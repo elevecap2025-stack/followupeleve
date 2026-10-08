@@ -528,7 +528,7 @@ const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:
   plan:{ filtro:'ate_hoje', vend:'', q:'', cls:'', semana:null, view:(()=>{ try{ return localStorage.getItem('cap_plan_view') || 'lista'; }catch(e){ return 'lista'; } })() },
   lig:{ de: mesAtual()+'-01', ate: hoje(), vend:'', res:'', q:'', cls:'' },
   cli:{ q:'', dia:'', mes:'', ano:'', pag:0, cls:'' },
-  pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', anivMot:true, sel:new Set() },
+  pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', sel:new Set() },
   aniv:{ tab:'hoje', emp:'', cls:'', dia:'', mes:mesAtual().slice(5), ano:new Date().getFullYear() }
 };
 const isAdmin = () => db.me && db.me.perfil === 'admin';
@@ -1110,7 +1110,6 @@ function pgPlanejar(){
     <div><label>Hora (opcional)</label><input type="time" value="${p.hora}" onchange="st.pl.hora=this.value"></div>
     <div><label>Motivo</label><select onchange="st.pl.motivo=this.value">${MOTIVOS.map(m=>`<option ${p.motivo===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="full"><label>Descrição / o que falar</label><input value="${esc(p.desc)}" oninput="st.pl.desc=this.value" placeholder="Vale para todos os clientes marcados"></div>
-    <div class="full"><label style="display:flex;gap:8px;align-items:center;cursor:pointer;margin:0"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--or)" ${p.anivMot?'checked':''} onchange="st.pl.anivMot=this.checked"> Aniversariantes da data entram com o motivo "Aniversário"</label></div>
   </div></div>`;
   if(!v){ $('content').innerHTML = html + '<div class="card empty">Selecione a vendedora para listar os clientes da empresa dela.</div>'; return; }
   const q = p.q.trim().toLowerCase(), qd = q.replace(/\D/g,''), nome = (a,b) => a.nome.localeCompare(b.nome);
@@ -1120,9 +1119,7 @@ function pgPlanejar(){
   const pend = {}; fuVisiveis().filter(f => f.status === 'pendente').sort((a,b) => a.data_prevista.localeCompare(b.data_prevista)).forEach(f => (pend[f.cliente_id] = pend[f.cliente_id] || []).push(f));
   p.bloq = new Set(Object.keys(pend).map(Number).filter(cid => pend[cid].some(f => f.vendedora_id !== v.id)));
   p.bloq.forEach(cid => p.sel.delete(cid));
-  const s1 = cl.filter(c => ehAniv(c, p.data)).sort(nome), s2 = [];
-  for(let i = 1; i <= 7; i++){ const d = addDias(p.data, i); cl.filter(c => ehAniv(c, d)).sort(nome).forEach(c => s2.push({ c, d })); }
-  const jaAniv = new Set([...s1.map(c => c.id), ...s2.map(x => x.c.id)]), s3all = cl.filter(c => !jaAniv.has(c.id)).sort(nome), lim = 200, s3 = s3all.slice(0, lim);
+  const lim = 200, s3all = cl.slice().sort(nome), s3 = s3all.slice(0, lim);
   const row = (c, extra) => { const u = M.ultLig[c.id], pl = pend[c.id] || [], bl = p.bloq.has(c.id);
     return `<tr><td style="width:40px"><input type="checkbox" class="plCk" data-id="${c.id}" ${p.sel.has(c.id)?'checked':''} ${bl?'disabled title="Já agendado para outra vendedora. Desmarque no ✕ para liberar."':''} onchange="plMarcar(${c.id}, this.checked)"></td>
       <td><b>${esc(c.nome)}</b> ${clsTag(c)} ${extra||''}${pl.map(f => ` <span class="tag ${f.vendedora_id===v.id?'warn':'bad'}" title="Follow-up pendente">📅 ${fmtDM(f.data_prevista)} · ${esc(vendNome(f.vendedora_id))}<button class="tag-x" title="Desmarcar da vendedora (cancela este follow-up)" onclick="plDesmarcarFU(${f.id})">✕</button></span>`).join('')}</td>
@@ -1140,9 +1137,7 @@ function pgPlanejar(){
       <div class="f"><label>Carteira</label><select onchange="st.pl.cart=this.value;pgPlanejar()"><option value="">Todas</option><option value="dela" ${p.cart==='dela'?'selected':''}>Da vendedora</option><option value="sem" ${p.cart==='sem'?'selected':''}>Sem carteira</option></select></div>
       <button class="btn sec" onclick="plMarcarVarios([],false,true)">Limpar seleção</button>
     </div>
-    ${secao(`🎂 Aniversariantes em ${nomeDia(p.data)} ${fmtD(p.data)}`, 'today', s1.map(c => c.id), s1.map(c => row(c, `<span class="tag or">faz ${idadeEm(c, p.data)} anos</span>`)).join(''))}
-    ${secao('🎂 Aniversariantes nos 7 dias seguintes', '', s2.map(x => x.c.id), s2.map(x => row(x.c, `<span class="tag">${nomeDia(x.d).slice(0,3)} ${fmtDM(x.d)}</span>`)).join(''))}
-    ${secao('Demais clientes', '', s3.map(c => c.id), s3.map(c => row(c)).join(''), s3all.length > lim ? `<p class="muted small">Exibindo ${lim} de ${fmtN(s3all.length)}. Use a busca, a classificação ou a carteira para achar os demais.</p>` : '')}
+    ${secao('📞 Follow-ups', '', s3.map(c => c.id), s3.map(c => row(c)).join(''), s3all.length > lim ? `<p class="muted small">Exibindo ${lim} de ${fmtN(s3all.length)}. Use a busca, a classificação ou a carteira para achar os demais.</p>` : '')}
   </div>
   <div class="pl-bar"><span id="plCnt"></span><span class="small muted" id="plInfo"></span><button class="btn" id="plOk" onclick="plCriar()">Criar follow-ups</button></div>`;
   $('content').innerHTML = html; plAtualizar();
@@ -1159,9 +1154,8 @@ async function plSalvarTel(id, campo, el){
 }
 function plAtualizar(){
   const p = st.pl, v = M.vend[Number(p.vend)], n = p.sel.size; if(!$('plCnt')) return;
-  const nAniv = [...p.sel].filter(id => M.cli[id] && ehAniv(M.cli[id], p.data)).length;
   $('plCnt').textContent = `${fmtN(n)} cliente(s) marcado(s)`;
-  $('plInfo').textContent = n && v ? `para ${v.nome} em ${fmtD(p.data)}${nAniv?` · ${nAniv} aniversariante(s)`:''}` : '';
+  $('plInfo').textContent = n && v ? `para ${v.nome} em ${fmtD(p.data)}` : '';
   $('plOk').disabled = !n; $('plOk').textContent = n ? `Criar ${fmtN(n)} follow-up(s)` : 'Criar follow-ups';
 }
 function plMarcar(id, on){ if(on) st.pl.sel.add(id); else st.pl.sel.delete(id); plAtualizar(); }
@@ -1185,7 +1179,7 @@ async function plCriar(){
   if(!ids.length) return toast('Marque pelo menos um cliente.', 'err');
   ids.sort((a,b) => ehAniv(M.cli[b], p.data) - ehAniv(M.cli[a], p.data) || M.cli[a].nome.localeCompare(M.cli[b].nome));
   const rows = ids.map(id => ({ empresa_id:v.empresa_id, cliente_id:id, vendedora_id:v.id, data_prevista:p.data, hora:p.hora || null,
-    motivo: (p.anivMot && ehAniv(M.cli[id], p.data)) ? 'Aniversário' : p.motivo, descricao: p.desc.trim() || null }));
+    motivo: p.motivo, descricao: p.desc.trim() || null }));
   $('plOk').disabled = true; $('plOk').textContent = 'Criando…';
   try{
     for(let i = 0; i < rows.length; i += 500){
