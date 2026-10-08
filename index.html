@@ -237,6 +237,16 @@ tr.hl td{background:#E6F1FB!important;animation:hl 2.5s ease}
 .pa-tbl td{text-align:center;font-size:13px}
 .pa-tbl td.pa-txt{white-space:pre-wrap;min-width:150px}
 .pa-tbl td.act{text-align:right}
+.pa-bar{position:relative;height:10px;background:#E5E7EB;border-radius:6px;min-width:90px}
+.pa-bar-f{height:100%;border-radius:6px;transition:width .4s ease}
+.pa-bar i{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--gr);border-radius:1px}
+.pa-bar-l{font-size:12px;margin-top:5px;line-height:1.35}
+.pa-et{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.pa-et input[type=checkbox]{width:20px;height:20px;accent-color:var(--ok);flex-shrink:0}
+.pa-et input:not([type]){flex:1}
+.pa-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:0 0 8px}
+.pa-leg span{display:inline-flex;align-items:center;gap:5px}
+.pa-leg b{display:inline-block;width:14px;height:8px;border-radius:3px}
 
 /* ---------- SEMANA (arrastar) ---------- */
 .wk-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -1976,6 +1986,33 @@ function pdfCli(){
 /* ============================ PLANO DE AÇÃO • 5W2H ============================ */
 const PA_STATUS = ['Não iniciado','Em andamento','Concluído','Atrasado','Cancelado'];
 const PA_TAG = { 'Não iniciado':'warn', 'Em andamento':'info', 'Concluído':'ok', 'Atrasado':'bad', 'Cancelado':'' };
+const diasEntre = (a,b) => Math.round((new Date(b+'T12:00:00') - new Date(a+'T12:00:00')) / 86400000);
+/* Lead time: dias do início até o fim (sem fim = até hoje) */
+function paLead(x){ return x.inicio ? Math.max(0, diasEntre(x.inicio, x.fim || hoje())) : null; }
+/* % previsto pelo prazo: quanto do período início→fim já passou */
+function paPrev(x){ if(!x.inicio || !x.fim) return null; const tot = diasEntre(x.inicio, x.fim); if(tot <= 0) return hoje() >= x.fim ? 100 : 0; return Math.max(0, Math.min(100, Math.round(diasEntre(x.inicio, hoje()) / tot * 100))); }
+const paEtapas = x => Array.isArray(x.etapas) ? x.etapas : [];
+/* % realizado: etapas concluídas ÷ total (sem etapas = % informado) */
+function paPct(x){ const e = paEtapas(x); return e.length ? Math.round(e.filter(s => s.ok).length / e.length * 100) : Math.max(0, Math.min(100, x.percentual || 0)); }
+function paBar(x){
+  const pr = paPct(x), e = paEtapas(x), enc = x.status === 'Concluído' || x.status === 'Cancelado', pv = enc ? null : paPrev(x);
+  const cor = pr >= 100 ? 'var(--ok)' : pv == null ? 'var(--or)' : pr >= pv ? 'var(--ok)' : pr >= pv - 15 ? 'var(--warn)' : 'var(--bad)';
+  return `<div class="pa-bar" title="Realizado ${pr}%${pv != null ? ' · previsto pelo prazo ' + pv + '%' : ''}"><div class="pa-bar-f" style="width:${pr}%;background:${cor}"></div>${pv != null ? `<i style="left:${pv}%"></i>` : ''}</div>
+    <div class="pa-bar-l"><b>${pr}%</b>${pv != null ? ` <span class="muted">· prev. ${pv}%</span>` : ''}${e.length ? `<div class="muted">${e.filter(s => s.ok).length}/${e.length} etapas</div>` : ''}</div>`;
+}
+function paLeadLive(){ const i = $('paIni').value, f = $('paFim').value; $('paLead').value = i ? Math.max(0, diasEntre(i, f || hoje())) : ''; $('paLeadObs').textContent = i && !f ? 'contando até hoje' : ''; }
+function paEtRender(){
+  const d = st.paEtDono, l = st.paEt, ok = l.filter(s => s.ok).length, pct = $('paPct');
+  $('paEtList').innerHTML = l.map((s,i) => `<div class="pa-et"><input type="checkbox" ${s.ok?'checked':''} onchange="st.paEt[${i}].ok=this.checked;st.paEt[${i}].em=this.checked?new Date().toISOString():null;paEtRender()"><input value="${esc(s.t)}" ${d?'':'disabled'} placeholder="Descreva a etapa" oninput="st.paEt[${i}].t=this.value">${d?`<button class="btn danger sm" title="Remover" onclick="st.paEt.splice(${i},1);paEtRender()">✕</button>`:''}</div>`).join('')
+    || '<div class="small muted">Sem etapas: o % é informado manualmente. Cadastre etapas para o % ser calculado sozinho.</div>';
+  if(l.length){ const v = Math.round(ok / l.length * 100); pct.value = v; pct.disabled = true; $('paEtRes').innerHTML = `<div class="pa-bar" style="margin-top:6px"><div class="pa-bar-f" style="width:${v}%;background:${v>=100?'var(--ok)':'var(--or)'}"></div></div><div class="small" style="margin-top:4px"><b>${ok} de ${l.length}</b> etapas concluídas = <b>${v}%</b></div>`; }
+  else { pct.disabled = false; $('paEtRes').innerHTML = ''; }
+}
+function paEtDoComo(){
+  const linhas = $('paComo').value.split(/\n+/).map(t => t.replace(/^\s*(\d+\s*[-.)–]?\s*|[-•*]\s*)/, '').trim()).filter(Boolean);
+  if(!linhas.length) return toast('Escreva as etapas no campo "Como?", uma por linha.', 'err');
+  linhas.forEach(t => { if(!st.paEt.some(s => s.t === t)) st.paEt.push({ t, ok:false }); }); paEtRender();
+}
 const fmtBRL = n => (Number(n)||0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 function pessoaNome(id){ const p = (db.pessoas||[]).find(x => x.id === id); return p ? (p.nome || p.email) : (db.me && id === db.me.id ? (db.me.nome || db.me.email) : '—'); }
 const paPend = () => db.me ? (db.planos||[]).filter(p => p.responsavel_id === db.me.id && !p.ciente_em && p.criado_por !== db.me.id) : [];
@@ -2019,14 +2056,15 @@ function pgPlano(){
     <button class="btn sec" onclick="pdfPA()">📄 Gerar PDF</button>
     <button class="btn" onclick="abrirPA()">+ Nova ação</button>
   </div>
+  <div class="pa-leg"><span><b style="background:var(--ok)"></b>No prazo ou concluído</span><span><b style="background:var(--warn)"></b>Um pouco atrás do previsto</span><span><b style="background:var(--bad)"></b>Atrasado em relação ao prazo</span><span><b style="background:var(--or)"></b>Sem datas para comparar</span><span><b style="background:var(--gr);width:2px;height:12px"></b>Previsto para hoje</span></div>
   <div class="pa-title">PLANO DE AÇÃO • 5W2H</div>
   <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Início</th><th>Horário previsto</th><th>Fim</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th><th>%</th><th>Observações</th><th></th></tr></thead><tbody>
-  ${l.map(x => { const pr = Math.max(0, Math.min(100, x.percentual||0)), dono = x.criado_por === me, resp = x.responsavel_id === me;
+  ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me;
     return `<tr><td><b>${x.id}</b></td><td class="pa-txt"><b>${esc(x.o_que)}</b></td><td class="pa-txt">${esc(x.por_que)}</td><td class="pa-txt">${esc(x.como)}</td>
       <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>`}</td>
-      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}</td><td>${x.lead_time ?? ''}</td>
+      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}</td><td>${paLead(x) ?? ''}${x.inicio && !x.fim ? '<div class="small muted">até hoje</div>' : ''}</td>
       <td class="pa-txt">${esc(x.onde)}</td><td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[x.status]||''}">${esc(x.status)}</span></td>
-      <td><div style="display:flex;gap:6px;align-items:center;justify-content:center"><div class="prog ${pr>=100?'ok':''}" style="min-width:50px;flex:1"><div style="width:${pr}%"></div></div><b>${pr}%</b></div></td>
+      <td style="min-width:120px">${paBar(x)}</td>
       <td class="pa-txt">${esc(x.observacoes)}</td>
       <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}<button class="btn sec sm" title="Editar" onclick="abrirPA(${x.id})">✎</button>${dono?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>`; }).join('') || '<tr><td colspan="15" class="empty">Nenhuma ação neste filtro.</td></tr>'}
   </tbody></table></div>`;
@@ -2042,26 +2080,29 @@ function abrirPA(id){
     <div class="full"><label>Como?</label><textarea id="paComo" ${dis}>${esc(x?x.como:'')}</textarea></div>
     <div><label>Quem? (responsável) *</label><select id="paQuem" ${dis}>${pess.map(p => `<option value="${p.id}" ${p.id===resp?'selected':''}>${esc(p.nome||p.email)}${p.id===me?' (eu)':''}</option>`).join('')}</select></div>
     <div><label>Onde?</label><input id="paOnde" value="${esc(x?x.onde:'')}" ${dis}></div>
-    <div><label>Início</label><input type="date" id="paIni" value="${x&&x.inicio?x.inicio:''}" ${dis}></div>
+    <div><label>Início</label><input type="date" id="paIni" value="${x&&x.inicio?x.inicio:''}" ${dis} onchange="paLeadLive()"></div>
     <div><label>Horário previsto</label><input type="time" id="paHora" value="${x&&x.horario?x.horario.slice(0,5):''}" ${dis}></div>
-    <div><label>Fim</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${dis}></div>
-    <div><label>Lead time (dias)</label><input type="number" min="0" id="paLead" value="${x&&x.lead_time!=null?x.lead_time:''}" ${dis}></div>
+    <div><label>Fim</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${dis} onchange="paLeadLive()"></div>
+    <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && x.inicio && !x.fim ? 'contando até hoje' : ''}</div></div>
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
     <div><label>Status</label><select id="paStatus">${PA_STATUS.map(s=>`<option ${(x?x.status:'Não iniciado')===s?'selected':''}>${s}</option>`).join('')}</select></div>
-    <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?x.percentual:0}"></div>
+    <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}"></div>
+    <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${dono?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
     <div class="full"><label>Observações</label><textarea id="paObs">${esc(x?x.observacoes:'')}</textarea></div>
     ${dono ? '<div class="full small muted">Se o responsável for outra pessoa, ela recebe a ação na hora para dar ciente.</div>' : ''}</div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`, true);
+  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = dono; paEtRender();
 }
 async function salvarPA(id){
   const x = id ? db.planos.find(p => p.id === id) : null, dono = !x || x.criado_por === db.me.id;
   const pct = Math.round(Number($('paPct').value) || 0);
   if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
-  let o = { status:$('paStatus').value, percentual:pct, observacoes:$('paObs').value.trim() || null };
+  const et = dono ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
+  let o = { status:$('paStatus').value, percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
   if(dono){
     Object.assign(o, { o_que:$('paOque').value.trim(), por_que:$('paPorque').value.trim() || null, como:$('paComo').value.trim() || null,
       responsavel_id:$('paQuem').value, onde:$('paOnde').value.trim() || null, inicio:$('paIni').value || null, horario:$('paHora').value || null,
-      fim:$('paFim').value || null, lead_time:$('paLead').value === '' ? null : Math.round(Number($('paLead').value)), quanto:Number($('paQuanto').value) || 0 });
+      fim:$('paFim').value || null, lead_time:$('paIni').value && $('paFim').value ? Math.max(0, diasEntre($('paIni').value, $('paFim').value)) : null, quanto:Number($('paQuanto').value) || 0 });
     if(!o.o_que) return toast('Preencha o campo "O quê?".', 'err');
     if(o.inicio && o.fim && o.fim < o.inicio) return toast('O fim não pode ser antes do início.', 'err');
   }
@@ -2125,7 +2166,7 @@ function pdfPA(){
     resumo: `${l.length} ação(ões)  -  ${l.filter(x=>x.status==='Concluído').length} concluída(s)  -  ${l.filter(x=>x.status==='Em andamento').length} em andamento  -  Total previsto ${fmtBRL(l.reduce((s,x)=>s+(Number(x.quanto)||0),0))}`,
     colunas:['ID','O quê?','Por quê?','Como?','Quem?','Início','Horário','Fim','Lead time','Onde?','Quanto?','Status','%','Observações'],
     linhas: l.map(x => [x.id, x.o_que, x.por_que||'', x.como||'', pessoaNome(x.responsavel_id) + (x.responsavel_id === x.criado_por ? '' : x.ciente_em ? ' (ciente '+fmtDH(x.ciente_em).slice(0,10)+')' : ' (aguardando ciente)'),
-      x.inicio?fmtD(x.inicio):'', x.horario?x.horario.slice(0,5):'', x.fim?fmtD(x.fim):'', x.lead_time ?? '', x.onde||'', fmtBRL(x.quanto), x.status, (x.percentual||0)+'%', x.observacoes||'']),
+      x.inicio?fmtD(x.inicio):'', x.horario?x.horario.slice(0,5):'', x.fim?fmtD(x.fim):'', paLead(x) ?? '', x.onde||'', fmtBRL(x.quanto), x.status, paPct(x)+'%' + (paPrev(x) != null && x.status !== 'Concluído' && x.status !== 'Cancelado' ? ' (prev. '+paPrev(x)+'%)' : '') + (paEtapas(x).length ? ' - '+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+' etapas' : ''), x.observacoes||'']),
     estilos: ret
       ? { 0:{cellWidth:6}, 1:{cellWidth:20}, 2:{cellWidth:18}, 3:{cellWidth:22}, 4:{cellWidth:16}, 5:{cellWidth:13}, 6:{cellWidth:9}, 7:{cellWidth:13}, 8:{cellWidth:8,halign:'center'}, 9:{cellWidth:12}, 10:{cellWidth:13,halign:'right'}, 11:{cellWidth:13}, 12:{cellWidth:7,halign:'center'} }
       : { 0:{cellWidth:8}, 1:{cellWidth:30}, 2:{cellWidth:28}, 3:{cellWidth:34}, 4:{cellWidth:24}, 5:{cellWidth:16}, 6:{cellWidth:13}, 7:{cellWidth:16}, 8:{cellWidth:11,halign:'center'}, 9:{cellWidth:18}, 10:{cellWidth:18,halign:'right'}, 11:{cellWidth:18}, 12:{cellWidth:9,halign:'center'} } });
