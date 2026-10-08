@@ -523,7 +523,7 @@ const api = {
 /* ============================ ESTADO ============================ */
 const db = { me:null, empresas:[], vendedoras:[], metas:[], usuarios:[], uv:[], clientes:[], followups:[], ligacoes:[], planos:[], pessoas:[], paOk:false, perfis:[] };
 const M = { emp:{}, vend:{}, cli:{}, ultLig:{} };
-const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false, cienteVisto:new Set(), cienteDepois:null, pa:{ ver:'todos', status:'', q:'', orient:'paisagem', pessoa:'' },
+const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false, cienteVisto:new Set(), cienteDepois:null, pa:{ ver:'todos', status:'', q:'', orient:'paisagem', pessoa:'' }, cat:{ q:'', de:'', ate:'', cls:'', pag:0 },
   painel:{ comp:mesAtual(), dia:'', vend:'', cls:'', anoNovos:new Date().getFullYear() },
   plan:{ filtro:'ate_hoje', vend:'', q:'', cls:'', semana:null, view:(()=>{ try{ return localStorage.getItem('cap_plan_view') || 'lista'; }catch(e){ return 'lista'; } })() },
   lig:{ de: mesAtual()+'-01', ate: hoje(), vend:'', res:'', q:'', cls:'' },
@@ -694,6 +694,7 @@ const PAGES = {
   planejar:{ t:'Planejar Ligações', ic:'📋', fn:()=>pgPlanejar() },
   ligacoes:{ t:'Ligações Realizadas', ic:'✅', fn:()=>pgLig() },
   clientes:{ t:'Clientes', ic:'👥', fn:()=>pgCli() },
+  clientesatend:{ t:'Clientes Atendidos', ic:'☑️', fn:()=>pgCliAtend(), seg:'clientes' },
   plano:{ t:'Plano de Ação', ic:'🎯', fn:()=>pgPlano() },
   planoconc:{ t:'Planos Concluídos', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
   vendedoras:{ t:'Vendedoras', ic:'👩‍💼', fn:()=>pgVend(), extra:true },
@@ -724,7 +725,7 @@ function montarNav(){
   const nAniv = anivDoDia(hoje()).length;
   const nAtras = fuVisiveis().filter(f => f.status==='pendente' && f.data_prevista <= hoje()).length;
   const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" title="${PAGES[k].t}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span><span class="lb">${PAGES[k].t}</span>${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
-  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('plano', paPend().length||'') + item('planoconc');
+  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('clientesatend') + item('plano', paPend().length||'') + item('planoconc');
   const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('perfis') + item('permissoes');
   if(cad) h += '<div class="sec">Cadastros</div>' + cad;
   h += '<div class="sec">Conta</div>' + item('meuperfil');
@@ -1423,6 +1424,7 @@ async function callSalvar(){
     if($('cNovo').checked){
       db.followups.push(await api.ins('followups', { empresa_id:C.c.empresa_id, cliente_id:C.c.id, vendedora_id:vend, data_prevista:$('cNData').value, hora:$('cNHora').value||null, motivo:$('cNMot').value, descricao:$('cNDesc').value.trim()||null }));
     }
+    if(efetivo(lig.resultado) && !C.c.atendido_em) C.c.atendido_em = lig.inicio;
     C.saved = true; indexar(); fecharModal(true); st.call = null;
     toast(C.fu ? 'Ligação registrada e follow-up concluído!' : 'Ligação registrada!', 'ok');
     st.hlLig = lig.id; st.lig.de = mesAtual()+'-01'; st.lig.ate = hoje(); st.lig.vend = ''; st.lig.res = ''; st.lig.q = '';
@@ -1479,6 +1481,7 @@ function exportLig(){
 function pgCli(){
   const p = st.cli, q = p.q.trim().toLowerCase(), qd = q.replace(/\D/g,''), porPag = 50;
   let l = cliVisiveis().filter(c => {
+    if(c.atendido_em) return false;  /* atendidos ficam na tela Clientes Atendidos */
     if((p.dia || p.mes || p.ano) && !c.data_nascimento) return false;
     if(p.dia && c.data_nascimento.slice(8,10) !== p.dia) return false;
     if(p.mes && c.data_nascimento.slice(5,7) !== p.mes) return false;
@@ -1500,7 +1503,7 @@ function pgCli(){
     ${isAdmin()?'<button class="btn sec" onclick="abrirImportacao()">⬆ Importar planilha</button>':''}
     <button class="btn" onclick="abrirCliente()">+ Novo cliente</button>
   </div>
-  <div class="small muted" style="margin-bottom:8px">${fmtN(l.length)} cliente(s)</div>
+  <div class="small muted" style="margin-bottom:8px">${fmtN(l.length)} cliente(s) a atender${(() => { const n = cliVisiveis().filter(c => c.atendido_em).length; return n && pode('clientesatend') ? ` · <a href="#" onclick="ir('clientesatend');return false">${fmtN(n)} já atendido(s) em Clientes Atendidos</a>` : ''; })()}</div>
   <div class="tbl-wrap"><table><thead><tr><th>Nome</th>${curEmp()?'':'<th>Empresa</th>'}<th>Celular</th><th>Telefone</th><th>Nascimento</th><th>Cadastro</th><th>Pedido</th><th>Entrega</th><th>Última ligação</th><th></th></tr></thead><tbody>
   ${vis.map(c => { const u = M.ultLig[c.id]; return `<tr${c.ativo?'':' style="opacity:.5"'}><td><b>${esc(c.nome)}</b> ${clsTag(c)}${c.vendedora_id?`<div class="small muted">Carteira: ${esc(vendNome(c.vendedora_id))}</div>`:''}</td>${curEmp()?'':`<td>${empTag(c.empresa_id)}</td>`}
     <td class="phone">${esc(c.celular)}</td><td class="phone">${esc(c.telefone)}</td><td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td><td>${c.data_cadastro?fmtD(c.data_cadastro):'<span class="muted">—</span>'}</td><td>${c.numero_pedido||c.data_pedido ? `${c.numero_pedido?'<b>Nº '+esc(c.numero_pedido)+'</b>':''}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}` : '<span class="muted">—</span>'}</td><td>${c.data_entrega?fmtD(c.data_entrega):'<span class="muted">—</span>'}</td>
@@ -1532,7 +1535,7 @@ function e_cod(e){ return (e.codigo||'').toUpperCase(); }
 function dataPlanilha(v){
   if(v === null || v === undefined || v === '' || v === '-') return null;
   if(typeof v === 'number'){ const d = new Date(Math.round((v - 25569) * 86400000)); return isNaN(d) ? null : d.toISOString().slice(0,10); }
-  const m = String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/); if(!m) return null;
+  const m = String(v).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:\s+\d{1,2}:\d{2}(?::\d{2})?)?$/); if(!m) return null;
   let a = Number(m[3]); if(a < 100) a += a > 30 ? 1900 : 2000;
   const iso = a+'-'+pad(m[2])+'-'+pad(m[1]), d = new Date(iso+'T12:00:00');
   return (!isNaN(d) && isoLocal(d) === iso) ? iso : null;
@@ -1541,24 +1544,29 @@ const telPlanilha = v => { const t = String(v ?? '').trim(); return (!t || t ===
 async function lerPlanilha(file){
   const wb = XLSX.read(await file.arrayBuffer(), { type:'array' });
   const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1, raw:true, defval:'' });
-  const hi = rows.findIndex(r => r.some(c => normNome(c).startsWith('NOME')));
-  if(hi < 0) throw new Error(`${file.name}: não encontrei a coluna "Nome/Razão Social".`);
+  const ehNome = x => x.startsWith('NOME') || (x.startsWith('CLIENTE') && !/COD|CPF|CNPJ/.test(x));
+  const hi = rows.findIndex(r => r.some(c => ehNome(normNome(c))));
+  if(hi < 0) throw new Error(`${file.name}: não encontrei a coluna "Cliente" ou "Nome/Razão Social".`);
   const H = rows[hi].map(normNome), col = p => H.findIndex(x => x.startsWith(p));
-  const cN = col('NOME'), cT = col('TEL'), cC = col('CEL'), cD = H.findIndex(x => x.includes('NASC'));
-  return rows.slice(hi+1).map(r => ({ nome: String(r[cN] ?? '').replace(/\s+/g,' ').trim(), telefone: cT>=0 ? telPlanilha(r[cT]) : null, celular: cC>=0 ? telPlanilha(r[cC]) : null, data_nascimento: cD>=0 ? dataPlanilha(r[cD]) : null })).filter(r => r.nome);
+  const cN = H.findIndex(x => x.startsWith('NOME')) >= 0 ? H.findIndex(x => x.startsWith('NOME')) : H.findIndex(ehNome), cT = col('TEL'), cC = col('CEL'), cD = H.findIndex(x => x.includes('NASC'));
+  const cP = H.findIndex(x => /PEDIDO/.test(x) && !/DATA|DT\b|EMISS/.test(x)), cE = H.findIndex(x => /ENTREGA/.test(x)), cDP = H.findIndex(x => /(DATA|DT).*PEDIDO|EMISS/.test(x));
+  const txt = v => { const t = String(v ?? '').trim(); return !t || t === '-' ? null : t.replace(/\.0+$/, ''); };
+  return rows.slice(hi+1).map(r => ({ nome: String(r[cN] ?? '').replace(/\s+/g,' ').trim(), telefone: cT>=0 ? telPlanilha(r[cT]) : null, celular: cC>=0 ? telPlanilha(r[cC]) : null, data_nascimento: cD>=0 ? dataPlanilha(r[cD]) : null,
+    ...(cP>=0 ? { numero_pedido: txt(r[cP]) } : {}), ...(cE>=0 ? { data_entrega: dataPlanilha(r[cE]) } : {}), ...(cDP>=0 ? { data_pedido: dataPlanilha(r[cDP]) } : {}) })).filter(r => r.nome);
 }
-const chaveCli = (emp, c) => emp+'|'+normNome(c.nome)+'|'+discar(c.celular||c.telefone||'');
+/* Não importa se já existir cliente com o mesmo Cliente + Nº do pedido + Entrega */
+const chaveCli = (emp, c) => emp+'|'+normNome(c.nome)+'|'+String(c.numero_pedido||'').trim().toUpperCase()+'|'+(c.data_entrega||'');
 function analisarImp(){
   IMP.forEach(f => {
     const emp = Number(f.emp), exist = new Set(db.clientes.filter(c => c.empresa_id === emp).map(c => chaveCli(emp, c))), vistos = new Set();
-    f.novos = []; f.jaExiste = 0; f.dup = 0;
+    f.novos = []; f.jaExiste = 0; f.dup = 0; f.temPedido = f.linhas.some(r => 'numero_pedido' in r || 'data_entrega' in r);
     f.linhas.forEach(r => { const k = chaveCli(emp, r); if(exist.has(k)) f.jaExiste++; else if(vistos.has(k)) f.dup++; else { vistos.add(k); f.novos.push(r); } });
   });
 }
 function abrirImportacao(){
   IMP = [];
   abrirModal('⬆ Importar clientes', `
-    <p style="margin-top:0">Selecione as planilhas de clientes do Microvix. A empresa é identificada pelo <b>nome do arquivo</b> (ex.: <i>CLIENTES 2026 - ELEVE.xlsx</i>). Clientes que já existem na empresa (mesmo nome e telefone) não são duplicados.</p>
+    <p style="margin-top:0">Selecione as planilhas de clientes do Microvix. A empresa é identificada pelo <b>nome do arquivo</b> (ex.: <i>CLIENTES 2026 - ELEVE.xlsx</i>). Antes de importar, o sistema compara <b>Cliente</b>, <b>Nº do pedido</b> e <b>Entrega</b>: se já existir um cadastro com os três iguais, a linha não é importada (também não repete linhas iguais dentro da planilha).</p>
     <input type="file" id="impArq" accept=".xlsx,.xls,.csv" multiple onchange="impSelecionar(this.files)">
     <div id="impLista"></div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="impOk" disabled onclick="impExecutar()">Importar</button>`, true);
@@ -1576,7 +1584,7 @@ function impRender(){
   analisarImp();
   $('impLista').innerHTML = IMP.map((f,i) => `<div class="imp-file"><div class="nm">📄 ${esc(f.arq)}</div>
     <div class="form" style="margin-top:8px"><div class="full"><label>Empresa ${f.emp?'(identificada pelo nome do arquivo)':''}</label><select onchange="IMP[${i}].emp=this.value;impRender()"><option value="">Selecione…</option>${db.empresas.filter(e=>e.ativo).map(e=>`<option value="${e.id}" ${String(f.emp)===String(e.id)?'selected':''}>${esc(e.nome)}</option>`).join('')}</select></div></div>
-    ${f.emp ? `<div class="imp-grid"><div><b>${fmtN(f.linhas.length)}</b><span>lidos</span></div><div><b style="color:var(--ok)">${fmtN(f.novos.length)}</b><span>novos</span></div><div><b>${fmtN(f.jaExiste)}</b><span>já cadastrados</span></div><div><b>${fmtN(f.novos.filter(r=>r.data_nascimento).length)}</b><span>novos c/ nascimento</span></div></div>` : '<p class="small" style="color:var(--bad)">Não identifiquei a empresa pelo nome do arquivo. Selecione acima.</p>'}
+    ${f.emp ? `<div class="imp-grid"><div><b>${fmtN(f.linhas.length)}</b><span>lidos</span></div><div><b style="color:var(--ok)">${fmtN(f.novos.length)}</b><span>novos</span></div><div><b>${fmtN(f.jaExiste)}</b><span>já cadastrados (cliente + pedido + entrega)</span></div><div><b>${fmtN(f.dup)}</b><span>repetidos na planilha</span></div></div>${f.temPedido ? '' : '<p class="small" style="color:var(--warn);margin:8px 0 0">Não encontrei as colunas de Nº do pedido/Entrega nesta planilha: a comparação usa só o nome do cliente.</p>'}` : '<p class="small" style="color:var(--bad)">Não identifiquei a empresa pelo nome do arquivo. Selecione acima.</p>'}
   </div>`).join('');
   const tot = IMP.reduce((s,f) => s + (f.emp ? f.novos.length : 0), 0);
   $('impOk').disabled = !tot || IMP.some(f => !f.emp); $('impOk').textContent = tot ? `Importar ${fmtN(tot)} cliente(s)` : 'Nada novo para importar';
@@ -2188,6 +2196,61 @@ async function trocarSenha(){
   finally{ $('mpSenhaBtn').disabled = false; }
 }
 
+/* ============================ CLIENTES ATENDIDOS ============================ */
+/* Cliente atendido = teve ligação com resultado "Atendeu…" (o banco marca sozinho) */
+function pgCliAtend(){
+  const p = st.cat, q = p.q.trim().toLowerCase(), qd = q.replace(/\D/g,''), porPag = 50;
+  let l = cliVisiveis().filter(c => {
+    if(!c.atendido_em) return false;
+    const d = dataDeTs(c.atendido_em);
+    if(p.de && d < p.de) return false; if(p.ate && d > p.ate) return false;
+    if(!clsOk(c.id, p.cls)) return false;
+    if(q && !c.nome.toLowerCase().includes(q) && !String(c.numero_pedido||'').toLowerCase().includes(q) && !(qd.length>=4 && (discar(c.celular).includes(qd) || discar(c.telefone).includes(qd)))) return false;
+    return true; }).sort((a,b) => String(b.atendido_em).localeCompare(String(a.atendido_em)));
+  const pags = Math.max(1, Math.ceil(l.length/porPag)); if(p.pag >= pags) p.pag = pags-1;
+  const vis = l.slice(p.pag*porPag, (p.pag+1)*porPag); st.pdfCat = l;
+  const mes = mesAtual(), noMes = cliVisiveis().filter(c => c.atendido_em && dataDeTs(c.atendido_em).slice(0,7) === mes).length, hj = cliVisiveis().filter(c => c.atendido_em && dataDeTs(c.atendido_em) === hoje()).length;
+  $('content').innerHTML = `
+  <div class="kpis">
+    <div class="kpi ok"><div class="l">Clientes atendidos</div><div class="v">${fmtN(cliVisiveis().filter(c => c.atendido_em).length)}</div></div>
+    <div class="kpi info"><div class="l">Atendidos neste mês</div><div class="v">${fmtN(noMes)}</div></div>
+    <div class="kpi"><div class="l">Atendidos hoje</div><div class="v">${fmtN(hj)}</div></div>
+    <div class="kpi dk click" onclick="ir('clientes')"><div class="l">A atender</div><div class="v">${fmtN(cliVisiveis().filter(c => !c.atendido_em).length)}</div><div class="s">Ir para Clientes</div></div>
+  </div>
+  <div class="filters">
+    <div class="f grow"><label>Buscar</label><input id="catQ" value="${esc(p.q)}" placeholder="Nome, telefone ou nº do pedido" oninput="st.cat.q=this.value;st.cat.pag=0;clearTimeout(window._caq);window._caq=setTimeout(()=>{pgCliAtend();const i=$('catQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <div class="f"><label>Atendido de</label><input type="date" value="${p.de}" onchange="st.cat.de=this.value;st.cat.pag=0;pgCliAtend()"></div>
+    <div class="f"><label>Atendido até</label><input type="date" value="${p.ate}" onchange="st.cat.ate=this.value;st.cat.pag=0;pgCliAtend()"></div>
+    ${clsFiltro(p.cls, "st.cat.cls=this.value;st.cat.pag=0;pgCliAtend()")}
+    <button class="btn sec" onclick="pdfCliAtend()">📄 Gerar PDF</button>
+  </div>
+  <div class="small muted" style="margin-bottom:8px">${fmtN(l.length)} cliente(s) atendido(s)</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Nome</th>${curEmp()?'':'<th>Empresa</th>'}<th>Celular / Telefone</th><th>Pedido</th><th>Entrega</th><th>Atendido em</th><th>Atendimento</th><th></th></tr></thead><tbody>
+  ${vis.map(c => { const u = M.ultLig[c.id]; return `<tr><td><b>${esc(c.nome)}</b> ${clsTag(c)}</td>${curEmp()?'':`<td>${empTag(c.empresa_id)}</td>`}
+    <td class="phone small">${esc([c.celular,c.telefone].filter(Boolean).join(' · '))}</td>
+    <td>${c.numero_pedido?'<b>Nº '+esc(c.numero_pedido)+'</b>':'<span class="muted">—</span>'}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}</td>
+    <td>${c.data_entrega?fmtD(c.data_entrega):'<span class="muted">—</span>'}</td>
+    <td>${fmtDH(c.atendido_em)}</td>
+    <td class="small">${u ? `<span class="tag ${efetivo(u.resultado)?'ok':''}">${esc(u.resultado)}</span><div class="muted">${esc(vendNome(u.vendedora_id))}${u.descricao?' — '+esc(u.descricao):''}</div>` : '<span class="muted">—</span>'}</td>
+    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Voltar para Clientes" onclick="reabrirCli(${c.id})">↩ Reabrir</button></td></tr>`; }).join('') || '<tr><td colspan="8" class="empty">Nenhum cliente atendido neste filtro.</td></tr>'}
+  </tbody></table></div>
+  <div class="pager"><button class="btn sec sm" ${p.pag<=0?'disabled':''} onclick="st.cat.pag--;pgCliAtend()">‹ Anterior</button><span class="small">Página ${p.pag+1} de ${pags}</span><button class="btn sec sm" ${p.pag>=pags-1?'disabled':''} onclick="st.cat.pag++;pgCliAtend()">Próxima ›</button></div>`;
+}
+async function reabrirCli(id){
+  const c = M.cli[id]; if(!c || !confirm(`Voltar ${c.nome} para a tela de Clientes (a atender)?`)) return;
+  try{ Object.assign(c, await api.upd('clientes', id, { atendido_em:null })); toast('Cliente voltou para Clientes.', 'ok'); pgCliAtend(); }
+  catch(e){ toast(e.message, 'err'); }
+}
+function pdfCliAtend(){
+  const l = st.pdfCat || [], p = st.cat; if(!l.length) return toast('Nenhum cliente neste filtro.', 'err');
+  gerarPDF({ titulo:'Clientes Atendidos', arquivo:`clientes_atendidos_${hoje()}.pdf`, paisagem:true,
+    subtitulo: 'Atendidos ' + (p.de ? 'de '+fmtD(p.de) : '') + (p.ate ? ' até '+fmtD(p.ate) : '') + (p.de||p.ate ? '' : 'em todo o período') + clsDesc(p.cls) + (p.q ? '  -  Busca: '+p.q : ''),
+    resumo: `${fmtN(l.length)} cliente(s) atendido(s)`,
+    colunas:['Nome','Empresa','Celular','Telefone','Nº pedido','Data pedido','Entrega','Atendido em','Resultado','Vendedora'],
+    linhas: l.map(c => { const u = M.ultLig[c.id]; return [c.nome, empNome(c.empresa_id), c.celular||'', c.telefone||'', c.numero_pedido||'', c.data_pedido?fmtD(c.data_pedido):'', c.data_entrega?fmtD(c.data_entrega):'', fmtDH(c.atendido_em), u?u.resultado:'', u?vendNome(u.vendedora_id):'']; }),
+    estilos:{ 0:{cellWidth:55}, 1:{cellWidth:18}, 2:{cellWidth:24}, 3:{cellWidth:24}, 4:{cellWidth:18}, 5:{cellWidth:19}, 6:{cellWidth:19}, 7:{cellWidth:26} } });
+}
+
 /* ============================ PLANO DE AÇÃO • 5W2H ============================ */
 const PA_STATUS = ['Não iniciado','Em andamento','Concluído','Atrasado','Cancelado'];
 /* Status automático: Concluído (100%), Atrasado (passou do fim), Em andamento (>0%), Não iniciado. Só "Cancelado" é manual. */
@@ -2235,13 +2298,13 @@ function paCiente(x){
 /* Quem pode ver os planos de todas as pessoas: administrador e perfis com "ver todos" (ex.: Diretor, Gerente) */
 function veTodosPlanos(){ if(isAdmin()) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
 const paConc = () => st.page === 'planoconc';
-const paEncerrada = x => ['Concluído','Cancelado'].includes(paStatus(x));
+const paEncerrada = x => paStatus(x) === 'Concluído';  /* só sai para Planos Concluídos com 100% */
 const paTipo = x => { const me = db.me.id; return x.criado_por === me && x.responsavel_id !== me ? 'env' : x.responsavel_id === me && x.criado_por !== me ? 'rec' : x.criado_por === me ? 'meu' : 'eq'; };
 const paCopias = x => x.grupo ? (db.planos||[]).filter(y => y.grupo === x.grupo).length : 1;
 function novoUUID(){ if(window.crypto && crypto.randomUUID) return crypto.randomUUID(); return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c === 'x' ? r : (r&3|8)).toString(16); }); }
 function paFiltradas(semStatus){
   const p = st.pa, me = db.me.id, q = p.q.trim().toLowerCase(), conc = paConc(), todos = veTodosPlanos();
-  const stOk = conc ? ['Concluído','Cancelado'] : ['Não iniciado','Em andamento','Atrasado'];
+  const stOk = conc ? ['Concluído'] : ['Não iniciado','Em andamento','Atrasado','Cancelado'];
   return (db.planos||[]).filter(x => {
     if(paEncerrada(x) !== conc) return false;
     const minha = x.criado_por === me || x.responsavel_id === me;
@@ -2264,7 +2327,6 @@ function pgPlano(){
   const nConc = (db.planos||[]).filter(x => paEncerrada(x) && (x.criado_por === me || x.responsavel_id === me)).length;
   const kpis = conc ? `
     <div class="kpi ok"><div class="l">Concluídas</div><div class="v">${n('Concluído')}</div><div class="s">${base.filter(x => paStatus(x)==='Concluído' && (x.concluido_em||'').slice(0,7)===mes).length} neste mês</div></div>
-    <div class="kpi dk"><div class="l">Canceladas</div><div class="v">${n('Cancelado')}</div></div>
     <div class="kpi info click" onclick="ir('plano')"><div class="l">Ações em aberto</div><div class="v">${(db.planos||[]).filter(x => !paEncerrada(x) && (x.criado_por === me || x.responsavel_id === me)).length}</div><div class="s">Ir para o Plano de Ação</div></div>`
     : `
     <div class="kpi dk"><div class="l">Ações em aberto</div><div class="v">${fmtN(base.length)}</div><div class="s">${base.filter(x=>x.criado_por===me).length} criadas por você</div></div>
@@ -2274,7 +2336,7 @@ function pgPlano(){
     <div class="kpi warn click ${p.ver==='ciente'?'sel':''}" onclick="st.pa.ver='ciente';pgPlano()"><div class="l">Aguardando seu ciente</div><div class="v">${pend}</div></div>
     <div class="kpi ok click" onclick="ir('planoconc')"><div class="l">Concluídas</div><div class="v">${nConc}</div><div class="s">Ver planos concluídos</div></div>`;
   const verOps = [['todos','Todas as minhas'], ...(todos ? [['equipe','Todas as pessoas']] : []), ['criados','Criadas por mim'], ['meus','Enviadas para mim'], ...(conc ? [] : [['ciente','Aguardando meu ciente']])];
-  const stOps = conc ? ['Concluído','Cancelado'] : ['Não iniciado','Em andamento','Atrasado'];
+  const stOps = conc ? ['Concluído'] : ['Não iniciado','Em andamento','Atrasado','Cancelado'];
   const pessoas = (db.pessoas||[]).slice().sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   $('content').innerHTML = `
   <div class="kpis">${kpis}</div>
@@ -2323,7 +2385,7 @@ function abrirPA(id){
     <div><label>Fim</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${dis} onchange="paLeadLive()"></div>
     <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && x.inicio && !x.fim ? 'contando até hoje' : ''}</div></div>
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
-    <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (vai para Planos Concluídos) · fim vencido Atrasado.</div></div>
+    <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (só então vai para Planos Concluídos) · fim vencido Atrasado.</div></div>
     <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}" ${so?'disabled':''}></div>
     <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${(dono || resp) && !so?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
     <div class="full"><label>Observações</label><textarea id="paObs" ${so?'disabled':''}>${esc(x?x.observacoes:'')}</textarea></div>
@@ -2378,7 +2440,7 @@ async function salvarPA(id){
   }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
 }
 /* Aviso do dia: ações da pessoa com início ou prazo final hoje (uma vez por dia) */
-function paHoje(){ const h = hoje(); return (db.planos||[]).filter(x => x.responsavel_id === db.me.id && !paEncerrada(x) && (x.inicio === h || x.fim === h)).sort((a,b) => (a.horario||'99').localeCompare(b.horario||'99')); }
+function paHoje(){ const h = hoje(); return (db.planos||[]).filter(x => x.responsavel_id === db.me.id && !paEncerrada(x) && paStatus(x) !== 'Cancelado' && (x.inicio === h || x.fim === h)).sort((a,b) => (a.horario||'99').localeCompare(b.horario||'99')); }
 function avisoDia(depois){
   const h = hoje(), key = 'eleve_pa_dia_' + db.me.id; let visto = ''; try{ visto = localStorage.getItem(key) || ''; }catch(e){}
   const l = db.paOk ? paHoje() : [];
