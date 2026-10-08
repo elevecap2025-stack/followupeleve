@@ -231,6 +231,12 @@ tr.hl td{background:#E6F1FB!important;animation:hl 2.5s ease}
 .pl-bar .btn{margin-left:auto}
 @media(max-width:900px){.form.f4{grid-template-columns:repeat(2,minmax(0,1fr))}.pl-bar{bottom:calc(66px + env(safe-area-inset-bottom,0px))}}
 @media(max-width:600px){.form.f4{grid-template-columns:1fr}}
+.pa-title{background:var(--or);color:#fff;font-weight:800;font-size:22px;letter-spacing:.02em;text-align:center;padding:10px;border-radius:12px 12px 0 0}
+.pa-tbl{border-radius:0 0 12px 12px}
+.pa-tbl th{background:var(--gr);color:#fff;text-align:center}
+.pa-tbl td{text-align:center;font-size:13px}
+.pa-tbl td.pa-txt{white-space:pre-wrap;min-width:150px}
+.pa-tbl td.act{text-align:right}
 
 /* ---------- SEMANA (arrastar) ---------- */
 .wk-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -470,9 +476,9 @@ const api = {
 };
 
 /* ============================ ESTADO ============================ */
-const db = { me:null, empresas:[], vendedoras:[], metas:[], usuarios:[], uv:[], clientes:[], followups:[], ligacoes:[] };
+const db = { me:null, empresas:[], vendedoras:[], metas:[], usuarios:[], uv:[], clientes:[], followups:[], ligacoes:[], planos:[], pessoas:[], paOk:false };
 const M = { emp:{}, vend:{}, cli:{}, ultLig:{} };
-const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false,
+const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false, cienteVisto:new Set(), cienteDepois:null, pa:{ ver:'todos', status:'', q:'', orient:'paisagem' },
   painel:{ comp:mesAtual(), dia:'', vend:'', cls:'', anoNovos:new Date().getFullYear() },
   plan:{ filtro:'ate_hoje', vend:'', q:'', cls:'', semana:null, view:(()=>{ try{ return localStorage.getItem('cap_plan_view') || 'lista'; }catch(e){ return 'lista'; } })() },
   lig:{ de: mesAtual()+'-01', ate: hoje(), vend:'', res:'', q:'', cls:'' },
@@ -581,7 +587,7 @@ $('loginForm').addEventListener('submit', async ev => {
 });
 
 function mostrarLogin(msg){ $('app').classList.add('hidden'); $('login').classList.remove('hidden'); $('loginMsg').textContent = msg||''; prepararLogin(); }
-function sair(){ S = null; st.avisoAniv = false; st.page = 'painel'; st.emp = ''; fecharModal(true); try{ localStorage.removeItem(SESS_KEY); }catch(e){} mostrarLogin(); }
+function sair(){ S = null; st.avisoAniv = false; st.cienteVisto = new Set(); st.page = 'painel'; st.emp = ''; fecharModal(true); try{ localStorage.removeItem(SESS_KEY); }catch(e){} mostrarLogin(); }
 async function logout(){ try{ if(S) await authReq('logout', {}, S.access_token); }catch(e){} sair(); }
 
 async function carregarDados(){
@@ -597,6 +603,7 @@ async function carregarDados(){
   db.usuarios = isAdmin() ? await sbAll('usuarios','select=*&order=created_at') : [db.me];
   await carregarUV();
   indexar();
+  await carregarPlanos();
 }
 
 async function carregarUV(){ try{ db.uv = await sbAll('usuario_vendedoras', isAdmin() ? 'select=*' : 'select=*&usuario_id=eq.'+db.me.id); }catch(e){ db.uv = []; if(isAdmin()) setTimeout(() => toast('Não foi possível ler os vínculos de login (usuario_vendedoras): '+e.message, 'err'), 900); } }
@@ -612,7 +619,8 @@ async function boot(){
     $('uNome').textContent = me.nome || me.email;
     $('uPerfil').textContent = isAdmin() ? 'Administrador' : ((minhas().length > 1 ? minhas().length+' vendedoras' : 'Vendedora') + ' · ' + minhasEmps().map(empNome).join(' / '));
     montarEmpSel(); montarNav(); ir(st.page);
-    if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); }
+    const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
+    if(paPend().length) abrirCiente(aniv); else aniv();
   }catch(e){ toast(e.message, 'err'); if(!S) mostrarLogin(e.message); }
   finally{ loading(false); }
 }
@@ -639,13 +647,14 @@ const PAGES = {
   planejar:{ t:'Planejar Ligações', ic:'📋', fn:()=>pgPlanejar() },
   ligacoes:{ t:'Ligações Realizadas', ic:'✅', fn:()=>pgLig() },
   clientes:{ t:'Clientes', ic:'👥', fn:()=>pgCli() },
+  plano:{ t:'Plano de Ação', ic:'🎯', fn:()=>pgPlano() },
   vendedoras:{ t:'Vendedoras', ic:'👩‍💼', fn:()=>pgVend(), extra:true },
   empresas:{ t:'Empresas', ic:'🏢', fn:()=>pgEmp(), adm:true },
   usuarios:{ t:'Usuários / Acessos', ic:'🔑', fn:()=>pgUsu(), adm:true },
   permissoes:{ t:'Permissões de Telas', ic:'🛡️', fn:()=>pgPerm(), adm:true }
 };
 /* Permissões de telas: usuarios.telas (null = todas as telas de operação liberadas) */
-const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes'];
+const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes','plano'];
 /* Telas extras: só liberadas quando marcadas explicitamente em Permissões (ex.: caixa cadastrar vendedoras) */
 const TELAS_PERM = [...TELAS_OPER, 'vendedoras'];
 function pode(k){
@@ -660,7 +669,7 @@ function montarNav(){
   const nAniv = anivDoDia(hoje()).length;
   const nAtras = fuVisiveis().filter(f => f.status==='pendente' && f.data_prevista <= hoje()).length;
   const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span>${PAGES[k].t}${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
-  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes');
+  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('plano', paPend().length||'');
   const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('permissoes');
   if(cad) h += '<div class="sec">Cadastros</div>' + cad;
   $('nav').innerHTML = h;
@@ -734,12 +743,12 @@ const primeiroNome = s => tituloNome(String(s||'').trim().split(/\s+/)[0]);
 const saudacao = () => { const h = new Date().getHours(); return h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite'; };
 function foneWa(c){ const p = [c.celular, c.telefone].find(ehCelular) || c.celular || c.telefone; return p ? discar(p) : ''; }
 function msgAniv(c, vid){
-  const loja = tituloNome(empNome(c.empresa_id));
+  const loja = 'Eleve Telhas';
   return `${saudacao()} ${primeiroNome(c.nome)}, vendedora ${primeiroNome(vendNome(vid))} aqui\n\n` +
     `🎉 A ${loja} deseja a você um feliz aniversário! 🥳\n\n` +
     `Que este novo ciclo seja repleto de saúde, alegria, amor e muitos momentos especiais. 💚\n\n` +
     `Agradecemos por fazer parte da nossa história e por escolher a ${loja}! Que seu dia seja incrível e que não faltem motivos para comemorar.\n\n` +
-    `🎂 Feliz aniversário! Com carinho, equipe ${loja} – A loja da Família. 💚`;
+    `🎂 Feliz aniversário! Com carinho, equipe ${loja} – Telhas sob medida para sua obra! 💚`;
 }
 function vendPadraoCli(c){
   const vs = vendsVisiveis(true).filter(v => v.empresa_id === c.empresa_id);
@@ -1832,7 +1841,7 @@ async function carregarPDF(){
 }
 function logoDataURL(){ const m = getComputedStyle(document.documentElement).getPropertyValue('--logo').match(/url\(["']?(data:[^"')]+)["']?\)/); return m ? m[1] : null; }
 const pdfTxt = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\s+/g, ' ').trim();
-async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos }){
+async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte }){
   loading(true, 'Gerando PDF…');
   try{
     await carregarPDF();
@@ -1862,7 +1871,7 @@ async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, p
     if(resumo){ doc.setFontSize(9.5); doc.setTextColor(43,47,54); doc.setFont('helvetica','bold'); doc.text(pdfTxt(resumo), 12, y); y += 4; }
     doc.autoTable({
       head: [colunas.map(pdfTxt)], body: linhas.map(r => r.map(pdfTxt)), startY: y, margin: { top: 33, left: 12, right: 12, bottom: 14 },
-      styles: { font:'helvetica', fontSize: 8, cellPadding: 1.8, textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak' },
+      styles: { font:'helvetica', fontSize: fonte || 8, cellPadding: fonte && fonte < 7 ? 1.2 : 1.8, textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak' },
       headStyles: { fillColor:[18,125,203], textColor:255, fontStyle:'bold' },
       alternateRowStyles: { fillColor:[240,246,252] }, columnStyles: estilos || {},
       didDrawPage: d => { if(d.pageNumber > 1) cab(); }
@@ -1962,6 +1971,164 @@ function pdfCli(){
     colunas:['Nome','Empresa','Classif.','Celular','Telefone','Nascimento','Cadastro','Carteira','Última ligação'],
     linhas: l.map(c => { const u = M.ultLig[c.id]; return [c.nome + (c.ativo?'':' (inativo)'), empNome(c.empresa_id), clsNome(c), c.celular||'', c.telefone||'', c.data_nascimento?fmtD(c.data_nascimento):'', c.data_cadastro?fmtD(c.data_cadastro):'', c.vendedora_id?vendNome(c.vendedora_id):'', u ? fmtDH(u.inicio)+' - '+u.resultado : '']; }),
     estilos:{ 0:{cellWidth:62}, 1:{cellWidth:20}, 2:{cellWidth:15}, 3:{cellWidth:26}, 4:{cellWidth:26}, 5:{cellWidth:20}, 6:{cellWidth:20} } });
+}
+
+/* ============================ PLANO DE AÇÃO • 5W2H ============================ */
+const PA_STATUS = ['Não iniciado','Em andamento','Concluído','Atrasado','Cancelado'];
+const PA_TAG = { 'Não iniciado':'warn', 'Em andamento':'info', 'Concluído':'ok', 'Atrasado':'bad', 'Cancelado':'' };
+const fmtBRL = n => (Number(n)||0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+function pessoaNome(id){ const p = (db.pessoas||[]).find(x => x.id === id); return p ? (p.nome || p.email) : (db.me && id === db.me.id ? (db.me.nome || db.me.email) : '—'); }
+const paPend = () => db.me ? (db.planos||[]).filter(p => p.responsavel_id === db.me.id && !p.ciente_em && p.criado_por !== db.me.id) : [];
+async function carregarPessoas(){ db.pessoas = (await sbFetch('/rest/v1/rpc/listar_usuarios', { method:'POST', body:{} })) || []; }
+async function carregarPlanos(){
+  try{ db.planos = await sbAll('plano_acao','select=*&order=id'); await carregarPessoas(); db.paOk = true; }
+  catch(e){ db.planos = []; db.pessoas = db.pessoas || []; db.paOk = false; }
+}
+function paCiente(x){
+  if(x.responsavel_id === x.criado_por) return '';
+  return x.ciente_em ? `<span class="tag ok">Ciente ${fmtDH(x.ciente_em).slice(0,16)}</span>` : '<span class="tag warn">Aguardando ciente</span>';
+}
+function paFiltradas(){
+  const p = st.pa, me = db.me.id, q = p.q.trim().toLowerCase();
+  return (db.planos||[]).filter(x => {
+    if(p.ver === 'criados' && x.criado_por !== me) return false;
+    if(p.ver === 'meus' && x.responsavel_id !== me) return false;
+    if(p.ver === 'ciente' && !(x.responsavel_id === me && !x.ciente_em && x.criado_por !== me)) return false;
+    if(p.status && x.status !== p.status) return false;
+    if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, pessoaNome(x.responsavel_id), pessoaNome(x.criado_por)].join(' ').toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a,b) => a.id - b.id);
+}
+function pgPlano(){
+  if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
+  const p = st.pa, me = db.me.id, l = paFiltradas(), todos = db.planos;
+  const n = s => todos.filter(x => x.status === s).length, pend = paPend().length;
+  $('content').innerHTML = `
+  <div class="kpis">
+    <div class="kpi dk"><div class="l">Ações</div><div class="v">${fmtN(todos.length)}</div><div class="s">${todos.filter(x=>x.criado_por===me).length} criadas por você</div></div>
+    <div class="kpi info"><div class="l">Em andamento</div><div class="v">${n('Em andamento')}</div></div>
+    <div class="kpi ok"><div class="l">Concluídas</div><div class="v">${n('Concluído')}</div></div>
+    <div class="kpi bad"><div class="l">Atrasadas</div><div class="v">${n('Atrasado')}</div></div>
+    <div class="kpi warn click ${p.ver==='ciente'?'sel':''}" onclick="st.pa.ver='ciente';pgPlano()"><div class="l">Aguardando seu ciente</div><div class="v">${pend}</div></div>
+  </div>
+  <div class="filters">
+    <div class="f"><label>Exibir</label><select onchange="st.pa.ver=this.value;pgPlano()">${[['todos','Todas as minhas'],['criados','Criadas por mim'],['meus','Enviadas para mim'],['ciente','Aguardando meu ciente']].map(([v,t])=>`<option value="${v}" ${p.ver===v?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${PA_STATUS.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="f grow"><label>Buscar</label><input id="paQ" value="${esc(p.q)}" placeholder="O quê, como, onde, quem…" oninput="st.pa.q=this.value;clearTimeout(window._paq);window._paq=setTimeout(()=>{pgPlano();const i=$('paQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <div class="seg"><button class="${p.orient==='paisagem'?'on':''}" onclick="st.pa.orient='paisagem';pgPlano()">Paisagem</button><button class="${p.orient==='retrato'?'on':''}" onclick="st.pa.orient='retrato';pgPlano()">Retrato</button></div>
+    <button class="btn sec" onclick="pdfPA()">📄 Gerar PDF</button>
+    <button class="btn" onclick="abrirPA()">+ Nova ação</button>
+  </div>
+  <div class="pa-title">PLANO DE AÇÃO • 5W2H</div>
+  <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Início</th><th>Horário previsto</th><th>Fim</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th><th>%</th><th>Observações</th><th></th></tr></thead><tbody>
+  ${l.map(x => { const pr = Math.max(0, Math.min(100, x.percentual||0)), dono = x.criado_por === me, resp = x.responsavel_id === me;
+    return `<tr><td><b>${x.id}</b></td><td class="pa-txt"><b>${esc(x.o_que)}</b></td><td class="pa-txt">${esc(x.por_que)}</td><td class="pa-txt">${esc(x.como)}</td>
+      <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>`}</td>
+      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}</td><td>${x.lead_time ?? ''}</td>
+      <td class="pa-txt">${esc(x.onde)}</td><td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[x.status]||''}">${esc(x.status)}</span></td>
+      <td><div style="display:flex;gap:6px;align-items:center;justify-content:center"><div class="prog ${pr>=100?'ok':''}" style="min-width:50px;flex:1"><div style="width:${pr}%"></div></div><b>${pr}%</b></div></td>
+      <td class="pa-txt">${esc(x.observacoes)}</td>
+      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}<button class="btn sec sm" title="Editar" onclick="abrirPA(${x.id})">✎</button>${dono?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>`; }).join('') || '<tr><td colspan="15" class="empty">Nenhuma ação neste filtro.</td></tr>'}
+  </tbody></table></div>`;
+}
+function abrirPA(id){
+  const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me, dis = dono ? '' : 'disabled';
+  const resp = x ? x.responsavel_id : me;
+  const pess = (db.pessoas||[]).slice(); if(!pess.some(p => p.id === me)) pess.unshift({ id:me, nome:db.me.nome||db.me.email, email:db.me.email });
+  abrirModal(x ? 'Ação #'+x.id : 'Nova ação · 5W2H', `<div class="form">
+    ${dono ? '' : `<div class="full box-info">Ação enviada por <b>${esc(pessoaNome(x.criado_por))}</b>. Você pode atualizar o status, o % e as observações.</div>`}
+    <div class="full"><label>O quê? *</label><textarea id="paOque" ${dis}>${esc(x?x.o_que:'')}</textarea></div>
+    <div class="full"><label>Por quê?</label><textarea id="paPorque" ${dis}>${esc(x?x.por_que:'')}</textarea></div>
+    <div class="full"><label>Como?</label><textarea id="paComo" ${dis}>${esc(x?x.como:'')}</textarea></div>
+    <div><label>Quem? (responsável) *</label><select id="paQuem" ${dis}>${pess.map(p => `<option value="${p.id}" ${p.id===resp?'selected':''}>${esc(p.nome||p.email)}${p.id===me?' (eu)':''}</option>`).join('')}</select></div>
+    <div><label>Onde?</label><input id="paOnde" value="${esc(x?x.onde:'')}" ${dis}></div>
+    <div><label>Início</label><input type="date" id="paIni" value="${x&&x.inicio?x.inicio:''}" ${dis}></div>
+    <div><label>Horário previsto</label><input type="time" id="paHora" value="${x&&x.horario?x.horario.slice(0,5):''}" ${dis}></div>
+    <div><label>Fim</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${dis}></div>
+    <div><label>Lead time (dias)</label><input type="number" min="0" id="paLead" value="${x&&x.lead_time!=null?x.lead_time:''}" ${dis}></div>
+    <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
+    <div><label>Status</label><select id="paStatus">${PA_STATUS.map(s=>`<option ${(x?x.status:'Não iniciado')===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?x.percentual:0}"></div>
+    <div class="full"><label>Observações</label><textarea id="paObs">${esc(x?x.observacoes:'')}</textarea></div>
+    ${dono ? '<div class="full small muted">Se o responsável for outra pessoa, ela recebe a ação na hora para dar ciente.</div>' : ''}</div>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`, true);
+}
+async function salvarPA(id){
+  const x = id ? db.planos.find(p => p.id === id) : null, dono = !x || x.criado_por === db.me.id;
+  const pct = Math.round(Number($('paPct').value) || 0);
+  if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
+  let o = { status:$('paStatus').value, percentual:pct, observacoes:$('paObs').value.trim() || null };
+  if(dono){
+    Object.assign(o, { o_que:$('paOque').value.trim(), por_que:$('paPorque').value.trim() || null, como:$('paComo').value.trim() || null,
+      responsavel_id:$('paQuem').value, onde:$('paOnde').value.trim() || null, inicio:$('paIni').value || null, horario:$('paHora').value || null,
+      fim:$('paFim').value || null, lead_time:$('paLead').value === '' ? null : Math.round(Number($('paLead').value)), quanto:Number($('paQuanto').value) || 0 });
+    if(!o.o_que) return toast('Preencha o campo "O quê?".', 'err');
+    if(o.inicio && o.fim && o.fim < o.inicio) return toast('O fim não pode ser antes do início.', 'err');
+  }
+  $('paSalvar').disabled = true;
+  try{
+    if(x) Object.assign(x, await api.upd('plano_acao', id, o));
+    else db.planos.push(await api.ins('plano_acao', o));
+    fecharModal(true); montarNav(); pgPlano();
+    const enviou = dono && o.responsavel_id !== db.me.id && (!x || x.ciente_em === null);
+    toast(enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
+  }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
+}
+async function excluirPA(id){
+  const x = db.planos.find(p => p.id === id); if(!x || !confirm(`Excluir a ação #${id}?\n${x.o_que}`)) return;
+  try{ await api.del('plano_acao', id); db.planos = db.planos.filter(p => p.id !== id); montarNav(); pgPlano(); toast('Ação excluída.', 'ok'); }
+  catch(e){ toast(e.message, 'err'); }
+}
+async function cientePA(ids){
+  try{
+    const r = await sbFetch(`/rest/v1/plano_acao?id=in.(${ids.join(',')})`, { method:'PATCH', body:{ ciente_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } });
+    (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; });
+    montarNav(); if(st.page === 'plano') pgPlano();
+    toast(ids.length > 1 ? 'Ciente registrado nas ações.' : 'Ciente registrado.', 'ok');
+    return true;
+  }catch(e){ toast(e.message, 'err'); return false; }
+}
+/* Aprovação imediata: quem recebe a ação vê o aviso ao entrar e a cada minuto */
+function abrirCiente(depois){
+  if(depois !== undefined) st.cienteDepois = depois;
+  const l = paPend(); l.forEach(x => st.cienteVisto.add(x.id));
+  const seguir = () => { const f = st.cienteDepois; st.cienteDepois = null; if(f) setTimeout(f, 50); };
+  if(!l.length){ fecharModal(true); seguir(); return; }
+  abrirModal(`📌 ${l.length > 1 ? l.length+' ações enviadas' : 'Ação enviada'} para você`,
+    `<p style="margin-top:0">Confirme que está ciente ${l.length > 1 ? 'das ações' : 'da ação'} do plano de ação:</p>` +
+    l.map(x => `<div class="box-info"><div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:220px">
+      <b>#${x.id} · ${esc(x.o_que)}</b><div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>
+      ${x.por_que?`<div><b>Por quê:</b> ${esc(x.por_que)}</div>`:''}${x.como?`<div><b>Como:</b> ${esc(x.como)}</div>`:''}${x.onde?`<div><b>Onde:</b> ${esc(x.onde)}</div>`:''}
+      <div class="small">${[x.inicio?'Início '+fmtD(x.inicio):'', x.horario?'às '+x.horario.slice(0,5):'', x.fim?'Fim '+fmtD(x.fim):'', Number(x.quanto)?fmtBRL(x.quanto):''].filter(Boolean).join(' · ')}</div></div>
+      <button class="btn ok sm" onclick="cientePA([${x.id}]).then(ok=>{ if(ok) abrirCiente(); })">✔ Estou ciente</button></div></div>`).join(''),
+    `<button class="btn sec" onclick="fecharModal()">Ver depois</button>${l.length > 1 ? `<button class="btn ok" onclick="cientePA([${l.map(x=>x.id).join(',')}]).then(ok=>{ if(ok) abrirCiente(); })">✔ Ciente de todas</button>` : ''}`,
+    true, () => { seguir(); });
+}
+async function checarCiente(){
+  if(!S || !db.me || !db.paOk || $('app').classList.contains('hidden')) return;
+  try{
+    const r = await sbFetch(`/rest/v1/plano_acao?responsavel_id=eq.${db.me.id}&ciente_em=is.null&select=*`) || [];
+    r.forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; else db.planos.push(n); });
+    const novos = paPend().filter(x => !st.cienteVisto.has(x.id));
+    if(!novos.length) return;
+    if(novos.some(n => !(db.pessoas||[]).some(p => p.id === n.criado_por))) await carregarPessoas();
+    montarNav();
+    if(!$('modal').classList.contains('show')){ if(st.page === 'plano') pgPlano(); abrirCiente(null); }
+  }catch(e){}
+}
+setInterval(checarCiente, 60000);
+function pdfPA(){
+  const l = paFiltradas(), ret = st.pa.orient === 'retrato'; if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
+  const ver = { todos:'Todas as minhas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver];
+  gerarPDF({ titulo:'Plano de Ação - 5W2H', arquivo:`plano_acao_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 7.2,
+    subtitulo: ver + (st.pa.status ? '  -  Status: '+st.pa.status : '') + (st.pa.q ? '  -  Busca: '+st.pa.q : ''),
+    resumo: `${l.length} ação(ões)  -  ${l.filter(x=>x.status==='Concluído').length} concluída(s)  -  ${l.filter(x=>x.status==='Em andamento').length} em andamento  -  Total previsto ${fmtBRL(l.reduce((s,x)=>s+(Number(x.quanto)||0),0))}`,
+    colunas:['ID','O quê?','Por quê?','Como?','Quem?','Início','Horário','Fim','Lead time','Onde?','Quanto?','Status','%','Observações'],
+    linhas: l.map(x => [x.id, x.o_que, x.por_que||'', x.como||'', pessoaNome(x.responsavel_id) + (x.responsavel_id === x.criado_por ? '' : x.ciente_em ? ' (ciente '+fmtDH(x.ciente_em).slice(0,10)+')' : ' (aguardando ciente)'),
+      x.inicio?fmtD(x.inicio):'', x.horario?x.horario.slice(0,5):'', x.fim?fmtD(x.fim):'', x.lead_time ?? '', x.onde||'', fmtBRL(x.quanto), x.status, (x.percentual||0)+'%', x.observacoes||'']),
+    estilos: ret
+      ? { 0:{cellWidth:6}, 1:{cellWidth:20}, 2:{cellWidth:18}, 3:{cellWidth:22}, 4:{cellWidth:16}, 5:{cellWidth:13}, 6:{cellWidth:9}, 7:{cellWidth:13}, 8:{cellWidth:8,halign:'center'}, 9:{cellWidth:12}, 10:{cellWidth:13,halign:'right'}, 11:{cellWidth:13}, 12:{cellWidth:7,halign:'center'} }
+      : { 0:{cellWidth:8}, 1:{cellWidth:30}, 2:{cellWidth:28}, 3:{cellWidth:34}, 4:{cellWidth:24}, 5:{cellWidth:16}, 6:{cellWidth:13}, 7:{cellWidth:16}, 8:{cellWidth:11,halign:'center'}, 9:{cellWidth:18}, 10:{cellWidth:18,halign:'right'}, 11:{cellWidth:18}, 12:{cellWidth:9,halign:'center'} } });
 }
 
 /* ============================ INÍCIO ============================ */
