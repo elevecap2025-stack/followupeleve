@@ -665,7 +665,7 @@ async function boot(){
     $('uPerfil').textContent = textoPerfil();
     montarEmpSel(); montarNav(); ir(st.page);
     const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
-    const dia = () => avisoDia(aniv);
+    const dia = () => avisoEntrega(() => avisoDia(aniv));
     if(paPend().length) abrirCiente(dia); else dia();
   }catch(e){ toast(e.message, 'err'); if(!S) mostrarLogin(e.message); }
   finally{ loading(false); }
@@ -2312,7 +2312,7 @@ function abrirPA(id){
         <div class="pa-quem">${pess.map(p => `<label class="ck-row"><input type="checkbox" class="paQk" value="${p.id}" ${p.id===me?'checked':''}><span>${esc(p.nome||p.email)}${p.id===me?' <span class="tag">eu</span>':''}</span></label>`).join('')}</div>
         ${pess.length <= 1 ? '<div class="small" style="color:var(--warn)">Só você aparece aqui porque não há outros usuários ativos. Cadastre ou ative os usuários em Usuários / Acessos.</div>' : ''}</div>`;
   abrirModal(x ? 'Ação #'+x.id : 'Nova ação · 5W2H', `<div class="form">
-    ${so ? `<div class="full box-info">Ação de <b>${esc(pessoaNome(x.responsavel_id))}</b>, criada por ${esc(pessoaNome(x.criado_por))}. Somente leitura.</div>` : dono ? '' : `<div class="full box-info">Ação enviada por <b>${esc(pessoaNome(x.criado_por))}</b>. Você pode marcar as etapas, atualizar o % e as observações.</div>`}
+    ${so ? `<div class="full box-info">Ação de <b>${esc(pessoaNome(x.responsavel_id))}</b>, criada por ${esc(pessoaNome(x.criado_por))}. Somente leitura.</div>` : dono ? '' : `<div class="full box-info">Ação enviada por <b>${esc(pessoaNome(x.criado_por))}</b>. Você pode incluir e marcar etapas, atualizar o % e as observações. O andamento aparece na hora para quem criou.</div>`}
     <div class="full"><label>O quê? *</label><textarea id="paOque" ${dis}>${esc(x?x.o_que:'')}</textarea></div>
     <div class="full"><label>Por quê?</label><textarea id="paPorque" ${dis}>${esc(x?x.por_que:'')}</textarea></div>
     <div class="full"><label>Como?</label><textarea id="paComo" ${dis}>${esc(x?x.como:'')}</textarea></div>
@@ -2325,12 +2325,12 @@ function abrirPA(id){
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
     <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (vai para Planos Concluídos) · fim vencido Atrasado.</div></div>
     <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}" ${so?'disabled':''}></div>
-    <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${dono?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
+    <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${(dono || resp) && !so?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
     <div class="full"><label>Observações</label><textarea id="paObs" ${so?'disabled':''}>${esc(x?x.observacoes:'')}</textarea></div>
-    ${x && dono && nc > 1 ? `<label class="full ck-row" style="margin:0"><input type="checkbox" id="paTodas" checked><span>Aplicar O quê, Por quê, Como, Onde, datas, horário, valor e etapas às <b>${nc} cópias</b> deste plano (o andamento de cada pessoa é mantido)</span></label>` : ''}
-    ${!x ? '<div class="full small muted">Cada pessoa marcada recebe a sua cópia na hora para dar ciente. Na sua lista, as cópias que você enviou aparecem em outra cor.</div>' : ''}</div>`,
+    ${x && dono && nc > 1 ? `<label class="full ck-row" style="margin:0"><input type="checkbox" id="paTodas" checked><span>Aplicar O quê, Por quê, Como, Onde, datas, horário, valor e etapas às <b>${nc} cópias</b> deste plano (etapas e andamento já são compartilhados)</span></label>` : ''}
+    ${!x ? '<div class="full small muted">Cada pessoa marcada recebe a ação na hora para dar ciente. Etapas, % e status são compartilhados: você acompanha o andamento em tempo real e recebe o aviso quando for entregue.</div>' : ''}</div>`,
     `<button class="btn sec" onclick="fecharModal()">${so?'Fechar':'Cancelar'}</button>${so ? '' : `<button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`}`, true);
-  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = dono && !so; paEtRender();
+  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = (dono || resp) && !so; paEtRender();
   if(so) document.querySelectorAll('#paEtList input').forEach(i => i.disabled = true);
 }
 function paMergeEtapas(novas, antigas){ /* mantém o andamento de cada cópia pelas etapas de mesmo texto */
@@ -2341,7 +2341,7 @@ async function salvarPA(id){
   const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me;
   const pct = Math.round(Number($('paPct').value) || 0);
   if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
-  const et = dono ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
+  const et = (dono || (x && x.responsavel_id === me)) ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
   let o = { status:$('paStatus').value === 'Cancelado' ? 'Cancelado' : 'Não iniciado', percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
   let comum = null;
   if(dono){
@@ -2367,10 +2367,11 @@ async function salvarPA(id){
     }
     if(dono && $('paTodas') && $('paTodas').checked && x.grupo){
       for(const c of db.planos.filter(y => y.grupo === x.grupo && y.id !== x.id && y.criado_por === me)){
-        Object.assign(c, await api.upd('plano_acao', c.id, { ...comum, etapas: paMergeEtapas(et, c.etapas) }));
+        Object.assign(c, await api.upd('plano_acao', c.id, comum));
       }
     }
     Object.assign(x, await api.upd('plano_acao', id, o));
+    try{ db.planos = await sbAll('plano_acao','select=*&order=id'); }catch(e){}
     fecharModal(true); montarNav(); pgPlano();
     const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
     toast(paEncerrada(x) ? 'Ação salva e movida para Planos Concluídos.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
@@ -2423,19 +2424,41 @@ function abrirCiente(depois){
     `<button class="btn sec" onclick="fecharModal()">Ver depois</button>${l.length > 1 ? `<button class="btn ok" onclick="cientePA([${l.map(x=>x.id).join(',')}]).then(ok=>{ if(ok) abrirCiente(); })">✔ Ciente de todas</button>` : ''}`,
     true, () => { seguir(); });
 }
+/* Sincroniza o plano a cada 30 s: andamento compartilhado, ciente, entregas e aviso do dia */
 async function checarCiente(){
   if(!S || !db.me || !db.paOk || $('app').classList.contains('hidden')) return;
   try{
-    const r = await sbFetch(`/rest/v1/plano_acao?responsavel_id=eq.${db.me.id}&ciente_em=is.null&select=*`) || [];
-    r.forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; else db.planos.push(n); });
-    const novos = paPend().filter(x => !st.cienteVisto.has(x.id));
-    if(!novos.length){ if(!$('modal').classList.contains('show')) avisoDia(); return; }
-    if(novos.some(n => !(db.pessoas||[]).some(p => p.id === n.criado_por))) await carregarPessoas();
-    montarNav();
-    if(!$('modal').classList.contains('show')){ if(st.page === 'plano' || st.page === 'planoconc') pgPlano(); abrirCiente(null); }
+    const r = await sbAll('plano_acao','select=*&order=id');
+    const sig = a => (a||[]).map(x => x.id+':'+x.updated_at).join('|'), mudou = sig(r) !== sig(db.planos);
+    db.planos = r;
+    if(r.some(n => ![n.criado_por, n.responsavel_id].every(u => (db.pessoas||[]).some(p => p.id === u)))) await carregarPessoas();
+    const aberto = $('modal').classList.contains('show');
+    if(mudou){ montarNav(); if((st.page === 'plano' || st.page === 'planoconc') && !aberto && document.activeElement && document.activeElement.id !== 'paQ') pgPlano(); }
+    if(aberto) return;
+    if(paPend().some(x => !st.cienteVisto.has(x.id))) return abrirCiente(null);
+    if(paEntregas().length) return avisoEntrega(null);
+    avisoDia();
   }catch(e){}
 }
-setInterval(checarCiente, 60000);
+/* Aviso para quem criou: a ação enviada foi concluída (entregue) */
+const paEntregas = () => db.me ? (db.planos||[]).filter(x => x.criado_por === db.me.id && x.responsavel_id !== db.me.id && x.status === 'Concluído' && !x.entrega_vista_em) : [];
+function avisoEntrega(depois){
+  const l = db.paOk ? paEntregas() : [];
+  if(!l.length){ if(depois) depois(); return; }
+  const ids = l.map(x => x.id);
+  const marcar = async () => { try{ const r = await sbFetch(`/rest/v1/plano_acao?id=in.(${ids.join(',')})`, { method:'PATCH', body:{ entrega_vista_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } });
+    (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; }); }catch(e){ l.forEach(x => x.entrega_vista_em = 'local'); } };
+  st.entregaDepois = depois || null;
+  abrirModal(`✅ ${l.length > 1 ? l.length + ' tarefas entregues' : 'Tarefa entregue'}`,
+    `<p style="margin-top:0">${l.length > 1 ? 'Estas ações que você enviou foram concluídas e já estão' : 'A ação que você enviou foi concluída e já está'} em <b>Planos Concluídos</b>:</p>` +
+    l.map(x => `<div class="box-info" style="border-left:4px solid var(--ok)"><b>#${x.id} · ${esc(x.o_que)}</b>
+      <div class="small">Entregue por <b>${esc(pessoaNome(x.responsavel_id))}</b>${x.concluido_em ? ' em '+fmtDH(x.concluido_em) : ''}${x.fim ? ' · prazo '+fmtD(x.fim)+(x.concluido_em && dataDeTs(x.concluido_em) > x.fim ? ' <span class="tag bad">após o prazo</span>' : ' <span class="tag ok">no prazo</span>') : ''}</div>
+      ${paEtapas(x).length ? `<div class="small muted">${paEtapas(x).length} etapa(s) concluída(s)</div>` : ''}${x.observacoes ? `<div class="small"><b>Obs.:</b> ${esc(x.observacoes)}</div>` : ''}</div>`).join(''),
+    `<button class="btn sec" onclick="fecharModal()">OK</button>${pode('plano') ? `<button class="btn ok" onclick="st.entregaIr=true;fecharModal()">Ver Planos Concluídos</button>` : ''}`,
+    true, () => { marcar().then(() => montarNav()); const ir_ = st.entregaIr; st.entregaIr = false; const f = st.entregaDepois; st.entregaDepois = null;
+      setTimeout(() => { if(ir_) ir('planoconc'); else if(f) f(); }, 50); });
+}
+setInterval(checarCiente, 30000);
 function pdfPA(){
   const l = paFiltradas(), ret = st.pa.orient === 'retrato'; if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
   const ver = { todos:'Todas as minhas', equipe:'Todas as pessoas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver] + (st.pa.pessoa ? '  -  Pessoa: '+pessoaNome(st.pa.pessoa) : '');
