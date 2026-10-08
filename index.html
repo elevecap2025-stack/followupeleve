@@ -528,7 +528,7 @@ const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:
   plan:{ filtro:'ate_hoje', vend:'', q:'', cls:'', semana:null, view:(()=>{ try{ return localStorage.getItem('cap_plan_view') || 'lista'; }catch(e){ return 'lista'; } })() },
   lig:{ de: mesAtual()+'-01', ate: hoje(), vend:'', res:'', q:'', cls:'' },
   cli:{ q:'', dia:'', mes:'', ano:'', pag:0, cls:'' },
-  pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', sel:new Set() },
+  pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', ped:'', entDe:'', entAte:'', sel:new Set() },
   aniv:{ tab:'hoje', emp:'', cls:'', dia:'', mes:mesAtual().slice(5), ano:new Date().getFullYear() }
 };
 const isAdmin = () => db.me && db.me.perfil === 'admin';
@@ -1115,6 +1115,8 @@ function pgPlanejar(){
   const q = p.q.trim().toLowerCase(), qd = q.replace(/\D/g,''), nome = (a,b) => a.nome.localeCompare(b.nome);
   const cl = db.clientes.filter(c => c.ativo && c.empresa_id === v.empresa_id && clsOk(c.id, p.cls)
     && (!p.cart || (p.cart === 'dela' ? c.vendedora_id === v.id : !c.vendedora_id))
+    && (!p.ped || String(c.numero_pedido||'').toLowerCase().includes(p.ped.trim().toLowerCase()))
+    && (!p.entDe || (c.data_entrega && c.data_entrega >= p.entDe)) && (!p.entAte || (c.data_entrega && c.data_entrega <= p.entAte))
     && (!q || c.nome.toLowerCase().includes(q) || (qd.length >= 4 && (discar(c.celular).includes(qd) || discar(c.telefone).includes(qd)))));
   const pend = {}; fuVisiveis().filter(f => f.status === 'pendente').sort((a,b) => a.data_prevista.localeCompare(b.data_prevista)).forEach(f => (pend[f.cliente_id] = pend[f.cliente_id] || []).push(f));
   p.bloq = new Set(Object.keys(pend).map(Number).filter(cid => pend[cid].some(f => f.vendedora_id !== v.id)));
@@ -1124,20 +1126,25 @@ function pgPlanejar(){
     return `<tr><td style="width:40px"><input type="checkbox" class="plCk" data-id="${c.id}" ${p.sel.has(c.id)?'checked':''} ${bl?'disabled title="Já agendado para outra vendedora. Desmarque no ✕ para liberar."':''} onchange="plMarcar(${c.id}, this.checked)"></td>
       <td><b>${esc(c.nome)}</b> ${clsTag(c)} ${extra||''}${pl.map(f => ` <span class="tag ${f.vendedora_id===v.id?'warn':'bad'}" title="Follow-up pendente">📅 ${fmtDM(f.data_prevista)} · ${esc(vendNome(f.vendedora_id))}<button class="tag-x" title="Desmarcar da vendedora (cancela este follow-up)" onclick="plDesmarcarFU(${f.id})">✕</button></span>`).join('')}</td>
       <td class="phone"><div class="pl-tel"><input value="${esc(c.celular||'')}" placeholder="Celular" title="Celular — altere e tecle Enter ou saia do campo para salvar" onchange="plSalvarTel(${c.id},'celular',this)"><input value="${esc(c.telefone||'')}" placeholder="Telefone" title="Telefone — altere e tecle Enter ou saia do campo para salvar" onchange="plSalvarTel(${c.id},'telefone',this)"></div></td>
+      <td>${c.numero_pedido?'<b>'+esc(c.numero_pedido)+'</b>':'<span class="muted">—</span>'}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}</td>
+      <td>${c.data_entrega?fmtD(c.data_entrega):'<span class="muted">—</span>'}</td>
       <td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td>
       <td class="small">${u?fmtDH(u.inicio)+'<br><span class="muted">'+esc(u.resultado)+'</span>':'<span class="muted">—</span>'}</td>
       <td class="small">${c.vendedora_id?esc(vendNome(c.vendedora_id)):'<span class="muted">—</span>'}</td></tr>`; };
   const secao = (tit, cls, ids, linhas, obs) => `<div class="dayhead ${cls}">${tit} <span class="tag">${ids.length}</span>
       ${ids.length?`<button class="btn sec sm" onclick="plMarcarVarios([${ids.join(',')}],true)">Marcar todos</button><button class="btn sec sm" onclick="plMarcarVarios([${ids.join(',')}],false)">Desmarcar</button>`:''}</div>
-    <div class="tbl-wrap"><table><thead><tr><th></th><th>Cliente</th><th>Celular / Telefone</th><th>Nascimento</th><th>Última ligação</th><th>Carteira</th></tr></thead><tbody>${linhas || '<tr><td colspan="6" class="empty">Nenhum cliente.</td></tr>'}</tbody></table></div>${obs||''}`;
+    <div class="tbl-wrap"><table><thead><tr><th></th><th>Cliente</th><th>Celular / Telefone</th><th>Nº pedido</th><th>Entrega</th><th>Nascimento</th><th>Última ligação</th><th>Carteira</th></tr></thead><tbody>${linhas || '<tr><td colspan="8" class="empty">Nenhum cliente.</td></tr>'}</tbody></table></div>${obs||''}`;
   html += `<div class="card"><h3>2. Escolha os clientes · ${esc(empNome(v.empresa_id))}</h3>
     <div class="filters">
       <div class="f grow"><label>Buscar</label><input id="plQ" value="${esc(p.q)}" placeholder="Nome ou telefone" oninput="st.pl.q=this.value;clearTimeout(window._plq);window._plq=setTimeout(()=>{pgPlanejar();const i=$('plQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
       ${clsFiltro(p.cls, "st.pl.cls=this.value;pgPlanejar()")}
       <div class="f"><label>Carteira</label><select onchange="st.pl.cart=this.value;pgPlanejar()"><option value="">Todas</option><option value="dela" ${p.cart==='dela'?'selected':''}>Da vendedora</option><option value="sem" ${p.cart==='sem'?'selected':''}>Sem carteira</option></select></div>
+      <div class="f"><label>Nº do pedido</label><input id="plPed" value="${esc(p.ped||'')}" placeholder="Ex.: 12345" style="min-width:110px" oninput="st.pl.ped=this.value;clearTimeout(window._plp);window._plp=setTimeout(()=>{pgPlanejar();const i=$('plPed');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+      <div class="f"><label>Entrega de</label><input type="date" value="${p.entDe||''}" onchange="st.pl.entDe=this.value;pgPlanejar()"></div>
+      <div class="f"><label>Entrega até</label><input type="date" value="${p.entAte||''}" onchange="st.pl.entAte=this.value;pgPlanejar()"></div>
       <button class="btn sec" onclick="plMarcarVarios([],false,true)">Limpar seleção</button>
     </div>
-    ${secao('📞 Follow-ups', '', s3.map(c => c.id), s3.map(c => row(c)).join(''), s3all.length > lim ? `<p class="muted small">Exibindo ${lim} de ${fmtN(s3all.length)}. Use a busca, a classificação ou a carteira para achar os demais.</p>` : '')}
+    ${secao('📞 Follow-ups', '', s3.map(c => c.id), s3.map(c => row(c)).join(''), s3all.length > lim ? `<p class="muted small">Exibindo ${lim} de ${fmtN(s3all.length)}. Use a busca ou os filtros para achar os demais.</p>` : '')}
   </div>
   <div class="pl-bar"><span id="plCnt"></span><span class="small muted" id="plInfo"></span><button class="btn" id="plOk" onclick="plCriar()">Criar follow-ups</button></div>`;
   $('content').innerHTML = html; plAtualizar();
@@ -1494,11 +1501,11 @@ function pgCli(){
     <button class="btn" onclick="abrirCliente()">+ Novo cliente</button>
   </div>
   <div class="small muted" style="margin-bottom:8px">${fmtN(l.length)} cliente(s)</div>
-  <div class="tbl-wrap"><table><thead><tr><th>Nome</th>${curEmp()?'':'<th>Empresa</th>'}<th>Celular</th><th>Telefone</th><th>Nascimento</th><th>Cadastro</th><th>Pedido</th><th>Última ligação</th><th></th></tr></thead><tbody>
+  <div class="tbl-wrap"><table><thead><tr><th>Nome</th>${curEmp()?'':'<th>Empresa</th>'}<th>Celular</th><th>Telefone</th><th>Nascimento</th><th>Cadastro</th><th>Pedido</th><th>Entrega</th><th>Última ligação</th><th></th></tr></thead><tbody>
   ${vis.map(c => { const u = M.ultLig[c.id]; return `<tr${c.ativo?'':' style="opacity:.5"'}><td><b>${esc(c.nome)}</b> ${clsTag(c)}${c.vendedora_id?`<div class="small muted">Carteira: ${esc(vendNome(c.vendedora_id))}</div>`:''}</td>${curEmp()?'':`<td>${empTag(c.empresa_id)}</td>`}
-    <td class="phone">${esc(c.celular)}</td><td class="phone">${esc(c.telefone)}</td><td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td><td>${c.data_cadastro?fmtD(c.data_cadastro):'<span class="muted">—</span>'}</td><td>${c.numero_pedido||c.data_pedido ? `${c.numero_pedido?'<b>Nº '+esc(c.numero_pedido)+'</b>':''}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}` : '<span class="muted">—</span>'}</td>
+    <td class="phone">${esc(c.celular)}</td><td class="phone">${esc(c.telefone)}</td><td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td><td>${c.data_cadastro?fmtD(c.data_cadastro):'<span class="muted">—</span>'}</td><td>${c.numero_pedido||c.data_pedido ? `${c.numero_pedido?'<b>Nº '+esc(c.numero_pedido)+'</b>':''}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}` : '<span class="muted">—</span>'}</td><td>${c.data_entrega?fmtD(c.data_entrega):'<span class="muted">—</span>'}</td>
     <td class="small">${u?fmtDH(u.inicio)+'<br><span class="muted">'+esc(u.resultado)+'</span>':'<span class="muted">—</span>'}</td>
-    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Editar" onclick="abrirCliente(${c.id})">✎</button> <button class="btn sec sm" onclick="abrirFollowup({clienteId:${c.id}})">📅 Follow-up</button> <button class="playbtn" style="width:32px;height:32px;font-size:13px;vertical-align:middle" title="Ligar agora" onclick="abrirLigacao({clienteId:${c.id}})">▶</button></td></tr>`; }).join('') || `<tr><td colspan="9" class="empty">Nenhum cliente encontrado.</td></tr>`}
+    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Editar" onclick="abrirCliente(${c.id})">✎</button> <button class="btn sec sm" onclick="abrirFollowup({clienteId:${c.id}})">📅 Follow-up</button> <button class="playbtn" style="width:32px;height:32px;font-size:13px;vertical-align:middle" title="Ligar agora" onclick="abrirLigacao({clienteId:${c.id}})">▶</button></td></tr>`; }).join('') || `<tr><td colspan="10" class="empty">Nenhum cliente encontrado.</td></tr>`}
   </tbody></table></div>
   <div class="pager"><button class="btn sec sm" ${p.pag<=0?'disabled':''} onclick="st.cli.pag--;pgCli()">‹ Anterior</button><span class="small">Página ${p.pag+1} de ${pags}</span><button class="btn sec sm" ${p.pag>=pags-1?'disabled':''} onclick="st.cli.pag++;pgCli()">Próxima ›</button></div>`;
 }
@@ -1603,11 +1610,12 @@ function abrirCliente(id){
     <div><label>Data do cadastro</label><input type="date" id="clCad" value="${c ? (c.data_cadastro||'') : hoje()}" ${isAdmin()?'':'disabled'}></div>
     <div><label>Nº do pedido</label><input id="clPedNum" value="${esc(c?c.numero_pedido:'')}" placeholder="Ex.: 12345"></div>
     <div><label>Data do pedido</label><input type="date" id="clPedData" value="${c&&c.data_pedido?c.data_pedido:''}"></div>
+    <div><label>Data de entrega do pedido</label><input type="date" id="clEntrega" value="${c&&c.data_entrega?c.data_entrega:''}"></div>
     <div class="full"><label>Observação</label><textarea id="clObs">${esc(c?c.observacao:'')}</textarea></div></div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="clSalvar" onclick="salvarCliente(${id||'null'})">Salvar</button>`);
 }
 async function salvarCliente(id){
-  const o = { nome:$('clNome').value.trim().toUpperCase(), empresa_id:Number($('clEmp').value), vendedora_id:Number($('clVend').value)||null, celular:$('clCel').value.trim()||null, telefone:$('clTel').value.trim()||null, data_nascimento:$('clNasc').value||null, ativo:$('clAtivo').value==='1', observacao:$('clObs').value.trim()||null, classificacao:$('clCls').value||null, data_cadastro:$('clCad').value||null, numero_pedido:$('clPedNum').value.trim()||null, data_pedido:$('clPedData').value||null };
+  const o = { nome:$('clNome').value.trim().toUpperCase(), empresa_id:Number($('clEmp').value), vendedora_id:Number($('clVend').value)||null, celular:$('clCel').value.trim()||null, telefone:$('clTel').value.trim()||null, data_nascimento:$('clNasc').value||null, ativo:$('clAtivo').value==='1', observacao:$('clObs').value.trim()||null, classificacao:$('clCls').value||null, data_cadastro:$('clCad').value||null, numero_pedido:$('clPedNum').value.trim()||null, data_pedido:$('clPedData').value||null, data_entrega:$('clEntrega').value||null };
   if(!o.nome) return toast('Informe o nome.', 'err');
   if(!isAdmin()){ const empSel = o.empresa_id; delete o.empresa_id; delete o.vendedora_id; if(!id) o.empresa_id = curEmp() || empSel; if(id) delete o.data_cadastro; else o.data_cadastro = hoje(); }
   $('clSalvar').disabled = true;
@@ -2060,9 +2068,9 @@ function pdfCli(){
   gerarPDF({ titulo:'Clientes', arquivo:`clientes_${hoje()}.pdf`, paisagem:true,
     subtitulo: ([p.dia ? 'Dia do aniversário: '+p.dia : '', p.mes ? 'Aniversário em '+MESES[Number(p.mes)-1] : '', p.ano ? 'Nascidos em '+p.ano : '', p.q ? 'Busca: '+p.q : ''].filter(Boolean).join('  -  ') || 'Todos os clientes') + clsDesc(p.cls),
     resumo: `${fmtN(l.length)} cliente(s)  -  ${fmtN(l.filter(c=>c.data_nascimento).length)} com data de nascimento`,
-    colunas:['Nome','Empresa','Classif.','Celular','Telefone','Nascimento','Cadastro','Nº pedido','Data pedido','Carteira','Última ligação'],
-    linhas: l.map(c => { const u = M.ultLig[c.id]; return [c.nome + (c.ativo?'':' (inativo)'), empNome(c.empresa_id), clsNome(c), c.celular||'', c.telefone||'', c.data_nascimento?fmtD(c.data_nascimento):'', c.data_cadastro?fmtD(c.data_cadastro):'', c.numero_pedido||'', c.data_pedido?fmtD(c.data_pedido):'', c.vendedora_id?vendNome(c.vendedora_id):'', u ? fmtDH(u.inicio)+' - '+u.resultado : '']; }),
-    estilos:{ 0:{cellWidth:52}, 1:{cellWidth:18}, 2:{cellWidth:14}, 3:{cellWidth:24}, 4:{cellWidth:24}, 5:{cellWidth:19}, 6:{cellWidth:19}, 7:{cellWidth:17}, 8:{cellWidth:19} } });
+    colunas:['Nome','Empresa','Classif.','Celular','Telefone','Nascimento','Cadastro','Nº pedido','Data pedido','Entrega','Carteira','Última ligação'],
+    linhas: l.map(c => { const u = M.ultLig[c.id]; return [c.nome + (c.ativo?'':' (inativo)'), empNome(c.empresa_id), clsNome(c), c.celular||'', c.telefone||'', c.data_nascimento?fmtD(c.data_nascimento):'', c.data_cadastro?fmtD(c.data_cadastro):'', c.numero_pedido||'', c.data_pedido?fmtD(c.data_pedido):'', c.data_entrega?fmtD(c.data_entrega):'', c.vendedora_id?vendNome(c.vendedora_id):'', u ? fmtDH(u.inicio)+' - '+u.resultado : '']; }),
+    estilos:{ 0:{cellWidth:46}, 1:{cellWidth:17}, 2:{cellWidth:13}, 3:{cellWidth:23}, 4:{cellWidth:23}, 5:{cellWidth:18}, 6:{cellWidth:18}, 7:{cellWidth:16}, 8:{cellWidth:18}, 9:{cellWidth:18} } });
 }
 
 /* ============================ PERFIS DE ACESSO (ADMIN) ============================ */
