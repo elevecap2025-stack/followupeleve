@@ -100,6 +100,7 @@ a{color:var(--or2)}
 #top h1{color:var(--gr)}
 #content{margin-top:3px}
 #top h1{font-size:18px;margin:0;flex:1}
+@media(max-width:700px){.atu-tx{display:none}}
 #top .emp{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mut)}
 #top select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-weight:600}
 #burger{display:none;background:none;border:0;font-size:22px;cursor:pointer}
@@ -405,7 +406,7 @@ body.drag-on{cursor:grabbing;user-select:none;-webkit-user-select:none}
       <div class="logo-img hdr" role="img" aria-label="Eleve Telhas Metálicas"></div>
       <h1 id="pgTitle"></h1>
       <div class="emp"><span>Empresa:</span><select id="empSel" onchange="setEmp(this.value)"></select></div>
-      <button class="btn sec sm" onclick="reload()" title="Atualizar dados">↻</button>
+      <button class="btn sec sm" id="btnAtu" onclick="reload()" title="Buscar as informações mais recentes em todas as telas">↻ <span class="atu-tx">Atualizar</span></button>
     </header>
     <div id="content"></div>
   </div>
@@ -675,7 +676,20 @@ function bloqueado(msg){
   $('uNome').textContent = (db.me && (db.me.nome||db.me.email)) || '';
   $('content').innerHTML = `<div class="card blocked"><div style="font-size:40px">🔒</div><p>${esc(msg)}</p><button class="btn" onclick="logout()">Sair</button></div>`;
 }
-async function reload(){ loading(true,'Atualizando…'); try{ await carregarDados(); montarNav(); ir(st.page); toast('Dados atualizados'); }catch(e){ toast(e.message,'err'); } finally{ loading(false); } }
+/* Atualizar: busca de novo acesso, permissões e todos os dados, e redesenha a tela atual */
+async function reload(){
+  if($('modal').classList.contains('show') && !confirm('Há uma janela aberta. Atualizar agora vai fechá-la sem salvar. Continuar?')) return;
+  fecharModal(true); loading(true,'Atualizando…');
+  try{
+    const me = (await sbFetch(`/rest/v1/usuarios?id=eq.${S.user.id}&select=*`))[0];
+    if(!me || !me.ativo){ bloqueado('Seu usuário está inativo ou não foi encontrado. Fale com o administrador.'); return; }
+    db.me = me; await carregarDados();
+    $('uNome').textContent = me.nome || me.email; $('uPerfil').textContent = textoPerfil();
+    montarEmpSel(); montarNav(); ir(st.page);
+    const h = new Date(); $('btnAtu').title = 'Atualizado às ' + pad(h.getHours()) + ':' + pad(h.getMinutes()) + ' — clique para buscar de novo';
+    toast('Tudo atualizado.', 'ok');
+  }catch(e){ toast(e.message,'err'); } finally{ loading(false); }
+}
 
 function montarEmpSel(){
   const s = $('empSel'); s.parentElement.classList.remove('hidden');
@@ -2392,7 +2406,7 @@ function abrirPA(id){
     ${x && dono && nc > 1 ? `<label class="full ck-row" style="margin:0"><input type="checkbox" id="paTodas" checked><span>Aplicar O quê, Por quê, Como, Onde, datas, horário, valor e etapas às <b>${nc} cópias</b> deste plano (etapas e andamento já são compartilhados)</span></label>` : ''}
     ${!x ? '<div class="full small muted">Cada pessoa marcada recebe a ação na hora para dar ciente. Etapas, % e status são compartilhados: você acompanha o andamento em tempo real e recebe o aviso quando for entregue.</div>' : ''}</div>`,
     `<button class="btn sec" onclick="fecharModal()">${so?'Fechar':'Cancelar'}</button>${so ? '' : `<button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`}`, true);
-  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = (dono || resp) && !so; paEtRender();
+  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtOrig = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = (dono || resp) && !so; paEtRender();
   if(so) document.querySelectorAll('#paEtList input').forEach(i => i.disabled = true);
 }
 function paMergeEtapas(novas, antigas){ /* mantém o andamento de cada cópia pelas etapas de mesmo texto */
@@ -2432,12 +2446,31 @@ async function salvarPA(id){
         Object.assign(c, await api.upd('plano_acao', c.id, comum));
       }
     }
-    Object.assign(x, await api.upd('plano_acao', id, o));
+    /* Salva sobre a versão mais recente: junta as etapas que outra pessoa incluiu/marcou enquanto esta janela estava aberta */
+    let salvo = null;
+    for(let t = 0; t < 4 && !salvo; t++){
+      const fr = (await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&select=*`) || [])[0];
+      if(!fr) throw new Error('Esta ação não existe mais (pode ter sido excluída). Clique em Atualizar.');
+      const etM = paMesclar(st.paEtOrig || [], et, paEtapas(fr));
+      const body = { ...o, etapas:etM, percentual: etM.length ? Math.round(etM.filter(e => e.ok).length / etM.length * 100) : o.percentual };
+      const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&updated_at=eq.${encodeURIComponent(fr.updated_at)}`, { method:'PATCH', body, headers:{ Prefer:'return=representation' } });
+      if(r && r.length) salvo = r[0];
+    }
+    if(!salvo) throw new Error('Outra pessoa está alterando esta ação agora. Feche, clique em Atualizar e tente de novo.');
+    Object.assign(x, salvo);
     try{ db.planos = await sbAll('plano_acao','select=*&order=id'); }catch(e){}
     fecharModal(true); montarNav(); pgPlano();
     const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
     toast(paEncerrada(x) ? 'Ação salva e movida para Planos Concluídos.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
   }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
+}
+/* Junta as etapas: parte da versão atual do banco e aplica só o que ESTA pessoa mudou (incluiu, removeu, marcou ou desmarcou) */
+function paMesclar(orig, mine, fresh){
+  const k = e => (e.t || '').trim(), O = new Map(orig.map(e => [k(e), e])), Mi = new Map(mine.map(e => [k(e), e]));
+  const out = fresh.map(e => ({ ...e })).filter(e => !(O.has(k(e)) && !Mi.has(k(e))));
+  out.forEach(e => { const a = O.get(k(e)), b = Mi.get(k(e)); if(a && b && !!a.ok !== !!b.ok){ e.ok = !!b.ok; e.em = b.ok ? (b.em || new Date().toISOString()) : null; } });
+  mine.forEach(e => { if(!O.has(k(e)) && !out.some(f => k(f) === k(e))) out.push({ ...e }); });
+  return out;
 }
 /* Aviso do dia: ações da pessoa com início ou prazo final hoje (uma vez por dia) */
 function paHoje(){ const h = hoje(); return (db.planos||[]).filter(x => x.responsavel_id === db.me.id && !paEncerrada(x) && paStatus(x) !== 'Cancelado' && (x.inicio === h || x.fim === h)).sort((a,b) => (a.horario||'99').localeCompare(b.horario||'99')); }
