@@ -1483,14 +1483,14 @@ function pgCli(){
     if(p.mes && c.data_nascimento.slice(5,7) !== p.mes) return false;
     if(p.ano && c.data_nascimento.slice(0,4) !== p.ano) return false;
     if(!clsOk(c.id, p.cls)) return false;
-    if(q && !c.nome.toLowerCase().includes(q) && !(qd.length>=4 && (discar(c.celular).includes(qd) || discar(c.telefone).includes(qd)))) return false;
+    if(q && !c.nome.toLowerCase().includes(q) && !String(c.numero_pedido||'').toLowerCase().includes(q) && !(qd.length>=4 && (discar(c.celular).includes(qd) || discar(c.telefone).includes(qd)))) return false;
     return true; }).sort((a,b) => (p.dia || p.mes || p.ano) ? a.data_nascimento.slice(5).localeCompare(b.data_nascimento.slice(5)) || a.nome.localeCompare(b.nome) : a.nome.localeCompare(b.nome));
   const anosNasc = [...new Set(cliVisiveis().map(c => (c.data_nascimento||'').slice(0,4)).filter(Boolean))].sort().reverse();
   const pags = Math.max(1, Math.ceil(l.length/porPag)); if(p.pag >= pags) p.pag = pags-1;
   const vis = l.slice(p.pag*porPag, (p.pag+1)*porPag); st.pdfCli = l;
   $('content').innerHTML = `
   <div class="filters">
-    <div class="f grow"><label>Buscar</label><input id="cliQ" value="${esc(p.q)}" placeholder="Nome ou telefone" oninput="st.cli.q=this.value;st.cli.pag=0;clearTimeout(window._cq);window._cq=setTimeout(()=>{pgCli();const i=$('cliQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <div class="f grow"><label>Buscar</label><input id="cliQ" value="${esc(p.q)}" placeholder="Nome, telefone ou nº do pedido" oninput="st.cli.q=this.value;st.cli.pag=0;clearTimeout(window._cq);window._cq=setTimeout(()=>{pgCli();const i=$('cliQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
     <div class="f"><label>Dia do aniversário</label><select onchange="st.cli.dia=this.value;st.cli.pag=0;pgCli()"><option value="">Todos</option>${Array.from({length:31},(_,i)=>pad(i+1)).map(d=>`<option ${p.dia===d?'selected':''}>${d}</option>`).join('')}</select></div>
     <div class="f"><label>Mês do aniversário</label><select onchange="st.cli.mes=this.value;st.cli.pag=0;pgCli()"><option value="">Todos</option>${MESES.map((m,i)=>`<option value="${pad(i+1)}" ${p.mes===pad(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="f"><label>Ano de nascimento</label><select onchange="st.cli.ano=this.value;st.cli.pag=0;pgCli()"><option value="">Todos</option>${anosNasc.map(y=>`<option ${p.ano===y?'selected':''}>${y}</option>`).join('')}</select></div>
@@ -1500,11 +1500,11 @@ function pgCli(){
     <button class="btn" onclick="abrirCliente()">+ Novo cliente</button>
   </div>
   <div class="small muted" style="margin-bottom:8px">${fmtN(l.length)} cliente(s)</div>
-  <div class="tbl-wrap"><table><thead><tr><th>Nome</th>${curEmp()?'':'<th>Empresa</th>'}<th>Celular</th><th>Telefone</th><th>Nascimento</th><th>Cadastro</th><th>Última ligação</th><th></th></tr></thead><tbody>
+  <div class="tbl-wrap"><table><thead><tr><th>Nome</th>${curEmp()?'':'<th>Empresa</th>'}<th>Celular</th><th>Telefone</th><th>Nascimento</th><th>Cadastro</th><th>Pedido</th><th>Última ligação</th><th></th></tr></thead><tbody>
   ${vis.map(c => { const u = M.ultLig[c.id]; return `<tr${c.ativo?'':' style="opacity:.5"'}><td><b>${esc(c.nome)}</b> ${clsTag(c)}${c.vendedora_id?`<div class="small muted">Carteira: ${esc(vendNome(c.vendedora_id))}</div>`:''}</td>${curEmp()?'':`<td>${empTag(c.empresa_id)}</td>`}
-    <td class="phone">${esc(c.celular)}</td><td class="phone">${esc(c.telefone)}</td><td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td><td>${c.data_cadastro?fmtD(c.data_cadastro):'<span class="muted">—</span>'}</td>
+    <td class="phone">${esc(c.celular)}</td><td class="phone">${esc(c.telefone)}</td><td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td><td>${c.data_cadastro?fmtD(c.data_cadastro):'<span class="muted">—</span>'}</td><td>${c.numero_pedido||c.data_pedido ? `${c.numero_pedido?'<b>Nº '+esc(c.numero_pedido)+'</b>':''}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}` : '<span class="muted">—</span>'}</td>
     <td class="small">${u?fmtDH(u.inicio)+'<br><span class="muted">'+esc(u.resultado)+'</span>':'<span class="muted">—</span>'}</td>
-    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Editar" onclick="abrirCliente(${c.id})">✎</button> <button class="btn sec sm" onclick="abrirFollowup({clienteId:${c.id}})">📅 Follow-up</button> <button class="playbtn" style="width:32px;height:32px;font-size:13px;vertical-align:middle" title="Ligar agora" onclick="abrirLigacao({clienteId:${c.id}})">▶</button></td></tr>`; }).join('') || `<tr><td colspan="8" class="empty">Nenhum cliente encontrado.</td></tr>`}
+    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Editar" onclick="abrirCliente(${c.id})">✎</button> <button class="btn sec sm" onclick="abrirFollowup({clienteId:${c.id}})">📅 Follow-up</button> <button class="playbtn" style="width:32px;height:32px;font-size:13px;vertical-align:middle" title="Ligar agora" onclick="abrirLigacao({clienteId:${c.id}})">▶</button></td></tr>`; }).join('') || `<tr><td colspan="9" class="empty">Nenhum cliente encontrado.</td></tr>`}
   </tbody></table></div>
   <div class="pager"><button class="btn sec sm" ${p.pag<=0?'disabled':''} onclick="st.cli.pag--;pgCli()">‹ Anterior</button><span class="small">Página ${p.pag+1} de ${pags}</span><button class="btn sec sm" ${p.pag>=pags-1?'disabled':''} onclick="st.cli.pag++;pgCli()">Próxima ›</button></div>`;
 }
@@ -1607,11 +1607,13 @@ function abrirCliente(id){
     <div><label>Situação</label><select id="clAtivo"><option value="1">Ativo</option><option value="0" ${c&&!c.ativo?'selected':''}>Inativo</option></select></div>
     <div><label>Classificação</label><select id="clCls"><option value="">Sem classificação</option>${Object.entries(CLASSES).map(([k,x])=>`<option value="${k}" ${c&&c.classificacao===k?'selected':''}>${x.ic} ${x.l}</option>`).join('')}</select></div>
     <div><label>Data do cadastro</label><input type="date" id="clCad" value="${c ? (c.data_cadastro||'') : hoje()}" ${isAdmin()?'':'disabled'}></div>
+    <div><label>Nº do pedido</label><input id="clPedNum" value="${esc(c?c.numero_pedido:'')}" placeholder="Ex.: 12345"></div>
+    <div><label>Data do pedido</label><input type="date" id="clPedData" value="${c&&c.data_pedido?c.data_pedido:''}"></div>
     <div class="full"><label>Observação</label><textarea id="clObs">${esc(c?c.observacao:'')}</textarea></div></div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="clSalvar" onclick="salvarCliente(${id||'null'})">Salvar</button>`);
 }
 async function salvarCliente(id){
-  const o = { nome:$('clNome').value.trim().toUpperCase(), empresa_id:Number($('clEmp').value), vendedora_id:Number($('clVend').value)||null, celular:$('clCel').value.trim()||null, telefone:$('clTel').value.trim()||null, data_nascimento:$('clNasc').value||null, ativo:$('clAtivo').value==='1', observacao:$('clObs').value.trim()||null, classificacao:$('clCls').value||null, data_cadastro:$('clCad').value||null };
+  const o = { nome:$('clNome').value.trim().toUpperCase(), empresa_id:Number($('clEmp').value), vendedora_id:Number($('clVend').value)||null, celular:$('clCel').value.trim()||null, telefone:$('clTel').value.trim()||null, data_nascimento:$('clNasc').value||null, ativo:$('clAtivo').value==='1', observacao:$('clObs').value.trim()||null, classificacao:$('clCls').value||null, data_cadastro:$('clCad').value||null, numero_pedido:$('clPedNum').value.trim()||null, data_pedido:$('clPedData').value||null };
   if(!o.nome) return toast('Informe o nome.', 'err');
   if(!isAdmin()){ const empSel = o.empresa_id; delete o.empresa_id; delete o.vendedora_id; if(!id) o.empresa_id = curEmp() || empSel; if(id) delete o.data_cadastro; else o.data_cadastro = hoje(); }
   $('clSalvar').disabled = true;
@@ -1802,7 +1804,7 @@ async function salvarEmp(id){
 
 /* ============================ USUÁRIOS / ACESSOS (ADMIN) ============================ */
 function pgUsu(){
-  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Cada login vê apenas a empresa e os números das vendedoras vinculadas a ele. Um login pode ter várias vendedoras, de qualquer empresa (ex.: caixa da loja).</div><button class="btn" onclick="abrirUsuario()">+ Novo acesso</button></div>
+  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Cada login vê apenas a empresa e os números das vendedoras vinculadas a ele. Um login pode ter várias vendedoras, de qualquer empresa (ex.: caixa da loja).</div><button class="btn sec" onclick="abrirLoteVend()">⚡ Criar vendedoras para usuários</button><button class="btn" onclick="abrirUsuario()">+ Novo acesso</button></div>
   <div class="tbl-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil de acesso</th><th>Cargo</th><th>Vendedoras vinculadas</th><th>Situação</th><th></th></tr></thead><tbody>
   ${db.usuarios.map(u => `<tr><td><b>${esc(u.nome)}</b></td><td>${esc(u.email)}</td><td>${perfilTag(u)}</td><td class="small">${esc(u.cargo)}</td>
     <td>${u.perfil==='admin'?'—':(()=>{ const vs = vincDe(u.id); return vs.length ? vs.map(x=>esc(vendNome(x))).join(', ')+' '+empTag((M.vend[vs[0]]||{}).empresa_id) : '<span class="tag">Sem vendedora</span>'; })()}</td>
@@ -1818,11 +1820,13 @@ function abrirUsuario(uid, vendId){
     <div class="full"><label>Nome *</label><input id="usNome" value="${esc(u?u.nome:(v?v.nome:''))}"></div>
     <div class="full"><label>E-mail (login) *</label><input type="email" id="usEmail" value="${esc(u?u.email:(v&&v.email?v.email:''))}" ${u?'disabled':''}></div>
     ${u?'':'<div class="full"><label>Senha inicial * (mín. 8 caracteres)</label><input type="text" id="usSenha" autocomplete="new-password"></div>'}
-    <div><label>Tipo de acesso</label><select id="usPerfil" onchange="$('usVendBox').classList.toggle('hidden',this.value==='admin');$('usPfBox').classList.toggle('hidden',this.value==='admin')"><option value="vendedora">Usuário</option><option value="admin" ${u&&u.perfil==='admin'?'selected':''}>Administrador</option></select></div>
+    <div><label>Tipo de acesso</label><select id="usPerfil" onchange="$('usVendBox').classList.toggle('hidden',this.value==='admin');$('usPfBox').classList.toggle('hidden',this.value==='admin');$('usCriaBox').classList.toggle('hidden',this.value==='admin')"><option value="vendedora">Usuário</option><option value="admin" ${u&&u.perfil==='admin'?'selected':''}>Administrador</option></select></div>
     <div><label>Situação</label><select id="usAtivo"><option value="1">Ativo</option><option value="0" ${u&&!u.ativo?'selected':''}>Inativo</option></select></div>
     <div class="${u&&u.perfil==='admin'?'hidden':''}" id="usPfBox"><label>Perfil de acesso</label><select id="usPf"><option value="">Individual (Permissões de Telas)</option>${(db.perfis||[]).map(p=>`<option value="${p.id}" ${u&&u.perfil_id===p.id?'selected':''}>${esc(p.nome)}${p.ativo?'':' (inativo)'}</option>`).join('')}</select></div>
     <div><label>Cargo / função</label><input id="usCargo" value="${esc(u?u.cargo:'')}"></div>
     <div><label>Telefone</label><input id="usTel" value="${esc(u?u.telefone:'')}"></div>
+    <div class="full ${u&&u.perfil==='admin'?'hidden':''}" id="usCriaBox"><label class="ck-row" style="margin:0"><input type="checkbox" id="usCriaV" ${u && vincDe(u.id).length ? '' : (u && perfilDe(u) && /vend|atend|caixa/i.test(perfilDe(u).nome) ? 'checked' : '')} onchange="$('usCriaOp').classList.toggle('hidden',!this.checked)"><span><b>Criar cadastro de vendedora para este usuário</b> <span class="small muted">— necessário para planejar follow-ups e registrar ligações em nome dele (vendedora, atendente, caixa)</span></span></label>
+      <div class="form ${u && !vincDe(u.id).length && perfilDe(u) && /vend|atend|caixa/i.test(perfilDe(u).nome) ? '' : 'hidden'}" id="usCriaOp" style="margin-top:8px"><div><label>Empresa</label><select id="usCriaEmp">${db.empresas.filter(e=>e.ativo).map(e=>`<option value="${e.id}">${esc(e.nome)}</option>`).join('')}</select></div><div><label>Meta de ligações/mês</label><input type="number" min="0" id="usCriaMeta" value="0"></div></div></div>
     <div class="full ${u&&u.perfil==='admin'?'hidden':''}" id="usVendBox"><label>Vendedoras vinculadas <span style="font-weight:400">(uma ou mais, de qualquer empresa · deixe vazio para gerente/usuário que só usa o Plano de Ação)</span></label>${lista}</div></div>
     ${u?'':'<p class="small muted">Se o cadastro de novos logins estiver desativado no Supabase, crie o login em Authentication → Users → Add user; ele aparece nesta lista como inativo para você vincular e ativar.</p>'}`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="usSalvar" onclick="salvarUsuario(${u?`'${u.id}'`:'null'})">Salvar</button>`);
@@ -1843,12 +1847,47 @@ async function salvarUsuario(uid){
       if(!uid) throw new Error('Não foi possível criar o usuário.');
       await new Promise(res => setTimeout(res, 600));
     }
+    if(perfil !== 'admin' && $('usCriaV') && $('usCriaV').checked){
+      const nv = await criarVendedoraPara({ nome:o.nome, email:(db.usuarios.find(x => x.id === uid)||{}).email || $('usEmail').value.trim().toLowerCase(), telefone:o.telefone }, Number($('usCriaEmp').value), Number($('usCriaMeta').value)||0);
+      if(!vids.includes(nv.id)) vids.unshift(nv.id); o.vendedora_id = vids[0];
+    }
     const rows = await sbFetch(`/rest/v1/usuarios?id=eq.${uid}`, { method:'PATCH', body:o, headers:{ Prefer:'return=representation' } });
-    if(!rows || !rows.length) throw new Error('Usuário criado no Auth, mas o perfil não foi encontrado. Verifique se o 01_schema.sql (trigger) foi executado.');
+    if(!rows || !rows.length) throw new Error('Usuário criado no Auth, mas o perfil não foi encontrado. Verifique se o script do banco (trigger) foi executado.');
     const k = db.usuarios.findIndex(x => x.id === uid); if(k>=0) db.usuarios[k] = rows[0]; else db.usuarios.push(rows[0]);
     await setVinculos(uid, vids);
     fecharModal(true); toast('Acesso salvo.', 'ok'); ir(st.page);
   }catch(e){ toast(e.message, 'err'); $('usSalvar').disabled = false; }
+}
+
+/* Cria a vendedora (para follow-ups e ligações) com os dados do usuário */
+async function criarVendedoraPara(u, empId, meta){
+  if(!empId) throw new Error('Cadastre uma empresa antes de criar vendedoras.');
+  let r;
+  try{ r = await api.ins('vendedoras', { nome:u.nome, empresa_id:empId, meta_mensal_padrao:meta||0, telefone:u.telefone||null, email:u.email||null, ativa:true }); }
+  catch(e){ throw new Error('Não foi possível cadastrar a vendedora "'+u.nome+'": '+e.message); }
+  if(!r) throw new Error('O banco não devolveu a vendedora criada. Rode o 13_pedido_reparo.sql no Supabase.');
+  db.vendedoras.push(r); M.vend[r.id] = r; return r;
+}
+function abrirLoteVend(){
+  const us = db.usuarios.filter(u => u.perfil !== 'admin' && !vincDe(u.id).length).sort((a,b) => (a.nome||a.email).localeCompare(b.nome||b.email));
+  if(!us.length) return toast('Todos os usuários já estão vinculados a uma vendedora.', 'ok');
+  abrirModal('⚡ Criar vendedoras para usuários', `<p style="margin-top:0">Cada usuário marcado ganha um cadastro de vendedora com o próprio nome, já vinculado ao login. Assim ele aparece em <b>Planejar Ligações</b>, nos follow-ups e no painel de metas.</p>
+    <div class="form"><div><label>Empresa</label><select id="lvEmp">${db.empresas.filter(e=>e.ativo).map(e=>`<option value="${e.id}">${esc(e.nome)}</option>`).join('')}</select></div><div><label>Meta de ligações/mês</label><input type="number" min="0" id="lvMeta" value="0"></div></div>
+    <label style="display:block;font-size:12px;font-weight:600;color:var(--mut);margin:14px 0 6px">Usuários sem vendedora</label>
+    ${us.map(u => `<label class="ck-row"><input type="checkbox" class="lvCk" value="${u.id}" ${perfilDe(u) && /diret|gerent/i.test(perfilDe(u).nome) ? '' : 'checked'}><span><b>${esc(u.nome||u.email)}</b> <span class="small muted">${esc(u.email)}${perfilDe(u)?' · '+esc(perfilDe(u).nome):''}</span></span></label>`).join('')}`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="lvOk" onclick="salvarLoteVend()">Criar e vincular</button>`, true);
+}
+async function salvarLoteVend(){
+  const ids = [...document.querySelectorAll('.lvCk:checked')].map(i => i.value), emp = Number($('lvEmp').value), meta = Number($('lvMeta').value)||0;
+  if(!ids.length) return toast('Marque pelo menos um usuário.', 'err');
+  $('lvOk').disabled = true; let n = 0;
+  try{
+    for(const id of ids){
+      const u = db.usuarios.find(x => x.id === id), v = await criarVendedoraPara(u, emp, meta);
+      await setVinculos(u.id, [v.id]); await patchUsuario(u.id, { vendedora_id:v.id }); n++;
+    }
+    fecharModal(true); toast(`${n} vendedora(s) criada(s) e vinculada(s).`, 'ok'); ir(st.page);
+  }catch(e){ toast((n ? n+' criada(s). ' : '') + e.message, 'err'); $('lvOk').disabled = false; }
 }
 
 /* ============================ PERMISSÕES DE TELAS (ADMIN) ============================ */
@@ -2027,9 +2066,9 @@ function pdfCli(){
   gerarPDF({ titulo:'Clientes', arquivo:`clientes_${hoje()}.pdf`, paisagem:true,
     subtitulo: ([p.dia ? 'Dia do aniversário: '+p.dia : '', p.mes ? 'Aniversário em '+MESES[Number(p.mes)-1] : '', p.ano ? 'Nascidos em '+p.ano : '', p.q ? 'Busca: '+p.q : ''].filter(Boolean).join('  -  ') || 'Todos os clientes') + clsDesc(p.cls),
     resumo: `${fmtN(l.length)} cliente(s)  -  ${fmtN(l.filter(c=>c.data_nascimento).length)} com data de nascimento`,
-    colunas:['Nome','Empresa','Classif.','Celular','Telefone','Nascimento','Cadastro','Carteira','Última ligação'],
-    linhas: l.map(c => { const u = M.ultLig[c.id]; return [c.nome + (c.ativo?'':' (inativo)'), empNome(c.empresa_id), clsNome(c), c.celular||'', c.telefone||'', c.data_nascimento?fmtD(c.data_nascimento):'', c.data_cadastro?fmtD(c.data_cadastro):'', c.vendedora_id?vendNome(c.vendedora_id):'', u ? fmtDH(u.inicio)+' - '+u.resultado : '']; }),
-    estilos:{ 0:{cellWidth:62}, 1:{cellWidth:20}, 2:{cellWidth:15}, 3:{cellWidth:26}, 4:{cellWidth:26}, 5:{cellWidth:20}, 6:{cellWidth:20} } });
+    colunas:['Nome','Empresa','Classif.','Celular','Telefone','Nascimento','Cadastro','Nº pedido','Data pedido','Carteira','Última ligação'],
+    linhas: l.map(c => { const u = M.ultLig[c.id]; return [c.nome + (c.ativo?'':' (inativo)'), empNome(c.empresa_id), clsNome(c), c.celular||'', c.telefone||'', c.data_nascimento?fmtD(c.data_nascimento):'', c.data_cadastro?fmtD(c.data_cadastro):'', c.numero_pedido||'', c.data_pedido?fmtD(c.data_pedido):'', c.vendedora_id?vendNome(c.vendedora_id):'', u ? fmtDH(u.inicio)+' - '+u.resultado : '']; }),
+    estilos:{ 0:{cellWidth:52}, 1:{cellWidth:18}, 2:{cellWidth:14}, 3:{cellWidth:24}, 4:{cellWidth:24}, 5:{cellWidth:19}, 6:{cellWidth:19}, 7:{cellWidth:17}, 8:{cellWidth:19} } });
 }
 
 /* ============================ PERFIS DE ACESSO (ADMIN) ============================ */
