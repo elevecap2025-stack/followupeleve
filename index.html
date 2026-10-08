@@ -361,7 +361,7 @@ body.drag-on{cursor:grabbing;user-select:none;-webkit-user-select:none}
   <aside id="side">
     <div class="brand"><div class="brand-tile"><div class="logo-img" role="img" aria-label="Eleve Telhas Metálicas"></div></div><small>Ligações &amp; Follow-up</small></div>
     <nav id="nav"></nav>
-    <div class="user"><b id="uNome"></b><span id="uPerfil"></span><button onclick="logout()">Sair</button></div>
+    <div class="user"><b id="uNome" style="cursor:pointer" title="Meu perfil" onclick="ir('meuperfil')"></b><span id="uPerfil"></span><button onclick="logout()">Sair</button></div>
   </aside>
   <div id="overlay" onclick="toggleSide(false)"></div>
   <div id="main">
@@ -486,7 +486,7 @@ const api = {
 };
 
 /* ============================ ESTADO ============================ */
-const db = { me:null, empresas:[], vendedoras:[], metas:[], usuarios:[], uv:[], clientes:[], followups:[], ligacoes:[], planos:[], pessoas:[], paOk:false };
+const db = { me:null, empresas:[], vendedoras:[], metas:[], usuarios:[], uv:[], clientes:[], followups:[], ligacoes:[], planos:[], pessoas:[], paOk:false, perfis:[] };
 const M = { emp:{}, vend:{}, cli:{}, ultLig:{} };
 const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false, cienteVisto:new Set(), cienteDepois:null, pa:{ ver:'todos', status:'', q:'', orient:'paisagem' },
   painel:{ comp:mesAtual(), dia:'', vend:'', cls:'', anoNovos:new Date().getFullYear() },
@@ -613,6 +613,7 @@ async function carregarDados(){
   db.usuarios = isAdmin() ? await sbAll('usuarios','select=*&order=created_at') : [db.me];
   await carregarUV();
   indexar();
+  try{ db.perfis = await sbAll('perfis','select=*&order=nome'); }catch(e){ db.perfis = []; }
   await carregarPlanos();
 }
 
@@ -624,10 +625,9 @@ async function boot(){
     $('login').classList.add('hidden'); $('app').classList.remove('hidden');
     if(!me || !me.ativo){ bloqueado('Seu usuário está inativo ou não foi encontrado. Fale com o administrador.'); return; }
     db.me = me; await carregarUV();
-    if(me.perfil !== 'admin' && !minhas().length){ bloqueado('Seu acesso foi criado, mas ainda não está vinculado a uma vendedora. Peça ao administrador para concluir a liberação.'); return; }
     await carregarDados();
     $('uNome').textContent = me.nome || me.email;
-    $('uPerfil').textContent = isAdmin() ? 'Administrador' : ((minhas().length > 1 ? minhas().length+' vendedoras' : 'Vendedora') + ' · ' + minhasEmps().map(empNome).join(' / '));
+    $('uPerfil').textContent = textoPerfil();
     montarEmpSel(); montarNav(); ir(st.page);
     const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
     if(paPend().length) abrirCiente(aniv); else aniv();
@@ -645,6 +645,7 @@ function montarEmpSel(){
   const s = $('empSel'); s.parentElement.classList.remove('hidden');
   if(isAdmin()){ s.disabled = false; s.innerHTML = '<option value="">Todas</option>' + db.empresas.filter(e=>e.ativo).map(e => `<option value="${e.id}" ${String(st.emp)===String(e.id)?'selected':''}>${esc(e.nome)}</option>`).join(''); }
   else if(minhasEmps().length > 1){ s.disabled = false; s.innerHTML = '<option value="">Todas</option>' + minhasEmps().map(id => `<option value="${id}" ${String(st.emp)===String(id)?'selected':''}>${esc(empNome(id))}</option>`).join(''); }
+  else if(!minhasEmps().length){ s.parentElement.classList.add('hidden'); }
   else { const e = M.emp[curEmp()]; s.innerHTML = `<option>${esc(e ? e.nome : '')}</option>`; s.disabled = true; }
 }
 function setEmp(v){ st.emp = v; st.painel.vend = ''; st.plan.vend = ''; st.lig.vend = ''; st.cli.pag = 0; st.aniv.emp = ''; st.pl.vend = ''; st.pl.sel = new Set(); montarNav(); ir(st.page); }
@@ -661,17 +662,23 @@ const PAGES = {
   vendedoras:{ t:'Vendedoras', ic:'👩‍💼', fn:()=>pgVend(), extra:true },
   empresas:{ t:'Empresas', ic:'🏢', fn:()=>pgEmp(), adm:true },
   usuarios:{ t:'Usuários / Acessos', ic:'🔑', fn:()=>pgUsu(), adm:true },
-  permissoes:{ t:'Permissões de Telas', ic:'🛡️', fn:()=>pgPerm(), adm:true }
+  perfis:{ t:'Perfis de Acesso', ic:'🧩', fn:()=>pgPerfis(), adm:true },
+  permissoes:{ t:'Permissões de Telas', ic:'🛡️', fn:()=>pgPerm(), adm:true },
+  meuperfil:{ t:'Meu Perfil', ic:'👤', fn:()=>pgMeuPerfil(), livre:true }
 };
 /* Permissões de telas: usuarios.telas (null = todas as telas de operação liberadas) */
 const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes','plano'];
 /* Telas extras: só liberadas quando marcadas explicitamente em Permissões (ex.: caixa cadastrar vendedoras) */
 const TELAS_PERM = [...TELAS_OPER, 'vendedoras'];
+/* Telas que funcionam sem vendedora vinculada (ex.: gerente) */
+const SEM_VINC = ['plano', 'vendedoras'];
 function pode(k){
   if(!PAGES[k]) return false;
+  if(PAGES[k].livre) return true;
   if(isAdmin()) return true;
   if(PAGES[k].adm) return false;
-  const t = db.me && db.me.telas;
+  if(TELAS_OPER.includes(k) && !SEM_VINC.includes(k) && !minhas().length) return false;
+  const t = telasDe(db.me);
   if(PAGES[k].extra) return Array.isArray(t) && t.includes(k);
   return !Array.isArray(t) || t.includes(k);
 }
@@ -680,8 +687,9 @@ function montarNav(){
   const nAtras = fuVisiveis().filter(f => f.status==='pendente' && f.data_prevista <= hoje()).length;
   const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span>${PAGES[k].t}${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
   let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('plano', paPend().length||'');
-  const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('permissoes');
+  const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('perfis') + item('permissoes');
   if(cad) h += '<div class="sec">Cadastros</div>' + cad;
+  h += '<div class="sec">Conta</div>' + item('meuperfil');
   $('nav').innerHTML = h;
   $('bnav').innerHTML = [['painel','Painel'],['aniversariantes','Aniversários',nAniv],['planejamento','Follow-up',nAtras],['ligacoes','Ligações'],['clientes','Clientes']].filter(([k]) => pode(k))
     .map(([k,l,b]) => `<a class="${st.page===k?'on':''}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span>${l}${b?`<span class="bdg">${b}</span>`:''}</a>`).join('');
@@ -689,7 +697,7 @@ function montarNav(){
 function ir(p){
   if(!pode(p)){
     if($('content').innerHTML && pode(st.page) && PAGES[p]) return toast('Você não tem acesso a essa tela.', 'err');
-    p = TELAS_PERM.find(pode);
+    p = [...TELAS_PERM, 'meuperfil'].find(pode);
     if(!p){ bloqueado('Nenhuma tela foi liberada para o seu usuário. Fale com o administrador.'); return; }
   }
   st.page = p; st.charts.forEach(c => c.destroy()); st.charts = [];
@@ -1698,7 +1706,7 @@ async function salvarVend(id){
       if(id) Object.assign(M.vend[id], row);
       else { db.vendedoras.push(row); M.vend[row.id] = row; db.uv.push({ usuario_id:db.me.id, vendedora_id:row.id }); }
       montarEmpSel(); montarNav();
-      $('uPerfil').textContent = (minhas().length > 1 ? minhas().length+' vendedoras' : 'Vendedora') + ' · ' + minhasEmps().map(empNome).join(' / ');
+      $('uPerfil').textContent = textoPerfil();
     } else if(id) Object.assign(M.vend[id], await api.upd('vendedoras', id, o));
     else { const r = await api.ins('vendedoras', o); db.vendedoras.push(r); M.vend[r.id] = r; }
     fecharModal(true); toast('Vendedora salva.', 'ok'); pgVend();
@@ -1757,9 +1765,9 @@ async function salvarEmp(id){
 /* ============================ USUÁRIOS / ACESSOS (ADMIN) ============================ */
 function pgUsu(){
   $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Cada login vê apenas a empresa e os números das vendedoras vinculadas a ele. Um login pode ter várias vendedoras, de qualquer empresa (ex.: caixa da loja).</div><button class="btn" onclick="abrirUsuario()">+ Novo acesso</button></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Vendedoras vinculadas</th><th>Situação</th><th></th></tr></thead><tbody>
-  ${db.usuarios.map(u => `<tr><td><b>${esc(u.nome)}</b></td><td>${esc(u.email)}</td><td>${u.perfil==='admin'?'<span class="tag or">Administrador</span>':'<span class="tag info">Vendedora</span>'}</td>
-    <td>${u.perfil==='admin'?'—':(()=>{ const vs = vincDe(u.id); return vs.length ? vs.map(x=>esc(vendNome(x))).join(', ')+' '+empTag((M.vend[vs[0]]||{}).empresa_id) : '<span class="tag bad">Não vinculada</span>'; })()}</td>
+  <div class="tbl-wrap"><table><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil de acesso</th><th>Cargo</th><th>Vendedoras vinculadas</th><th>Situação</th><th></th></tr></thead><tbody>
+  ${db.usuarios.map(u => `<tr><td><b>${esc(u.nome)}</b></td><td>${esc(u.email)}</td><td>${perfilTag(u)}</td><td class="small">${esc(u.cargo)}</td>
+    <td>${u.perfil==='admin'?'—':(()=>{ const vs = vincDe(u.id); return vs.length ? vs.map(x=>esc(vendNome(x))).join(', ')+' '+empTag((M.vend[vs[0]]||{}).empresa_id) : '<span class="tag">Sem vendedora</span>'; })()}</td>
     <td>${u.ativo?'<span class="tag ok">Ativo</span>':'<span class="tag">Inativo</span>'}</td><td class="act"><button class="btn sec sm" onclick="abrirUsuario('${u.id}')">✎</button></td></tr>`).join('')}
   </tbody></table></div>`;
 }
@@ -1772,17 +1780,20 @@ function abrirUsuario(uid, vendId){
     <div class="full"><label>Nome *</label><input id="usNome" value="${esc(u?u.nome:(v?v.nome:''))}"></div>
     <div class="full"><label>E-mail (login) *</label><input type="email" id="usEmail" value="${esc(u?u.email:(v&&v.email?v.email:''))}" ${u?'disabled':''}></div>
     ${u?'':'<div class="full"><label>Senha inicial * (mín. 8 caracteres)</label><input type="text" id="usSenha" autocomplete="new-password"></div>'}
-    <div><label>Perfil</label><select id="usPerfil" onchange="$('usVendBox').classList.toggle('hidden',this.value==='admin')"><option value="vendedora">Vendedora</option><option value="admin" ${u&&u.perfil==='admin'?'selected':''}>Administrador</option></select></div>
+    <div><label>Tipo de acesso</label><select id="usPerfil" onchange="$('usVendBox').classList.toggle('hidden',this.value==='admin');$('usPfBox').classList.toggle('hidden',this.value==='admin')"><option value="vendedora">Usuário</option><option value="admin" ${u&&u.perfil==='admin'?'selected':''}>Administrador</option></select></div>
     <div><label>Situação</label><select id="usAtivo"><option value="1">Ativo</option><option value="0" ${u&&!u.ativo?'selected':''}>Inativo</option></select></div>
-    <div class="full ${u&&u.perfil==='admin'?'hidden':''}" id="usVendBox"><label>Vendedoras vinculadas * <span style="font-weight:400">(uma ou mais, de qualquer empresa)</span></label>${lista}</div></div>
+    <div class="${u&&u.perfil==='admin'?'hidden':''}" id="usPfBox"><label>Perfil de acesso</label><select id="usPf"><option value="">Individual (Permissões de Telas)</option>${(db.perfis||[]).map(p=>`<option value="${p.id}" ${u&&u.perfil_id===p.id?'selected':''}>${esc(p.nome)}${p.ativo?'':' (inativo)'}</option>`).join('')}</select></div>
+    <div><label>Cargo / função</label><input id="usCargo" value="${esc(u?u.cargo:'')}"></div>
+    <div><label>Telefone</label><input id="usTel" value="${esc(u?u.telefone:'')}"></div>
+    <div class="full ${u&&u.perfil==='admin'?'hidden':''}" id="usVendBox"><label>Vendedoras vinculadas <span style="font-weight:400">(uma ou mais, de qualquer empresa · deixe vazio para gerente/usuário que só usa o Plano de Ação)</span></label>${lista}</div></div>
     ${u?'':'<p class="small muted">Se o cadastro de novos logins estiver desativado no Supabase, crie o login em Authentication → Users → Add user; ele aparece nesta lista como inativo para você vincular e ativar.</p>'}`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="usSalvar" onclick="salvarUsuario(${u?`'${u.id}'`:'null'})">Salvar</button>`);
 }
 async function salvarUsuario(uid){
   const perfil = $('usPerfil').value, vids = perfil==='admin' ? [] : [...document.querySelectorAll('.usVk:checked')].map(i => Number(i.value));
-  const o = { nome:$('usNome').value.trim(), perfil, vendedora_id:vids[0]||null, ativo:$('usAtivo').value==='1' };
+  const o = { nome:$('usNome').value.trim(), perfil, vendedora_id:vids[0]||null, ativo:$('usAtivo').value==='1', cargo:$('usCargo').value.trim()||null, telefone:$('usTel').value.trim()||null };
+  if(db.perfis.length || $('usPf').value) o.perfil_id = perfil==='admin' ? null : (Number($('usPf').value) || null);
   if(!o.nome) return toast('Informe o nome.', 'err');
-  if(perfil==='vendedora' && !vids.length) return toast('Vincule o acesso a pelo menos uma vendedora.', 'err');
   if(uid === db.me.id && (perfil!=='admin' || !o.ativo)) return toast('Você não pode remover seu próprio acesso de administrador.', 'err');
   $('usSalvar').disabled = true;
   try{
@@ -1805,16 +1816,16 @@ async function salvarUsuario(uid){
 /* ============================ PERMISSÕES DE TELAS (ADMIN) ============================ */
 function pgPerm(){
   const us = db.usuarios.slice().sort((a,b) => (a.perfil==='admin') - (b.perfil==='admin') || (a.email||'').localeCompare(b.email||''));
-  st.perm = {}; us.forEach(u => { if(u.perfil !== 'admin') st.perm[u.id] = new Set(Array.isArray(u.telas) ? u.telas : TELAS_OPER); });
+  st.perm = {}; us.forEach(u => { if(u.perfil !== 'admin' && !(perfilDe(u) && perfilDe(u).ativo)) st.perm[u.id] = new Set(Array.isArray(u.telas) ? u.telas : TELAS_OPER); });
   const cab = TELAS_PERM.map(k => `<th style="text-align:center">${PAGES[k].ic}<br>${PAGES[k].t.replace(' (Follow-up)','')}</th>`).join('');
   $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Marque as telas que cada usuário pode abrir. <b>Vendedoras</b> pode ser liberada para o login do caixa cadastrar e editar as vendedoras dele (em qualquer empresa); Empresas, Usuários e Permissões são sempre só do administrador. O que cada login enxerga dentro das telas continua sendo definido pelas vendedoras vinculadas.</div>
     <button class="btn" id="permOk" onclick="salvarPerm()">Salvar permissões</button></div>
   <div class="tbl-wrap"><table><thead><tr><th>Usuário</th><th>Vendedoras</th>${cab}<th></th></tr></thead><tbody>
-  ${us.map(u => { const adm = u.perfil === 'admin', vs = vincDe(u.id);
+  ${us.map(u => { const adm = u.perfil === 'admin', vs = vincDe(u.id), pf = !adm && perfilDe(u) && perfilDe(u).ativo ? perfilDe(u) : null;
     return `<tr><td><b>${esc(u.nome||u.email)}</b><div class="small muted">${esc(u.email)}${u.ativo?'':' · inativo'}</div></td>
       <td class="small">${adm ? '<span class="tag or">Administrador</span>' : (vs.length ? vs.map(x=>esc(vendNome(x))).join(', ') : '<span class="tag bad">Não vinculada</span>')}</td>
-      ${TELAS_PERM.map(k => `<td style="text-align:center"><input type="checkbox" class="plCk" ${adm ? 'checked disabled title="Administrador tem acesso total"' : `data-u="${u.id}" data-k="${k}" ${st.perm[u.id].has(k)?'checked':''} onchange="permMarcar('${u.id}','${k}',this.checked)"`}></td>`).join('')}
-      <td class="act">${adm ? '' : `<button class="btn sec sm" onclick="permTodas('${u.id}',true)">Todas</button> <button class="btn sec sm" onclick="permTodas('${u.id}',false)">Nenhuma</button>`}</td></tr>`; }).join('') || '<tr><td colspan="10" class="empty">Nenhum usuário.</td></tr>'}
+      ${TELAS_PERM.map(k => `<td style="text-align:center"><input type="checkbox" class="plCk" ${adm ? 'checked disabled title="Administrador tem acesso total"' : pf ? `disabled ${pf.telas.includes(k)?'checked':''} title="Definido pelo perfil ${esc(pf.nome)}"` : `data-u="${u.id}" data-k="${k}" ${st.perm[u.id].has(k)?'checked':''} onchange="permMarcar('${u.id}','${k}',this.checked)"`}></td>`).join('')}
+      <td class="act">${adm ? '' : pf ? `<span class="tag info">Perfil: ${esc(pf.nome)}</span>` : `<button class="btn sec sm" onclick="permTodas('${u.id}',true)">Todas</button> <button class="btn sec sm" onclick="permTodas('${u.id}',false)">Nenhuma</button>`}</td></tr>`; }).join('') || '<tr><td colspan="10" class="empty">Nenhum usuário.</td></tr>'}
   </tbody></table></div>`;
 }
 function permMarcar(uid, k, on){ const s = st.perm[uid]; if(on) s.add(k); else s.delete(k); }
@@ -1983,8 +1994,123 @@ function pdfCli(){
     estilos:{ 0:{cellWidth:62}, 1:{cellWidth:20}, 2:{cellWidth:15}, 3:{cellWidth:26}, 4:{cellWidth:26}, 5:{cellWidth:20}, 6:{cellWidth:20} } });
 }
 
+/* ============================ PERFIS DE ACESSO (ADMIN) ============================ */
+const perfilDe = u => u && u.perfil_id ? (db.perfis||[]).find(p => p.id === u.perfil_id) : null;
+/* Telas do usuário: as do perfil de acesso (se ativo) ou as marcadas individualmente */
+function telasDe(u){ const p = perfilDe(u); return p && p.ativo ? p.telas : (u ? u.telas : null); }
+function perfilTag(u){
+  if(u.perfil === 'admin') return '<span class="tag or">Administrador</span>';
+  const p = perfilDe(u); return p ? `<span class="tag info">${esc(p.nome)}${p.ativo?'':' (inativo)'}</span>` : '<span class="tag">Individual</span>';
+}
+function textoPerfil(){
+  if(isAdmin()) return 'Administrador';
+  const p = perfilDe(db.me), vin = minhas().length ? (minhas().length > 1 ? minhas().length+' vendedoras' : 'Vendedora') + ' · ' + minhasEmps().map(empNome).join(' / ') : (db.me.cargo || 'Sem vendedora vinculada');
+  return (p ? p.nome + ' · ' : '') + vin;
+}
+function pgPerfis(){
+  const l = (db.perfis||[]).slice().sort((a,b) => a.nome.localeCompare(b.nome));
+  const nUs = id => db.usuarios.filter(u => u.perfil !== 'admin' && u.perfil_id === id).length;
+  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Cada perfil define as telas que os usuários dele podem abrir. Usuário com perfil segue as telas do perfil; sem perfil, vale o que estiver marcado em Permissões de Telas. O que cada login enxerga dentro das telas continua definido pelas vendedoras vinculadas.</div><button class="btn" onclick="abrirPerfilAc()">+ Novo perfil</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Perfil</th><th>Descrição</th><th>Telas liberadas</th><th class="num">Usuários</th><th>Situação</th><th></th></tr></thead><tbody>
+  ${l.map(p => `<tr><td><b>${esc(p.nome)}</b></td><td class="small">${esc(p.descricao)}</td>
+    <td>${(p.telas||[]).filter(k => PAGES[k]).map(k => `<span class="tag" style="margin:1px">${PAGES[k].ic} ${esc(PAGES[k].t.replace(' (Follow-up)',''))}</span>`).join(' ') || '<span class="muted small">Nenhuma</span>'}</td>
+    <td class="num">${nUs(p.id)}</td><td>${p.ativo?'<span class="tag ok">Ativo</span>':'<span class="tag">Inativo</span>'}</td>
+    <td class="act"><button class="btn sec sm" onclick="abrirPerfilAc(${p.id})">✎</button> <button class="btn danger sm" title="Excluir" onclick="excluirPerfilAc(${p.id})">🗑</button></td></tr>`).join('') || '<tr><td colspan="6" class="empty">Nenhum perfil cadastrado.</td></tr>'}
+  </tbody></table></div>`;
+}
+function abrirPerfilAc(id){
+  const p = id ? db.perfis.find(x => x.id === id) : null, tel = new Set(p ? p.telas : TELAS_OPER);
+  const us = db.usuarios.filter(u => u.perfil !== 'admin').sort((a,b) => (a.nome||a.email||'').localeCompare(b.nome||b.email||''));
+  abrirModal(p ? 'Editar perfil · '+esc(p.nome) : 'Novo perfil de acesso', `<div class="form">
+    <div><label>Nome do perfil *</label><input id="pfNome" value="${esc(p?p.nome:'')}" placeholder="Ex.: Gerente, Caixa, Vendedora"></div>
+    <div><label>Situação</label><select id="pfAtivo"><option value="1">Ativo</option><option value="0" ${p&&!p.ativo?'selected':''}>Inativo</option></select></div>
+    <div class="full"><label>Descrição</label><input id="pfDesc" value="${esc(p?p.descricao:'')}"></div>
+    <div class="full"><label>Telas liberadas</label>${TELAS_PERM.map(k => `<label class="ck-row"><input type="checkbox" class="pfTl" value="${k}" ${tel.has(k)?'checked':''}><span>${PAGES[k].ic} ${esc(PAGES[k].t)}${k==='vendedoras'?' <span class="small muted">(cadastrar e editar vendedoras)</span>':''}</span></label>`).join('')}</div>
+    <div class="full"><label>Usuários com este perfil</label>${us.map(u => { const o = perfilDe(u); return `<label class="ck-row"><input type="checkbox" class="pfUs" value="${u.id}" ${p && u.perfil_id===p.id?'checked':''}><span><b>${esc(u.nome||u.email)}</b> <span class="small muted">${esc(u.email)}${o && (!p || o.id!==p.id) ? ' · hoje: '+esc(o.nome) : ''}</span></span></label>`; }).join('') || '<div class="muted small">Nenhum usuário cadastrado.</div>'}</div>
+    <p class="full small muted" style="margin:0">Telas de Empresas, Usuários, Perfis e Permissões são sempre só do administrador. "Meu Perfil" fica liberado para todos.</p></div>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="pfSalvar" onclick="salvarPerfilAc(${id||'null'})">Salvar</button>`, true);
+}
+async function salvarPerfilAc(id){
+  const o = { nome:$('pfNome').value.trim(), descricao:$('pfDesc').value.trim() || null, ativo:$('pfAtivo').value==='1', telas:[...document.querySelectorAll('.pfTl:checked')].map(i => i.value) };
+  if(!o.nome) return toast('Informe o nome do perfil.', 'err');
+  if(db.perfis.some(p => p.id !== id && p.nome.toLowerCase() === o.nome.toLowerCase())) return toast('Já existe um perfil com esse nome.', 'err');
+  const marc = new Set([...document.querySelectorAll('.pfUs:checked')].map(i => i.value));
+  $('pfSalvar').disabled = true;
+  try{
+    let p;
+    if(id){ p = await api.upd('perfis', id, o); Object.assign(db.perfis.find(x => x.id === id), p); }
+    else { p = await api.ins('perfis', o); db.perfis.push(p); }
+    for(const u of db.usuarios.filter(x => x.perfil !== 'admin')){
+      const tem = u.perfil_id === p.id, quer = marc.has(u.id);
+      if(tem !== quer) await patchUsuario(u.id, { perfil_id: quer ? p.id : null });
+    }
+    fecharModal(true); toast('Perfil salvo.', 'ok'); pgPerfis();
+  }catch(e){ toast(/perfis|perfil_id/i.test(e.message) ? 'Execute o 11_perfis.sql no Supabase e tente de novo.' : e.message, 'err'); $('pfSalvar').disabled = false; }
+}
+async function excluirPerfilAc(id){
+  const p = db.perfis.find(x => x.id === id), n = db.usuarios.filter(u => u.perfil_id === id).length; if(!p) return;
+  if(!confirm(`Excluir o perfil ${p.nome}?${n ? `\n${n} usuário(s) ficarão sem perfil e passam a usar as telas marcadas em Permissões de Telas.` : ''}`)) return;
+  try{ await api.del('perfis', id); db.perfis = db.perfis.filter(x => x.id !== id); db.usuarios.forEach(u => { if(u.perfil_id === id) u.perfil_id = null; }); toast('Perfil excluído.', 'ok'); pgPerfis(); }
+  catch(e){ toast(e.message, 'err'); }
+}
+
+/* ============================ MEU PERFIL (TODOS) ============================ */
+function pgMeuPerfil(){
+  const u = db.me, p = perfilDe(u), vs = minhas(), tl = isAdmin() ? null : TELAS_PERM.filter(pode);
+  $('content').innerHTML = `<div class="grid g2">
+  <div class="card"><h3>👤 Meus dados</h3><div class="form">
+    <div class="full"><label>Nome *</label><input id="mpNome" value="${esc(u.nome||'')}"></div>
+    <div class="full"><label>E-mail (login)</label><input value="${esc(u.email||'')}" disabled></div>
+    <div><label>Telefone</label><input id="mpTel" value="${esc(u.telefone||'')}" placeholder="(47)99999-9999"></div>
+    <div><label>Cargo / função</label><input id="mpCargo" value="${esc(u.cargo||'')}" placeholder="Ex.: Gerente de vendas"></div>
+  </div><div style="margin-top:14px;text-align:right"><button class="btn" id="mpSalvar" onclick="salvarMeuPerfil()">Salvar dados</button></div></div>
+  <div class="card"><h3>🔒 Trocar senha</h3><div class="form">
+    <div class="full"><label>Senha atual *</label><input type="password" id="mpAtual" autocomplete="current-password"></div>
+    <div><label>Nova senha * (mín. 8, letras e números)</label><input type="password" id="mpNova" autocomplete="new-password"></div>
+    <div><label>Confirmar nova senha *</label><input type="password" id="mpConf" autocomplete="new-password"></div>
+  </div><div style="margin-top:14px;text-align:right"><button class="btn dark" id="mpSenhaBtn" onclick="trocarSenha()">Trocar senha</button></div></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>🛡️ Meu acesso</h3>
+    <div class="box-info"><b>Tipo:</b> ${isAdmin() ? 'Administrador (acesso total)' : 'Usuário'}${p ? ` · <b>Perfil:</b> ${esc(p.nome)}` : ''}${u.cargo ? ` · <b>Cargo:</b> ${esc(u.cargo)}` : ''}</div>
+    ${isAdmin() ? '' : `<div class="box-info"><b>Vendedoras vinculadas:</b> ${vs.length ? vs.map(x => esc(vendNome(x)) + ' (' + esc(empNome((M.vend[x]||{}).empresa_id)) + ')').join(', ') : 'nenhuma — telas de ligações ficam ocultas'}</div>
+    <div class="box-info"><b>Telas liberadas:</b> ${tl.map(k => `<span class="tag" style="margin:1px">${PAGES[k].ic} ${esc(PAGES[k].t.replace(' (Follow-up)',''))}</span>`).join(' ') || 'nenhuma'}</div>`}
+    <p class="small muted" style="margin-bottom:0">Perfil, vendedoras e telas são definidos pelo administrador.</p></div>`;
+}
+async function salvarMeuPerfil(){
+  const nome = $('mpNome').value.trim(); if(!nome) return toast('Informe o nome.', 'err');
+  $('mpSalvar').disabled = true;
+  try{
+    const r = await sbFetch('/rest/v1/rpc/atualizar_meu_perfil', { method:'POST', body:{ p_nome:nome, p_telefone:$('mpTel').value, p_cargo:$('mpCargo').value } });
+    Object.assign(db.me, Array.isArray(r) ? r[0] : r); const k = db.usuarios.findIndex(x => x.id === db.me.id); if(k >= 0) db.usuarios[k] = db.me;
+    $('uNome').textContent = db.me.nome || db.me.email; $('uPerfil').textContent = textoPerfil();
+    toast('Dados salvos.', 'ok');
+  }catch(e){ toast(/atualizar_meu_perfil/i.test(e.message) ? 'Execute o 11_perfis.sql no Supabase e tente de novo.' : e.message, 'err'); }
+  finally{ $('mpSalvar').disabled = false; }
+}
+async function trocarSenha(){
+  const atual = $('mpAtual').value, nova = $('mpNova').value, conf = $('mpConf').value;
+  if(!atual) return toast('Informe a senha atual.', 'err');
+  if(nova.length < 8 || !/[a-zA-Z]/.test(nova) || !/\d/.test(nova)) return toast('A nova senha precisa de pelo menos 8 caracteres, com letras e números.', 'err');
+  if(nova !== conf) return toast('A confirmação não confere com a nova senha.', 'err');
+  if(nova === atual) return toast('A nova senha deve ser diferente da atual.', 'err');
+  $('mpSenhaBtn').disabled = true;
+  try{
+    try{ setSess(await authReq('token?grant_type=password', { email:db.me.email, password:atual })); }
+    catch(e){ throw new Error('Senha atual incorreta.'); }
+    const r = await fetch(CONFIG.SUPABASE_URL+'/auth/v1/user', { method:'PUT', headers:{ apikey:CONFIG.SUPABASE_ANON_KEY, Authorization:'Bearer '+S.access_token, 'Content-Type':'application/json' }, body: JSON.stringify({ password:nova }) });
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok) throw new Error(traduzErro(j.error_description || j.msg || j.message || ('Erro '+r.status)));
+    try{ if(localStorage.getItem(LEMBRAR_KEY)){ $('lgLembrar').checked = true; await lembrarAposLogin(db.me.email, nova); } }catch(e){}
+    ['mpAtual','mpNova','mpConf'].forEach(i => $(i).value = '');
+    toast('Senha alterada.', 'ok');
+  }catch(e){ toast(e.message, 'err'); }
+  finally{ $('mpSenhaBtn').disabled = false; }
+}
+
 /* ============================ PLANO DE AÇÃO • 5W2H ============================ */
 const PA_STATUS = ['Não iniciado','Em andamento','Concluído','Atrasado','Cancelado'];
+/* Status automático: Concluído (100%), Atrasado (passou do fim), Em andamento (>0%), Não iniciado. Só "Cancelado" é manual. */
+function paStatus(x){ if(x.status === 'Cancelado') return 'Cancelado'; const pr = paPct(x); return pr >= 100 ? 'Concluído' : x.fim && x.fim < hoje() ? 'Atrasado' : pr > 0 ? 'Em andamento' : 'Não iniciado'; }
 const PA_TAG = { 'Não iniciado':'warn', 'Em andamento':'info', 'Concluído':'ok', 'Atrasado':'bad', 'Cancelado':'' };
 const diasEntre = (a,b) => Math.round((new Date(b+'T12:00:00') - new Date(a+'T12:00:00')) / 86400000);
 /* Lead time: dias do início até o fim (sem fim = até hoje) */
@@ -1995,7 +2121,7 @@ const paEtapas = x => Array.isArray(x.etapas) ? x.etapas : [];
 /* % realizado: etapas concluídas ÷ total (sem etapas = % informado) */
 function paPct(x){ const e = paEtapas(x); return e.length ? Math.round(e.filter(s => s.ok).length / e.length * 100) : Math.max(0, Math.min(100, x.percentual || 0)); }
 function paBar(x){
-  const pr = paPct(x), e = paEtapas(x), enc = x.status === 'Concluído' || x.status === 'Cancelado', pv = enc ? null : paPrev(x);
+  const pr = paPct(x), e = paEtapas(x), enc = ['Concluído','Cancelado'].includes(paStatus(x)), pv = enc ? null : paPrev(x);
   const cor = pr >= 100 ? 'var(--ok)' : pv == null ? 'var(--or)' : pr >= pv ? 'var(--ok)' : pr >= pv - 15 ? 'var(--warn)' : 'var(--bad)';
   return `<div class="pa-bar" title="Realizado ${pr}%${pv != null ? ' · previsto pelo prazo ' + pv + '%' : ''}"><div class="pa-bar-f" style="width:${pr}%;background:${cor}"></div>${pv != null ? `<i style="left:${pv}%"></i>` : ''}</div>
     <div class="pa-bar-l"><b>${pr}%</b>${pv != null ? ` <span class="muted">· prev. ${pv}%</span>` : ''}${e.length ? `<div class="muted">${e.filter(s => s.ok).length}/${e.length} etapas</div>` : ''}</div>`;
@@ -2031,7 +2157,7 @@ function paFiltradas(){
     if(p.ver === 'criados' && x.criado_por !== me) return false;
     if(p.ver === 'meus' && x.responsavel_id !== me) return false;
     if(p.ver === 'ciente' && !(x.responsavel_id === me && !x.ciente_em && x.criado_por !== me)) return false;
-    if(p.status && x.status !== p.status) return false;
+    if(p.status && paStatus(x) !== p.status) return false;
     if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, pessoaNome(x.responsavel_id), pessoaNome(x.criado_por)].join(' ').toLowerCase().includes(q)) return false;
     return true;
   }).sort((a,b) => a.id - b.id);
@@ -2039,7 +2165,7 @@ function paFiltradas(){
 function pgPlano(){
   if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
   const p = st.pa, me = db.me.id, l = paFiltradas(), todos = db.planos;
-  const n = s => todos.filter(x => x.status === s).length, pend = paPend().length;
+  const n = s => todos.filter(x => paStatus(x) === s).length, pend = paPend().length;
   $('content').innerHTML = `
   <div class="kpis">
     <div class="kpi dk"><div class="l">Ações</div><div class="v">${fmtN(todos.length)}</div><div class="s">${todos.filter(x=>x.criado_por===me).length} criadas por você</div></div>
@@ -2063,7 +2189,7 @@ function pgPlano(){
     return `<tr><td><b>${x.id}</b></td><td class="pa-txt"><b>${esc(x.o_que)}</b></td><td class="pa-txt">${esc(x.por_que)}</td><td class="pa-txt">${esc(x.como)}</td>
       <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>`}</td>
       <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}</td><td>${paLead(x) ?? ''}${x.inicio && !x.fim ? '<div class="small muted">até hoje</div>' : ''}</td>
-      <td class="pa-txt">${esc(x.onde)}</td><td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[x.status]||''}">${esc(x.status)}</span></td>
+      <td class="pa-txt">${esc(x.onde)}</td><td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
       <td style="min-width:120px">${paBar(x)}</td>
       <td class="pa-txt">${esc(x.observacoes)}</td>
       <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}<button class="btn sec sm" title="Editar" onclick="abrirPA(${x.id})">✎</button>${dono?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>`; }).join('') || '<tr><td colspan="15" class="empty">Nenhuma ação neste filtro.</td></tr>'}
@@ -2085,7 +2211,7 @@ function abrirPA(id){
     <div><label>Fim</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${dis} onchange="paLeadLive()"></div>
     <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && x.inicio && !x.fim ? 'contando até hoje' : ''}</div></div>
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
-    <div><label>Status</label><select id="paStatus">${PA_STATUS.map(s=>`<option ${(x?x.status:'Não iniciado')===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div><label>Status (automático)</label><select id="paStatus"><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído · fim vencido Atrasado.</div></div>
     <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}"></div>
     <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${dono?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
     <div class="full"><label>Observações</label><textarea id="paObs">${esc(x?x.observacoes:'')}</textarea></div>
@@ -2098,7 +2224,7 @@ async function salvarPA(id){
   const pct = Math.round(Number($('paPct').value) || 0);
   if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
   const et = dono ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
-  let o = { status:$('paStatus').value, percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
+  let o = { status:$('paStatus').value === 'Cancelado' ? 'Cancelado' : 'Não iniciado', percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
   if(dono){
     Object.assign(o, { o_que:$('paOque').value.trim(), por_que:$('paPorque').value.trim() || null, como:$('paComo').value.trim() || null,
       responsavel_id:$('paQuem').value, onde:$('paOnde').value.trim() || null, inicio:$('paIni').value || null, horario:$('paHora').value || null,
@@ -2163,10 +2289,10 @@ function pdfPA(){
   const ver = { todos:'Todas as minhas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver];
   gerarPDF({ titulo:'Plano de Ação - 5W2H', arquivo:`plano_acao_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 7.2,
     subtitulo: ver + (st.pa.status ? '  -  Status: '+st.pa.status : '') + (st.pa.q ? '  -  Busca: '+st.pa.q : ''),
-    resumo: `${l.length} ação(ões)  -  ${l.filter(x=>x.status==='Concluído').length} concluída(s)  -  ${l.filter(x=>x.status==='Em andamento').length} em andamento  -  Total previsto ${fmtBRL(l.reduce((s,x)=>s+(Number(x.quanto)||0),0))}`,
+    resumo: `${l.length} ação(ões)  -  ${l.filter(x=>paStatus(x)==='Concluído').length} concluída(s)  -  ${l.filter(x=>paStatus(x)==='Em andamento').length} em andamento  -  ${l.filter(x=>paStatus(x)==='Atrasado').length} atrasada(s)  -  Total previsto ${fmtBRL(l.reduce((s,x)=>s+(Number(x.quanto)||0),0))}`,
     colunas:['ID','O quê?','Por quê?','Como?','Quem?','Início','Horário','Fim','Lead time','Onde?','Quanto?','Status','%','Observações'],
     linhas: l.map(x => [x.id, x.o_que, x.por_que||'', x.como||'', pessoaNome(x.responsavel_id) + (x.responsavel_id === x.criado_por ? '' : x.ciente_em ? ' (ciente '+fmtDH(x.ciente_em).slice(0,10)+')' : ' (aguardando ciente)'),
-      x.inicio?fmtD(x.inicio):'', x.horario?x.horario.slice(0,5):'', x.fim?fmtD(x.fim):'', paLead(x) ?? '', x.onde||'', fmtBRL(x.quanto), x.status, paPct(x)+'%' + (paPrev(x) != null && x.status !== 'Concluído' && x.status !== 'Cancelado' ? ' (prev. '+paPrev(x)+'%)' : '') + (paEtapas(x).length ? ' - '+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+' etapas' : ''), x.observacoes||'']),
+      x.inicio?fmtD(x.inicio):'', x.horario?x.horario.slice(0,5):'', x.fim?fmtD(x.fim):'', paLead(x) ?? '', x.onde||'', fmtBRL(x.quanto), paStatus(x), paPct(x)+'%' + (paPrev(x) != null && !['Concluído','Cancelado'].includes(paStatus(x)) ? ' (prev. '+paPrev(x)+'%)' : '') + (paEtapas(x).length ? ' - '+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+' etapas' : ''), x.observacoes||'']),
     estilos: ret
       ? { 0:{cellWidth:6}, 1:{cellWidth:20}, 2:{cellWidth:18}, 3:{cellWidth:22}, 4:{cellWidth:16}, 5:{cellWidth:13}, 6:{cellWidth:9}, 7:{cellWidth:13}, 8:{cellWidth:8,halign:'center'}, 9:{cellWidth:12}, 10:{cellWidth:13,halign:'right'}, 11:{cellWidth:13}, 12:{cellWidth:7,halign:'center'} }
       : { 0:{cellWidth:8}, 1:{cellWidth:30}, 2:{cellWidth:28}, 3:{cellWidth:34}, 4:{cellWidth:24}, 5:{cellWidth:16}, 6:{cellWidth:13}, 7:{cellWidth:16}, 8:{cellWidth:11,halign:'center'}, 9:{cellWidth:18}, 10:{cellWidth:18,halign:'right'}, 11:{cellWidth:18}, 12:{cellWidth:9,halign:'center'} } });
