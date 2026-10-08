@@ -71,6 +71,29 @@ a{color:var(--or2)}
 #side .user b{display:block;color:#fff;font-size:13px}
 #side .user button{margin-top:8px;width:100%;background:transparent;border:1px solid #3A3F47;color:#D1D5DB;padding:7px;border-radius:6px;cursor:pointer}
 #side .user button:hover{border-color:var(--or);color:#fff}
+/* ---------- MENU RECOLHÍVEL (computador) ---------- */
+#sideTg{display:none}
+@media(min-width:901px){
+  #sideTg{display:flex;position:absolute;top:118px;right:-13px;width:26px;height:26px;border-radius:50%;border:2px solid var(--bg);background:var(--or);color:#fff;font-size:15px;font-weight:700;line-height:1;align-items:center;justify-content:center;cursor:pointer;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0}
+  #sideTg:hover{background:var(--or2)}
+  #side,#main{transition:width .2s ease,margin-left .2s ease}
+  body.menu-min #side{width:68px}
+  body.menu-min #main{margin-left:68px}
+  body.menu-min #side .brand{padding:14px 6px 12px}
+  body.menu-min #side .brand small{display:none}
+  body.menu-min .brand-tile .logo-img{width:52px;height:36px}
+  body.menu-min #sideTg{top:54px}
+  body.menu-min #side nav{padding:10px 6px}
+  body.menu-min #side nav .sec{font-size:0;padding:6px 0;margin:6px 8px;border-top:1px solid #2F343B}
+  body.menu-min #side nav a{justify-content:center;padding:11px 0;position:relative}
+  body.menu-min #side nav a .lb{display:none}
+  body.menu-min #side nav a .ic{width:auto;font-size:17px}
+  body.menu-min #side nav a .bdg{position:absolute;top:2px;right:4px;margin:0;font-size:10px;padding:0 5px}
+  body.menu-min #side .user{padding:10px 8px}
+  body.menu-min #side .user b,body.menu-min #side .user #uPerfil{display:none}
+  body.menu-min #side .user button{font-size:0;margin-top:0;padding:8px 0}
+  body.menu-min #side .user button::before{content:'⏻';font-size:15px}
+}
 #main{margin-left:236px;flex:1;min-width:0;display:flex;flex-direction:column}
 #top{background:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:30;box-shadow:0 3px 0 0 transparent}
 #top::after{content:'';position:absolute;left:0;right:0;bottom:-3px;height:3px;background:linear-gradient(90deg,var(--or) 0%,var(--or2) 45%,var(--gr) 100%)}
@@ -237,6 +260,18 @@ tr.hl td{background:#E6F1FB!important;animation:hl 2.5s ease}
 .pa-tbl td{text-align:center;font-size:13px}
 .pa-tbl td.pa-txt{white-space:pre-wrap;min-width:150px}
 .pa-tbl td.act{text-align:right}
+.pa-title.conc{background:var(--ok)}
+.pa-tbl tr.pa-env td{background:#FFF6E5}
+.pa-tbl tr.pa-rec td{background:#E8F2FC}
+.pa-tbl tr.pa-eq td{background:#F6F7F9}
+.pa-tbl tr.pa-env td:first-child{box-shadow:inset 4px 0 0 var(--warn)}
+.pa-tbl tr.pa-rec td:first-child{box-shadow:inset 4px 0 0 var(--or)}
+.pa-tbl tr.pa-eq td:first-child{box-shadow:inset 4px 0 0 #9CA3AF}
+@media(max-width:700px){.pa-tbl tr.pa-env{border-left-color:var(--warn)!important}.pa-tbl tr.pa-eq{border-left-color:#9CA3AF!important}.pa-tbl tr.pa-env td:first-child,.pa-tbl tr.pa-rec td:first-child,.pa-tbl tr.pa-eq td:first-child{box-shadow:none}}
+.pa-sw{width:14px!important;height:10px!important;border:1px solid #D1D5DB}
+.pa-sw.meu{background:#fff}.pa-sw.env{background:#FFF6E5;border-color:var(--warn)}.pa-sw.rec{background:#E8F2FC;border-color:var(--or)}.pa-sw.eq{background:#F6F7F9}
+.pa-quem{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px;max-height:210px;overflow:auto}
+.pa-quem .ck-row{margin:0}
 .pa-bar{position:relative;height:10px;background:#E5E7EB;border-radius:6px;min-width:90px}
 .pa-bar-f{height:100%;border-radius:6px;transition:width .4s ease}
 .pa-bar i{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--gr);border-radius:1px}
@@ -359,9 +394,9 @@ body.drag-on{cursor:grabbing;user-select:none;-webkit-user-select:none}
 <!-- ====================== APP ====================== -->
 <div id="app" class="hidden">
   <aside id="side">
-    <div class="brand"><div class="brand-tile"><div class="logo-img" role="img" aria-label="Eleve Telhas Metálicas"></div></div><small>Ligações &amp; Follow-up</small></div>
+    <div class="brand"><div class="brand-tile"><div class="logo-img" role="img" aria-label="Eleve Telhas Metálicas"></div></div><small>Ligações &amp; Follow-up</small><button id="sideTg" onclick="toggleMenuMin()" title="Recolher menu" aria-label="Recolher menu">‹</button></div>
     <nav id="nav"></nav>
-    <div class="user"><b id="uNome" style="cursor:pointer" title="Meu perfil" onclick="ir('meuperfil')"></b><span id="uPerfil"></span><button onclick="logout()">Sair</button></div>
+    <div class="user"><b id="uNome" style="cursor:pointer" title="Meu perfil" onclick="ir('meuperfil')"></b><span id="uPerfil"></span><button onclick="logout()" title="Sair">Sair</button></div>
   </aside>
   <div id="overlay" onclick="toggleSide(false)"></div>
   <div id="main">
@@ -488,7 +523,7 @@ const api = {
 /* ============================ ESTADO ============================ */
 const db = { me:null, empresas:[], vendedoras:[], metas:[], usuarios:[], uv:[], clientes:[], followups:[], ligacoes:[], planos:[], pessoas:[], paOk:false, perfis:[] };
 const M = { emp:{}, vend:{}, cli:{}, ultLig:{} };
-const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false, cienteVisto:new Set(), cienteDepois:null, pa:{ ver:'todos', status:'', q:'', orient:'paisagem' },
+const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:false, cienteVisto:new Set(), cienteDepois:null, pa:{ ver:'todos', status:'', q:'', orient:'paisagem', pessoa:'' },
   painel:{ comp:mesAtual(), dia:'', vend:'', cls:'', anoNovos:new Date().getFullYear() },
   plan:{ filtro:'ate_hoje', vend:'', q:'', cls:'', semana:null, view:(()=>{ try{ return localStorage.getItem('cap_plan_view') || 'lista'; }catch(e){ return 'lista'; } })() },
   lig:{ de: mesAtual()+'-01', ate: hoje(), vend:'', res:'', q:'', cls:'' },
@@ -630,7 +665,8 @@ async function boot(){
     $('uPerfil').textContent = textoPerfil();
     montarEmpSel(); montarNav(); ir(st.page);
     const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
-    if(paPend().length) abrirCiente(aniv); else aniv();
+    const dia = () => avisoDia(aniv);
+    if(paPend().length) abrirCiente(dia); else dia();
   }catch(e){ toast(e.message, 'err'); if(!S) mostrarLogin(e.message); }
   finally{ loading(false); }
 }
@@ -659,6 +695,7 @@ const PAGES = {
   ligacoes:{ t:'Ligações Realizadas', ic:'✅', fn:()=>pgLig() },
   clientes:{ t:'Clientes', ic:'👥', fn:()=>pgCli() },
   plano:{ t:'Plano de Ação', ic:'🎯', fn:()=>pgPlano() },
+  planoconc:{ t:'Planos Concluídos', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
   vendedoras:{ t:'Vendedoras', ic:'👩‍💼', fn:()=>pgVend(), extra:true },
   empresas:{ t:'Empresas', ic:'🏢', fn:()=>pgEmp(), adm:true },
   usuarios:{ t:'Usuários / Acessos', ic:'🔑', fn:()=>pgUsu(), adm:true },
@@ -674,6 +711,7 @@ const TELAS_PERM = [...TELAS_OPER, 'vendedoras'];
 const SEM_VINC = ['plano', 'vendedoras'];
 function pode(k){
   if(!PAGES[k]) return false;
+  if(PAGES[k].seg) return pode(PAGES[k].seg);
   if(PAGES[k].livre) return true;
   if(isAdmin()) return true;
   if(PAGES[k].adm) return false;
@@ -685,8 +723,8 @@ function pode(k){
 function montarNav(){
   const nAniv = anivDoDia(hoje()).length;
   const nAtras = fuVisiveis().filter(f => f.status==='pendente' && f.data_prevista <= hoje()).length;
-  const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span>${PAGES[k].t}${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
-  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('plano', paPend().length||'');
+  const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" title="${PAGES[k].t}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span><span class="lb">${PAGES[k].t}</span>${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
+  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('plano', paPend().length||'') + item('planoconc');
   const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('perfis') + item('permissoes');
   if(cad) h += '<div class="sec">Cadastros</div>' + cad;
   h += '<div class="sec">Conta</div>' + item('meuperfil');
@@ -2011,11 +2049,12 @@ function pgPerfis(){
   const l = (db.perfis||[]).slice().sort((a,b) => a.nome.localeCompare(b.nome));
   const nUs = id => db.usuarios.filter(u => u.perfil !== 'admin' && u.perfil_id === id).length;
   $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Cada perfil define as telas que os usuários dele podem abrir. Usuário com perfil segue as telas do perfil; sem perfil, vale o que estiver marcado em Permissões de Telas. O que cada login enxerga dentro das telas continua definido pelas vendedoras vinculadas.</div><button class="btn" onclick="abrirPerfilAc()">+ Novo perfil</button></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Perfil</th><th>Descrição</th><th>Telas liberadas</th><th class="num">Usuários</th><th>Situação</th><th></th></tr></thead><tbody>
+  <div class="tbl-wrap"><table><thead><tr><th>Perfil</th><th>Descrição</th><th>Telas liberadas</th><th>Planos de ação</th><th class="num">Usuários</th><th>Situação</th><th></th></tr></thead><tbody>
   ${l.map(p => `<tr><td><b>${esc(p.nome)}</b></td><td class="small">${esc(p.descricao)}</td>
     <td>${(p.telas||[]).filter(k => PAGES[k]).map(k => `<span class="tag" style="margin:1px">${PAGES[k].ic} ${esc(PAGES[k].t.replace(' (Follow-up)',''))}</span>`).join(' ') || '<span class="muted small">Nenhuma</span>'}</td>
+    <td>${p.ve_todos_planos ? '<span class="tag info">Todas as pessoas</span>' : '<span class="tag">Só os próprios</span>'}</td>
     <td class="num">${nUs(p.id)}</td><td>${p.ativo?'<span class="tag ok">Ativo</span>':'<span class="tag">Inativo</span>'}</td>
-    <td class="act"><button class="btn sec sm" onclick="abrirPerfilAc(${p.id})">✎</button> <button class="btn danger sm" title="Excluir" onclick="excluirPerfilAc(${p.id})">🗑</button></td></tr>`).join('') || '<tr><td colspan="6" class="empty">Nenhum perfil cadastrado.</td></tr>'}
+    <td class="act"><button class="btn sec sm" onclick="abrirPerfilAc(${p.id})">✎</button> <button class="btn danger sm" title="Excluir" onclick="excluirPerfilAc(${p.id})">🗑</button></td></tr>`).join('') || '<tr><td colspan="7" class="empty">Nenhum perfil cadastrado.</td></tr>'}
   </tbody></table></div>`;
 }
 function abrirPerfilAc(id){
@@ -2026,12 +2065,13 @@ function abrirPerfilAc(id){
     <div><label>Situação</label><select id="pfAtivo"><option value="1">Ativo</option><option value="0" ${p&&!p.ativo?'selected':''}>Inativo</option></select></div>
     <div class="full"><label>Descrição</label><input id="pfDesc" value="${esc(p?p.descricao:'')}"></div>
     <div class="full"><label>Telas liberadas</label>${TELAS_PERM.map(k => `<label class="ck-row"><input type="checkbox" class="pfTl" value="${k}" ${tel.has(k)?'checked':''}><span>${PAGES[k].ic} ${esc(PAGES[k].t)}${k==='vendedoras'?' <span class="small muted">(cadastrar e editar vendedoras)</span>':''}</span></label>`).join('')}</div>
+    <label class="full ck-row" style="margin:0"><input type="checkbox" id="pfVeTodos" ${p&&p.ve_todos_planos?'checked':''}><span><b>Ver planos de ação de todas as pessoas</b> <span class="small muted">(filtro "Pessoa" no Plano de Ação · ex.: Diretor, Gerente). Desmarcado: vê só os planos que criou ou que foram enviados para o próprio login.</span></span></label>
     <div class="full"><label>Usuários com este perfil</label>${us.map(u => { const o = perfilDe(u); return `<label class="ck-row"><input type="checkbox" class="pfUs" value="${u.id}" ${p && u.perfil_id===p.id?'checked':''}><span><b>${esc(u.nome||u.email)}</b> <span class="small muted">${esc(u.email)}${o && (!p || o.id!==p.id) ? ' · hoje: '+esc(o.nome) : ''}</span></span></label>`; }).join('') || '<div class="muted small">Nenhum usuário cadastrado.</div>'}</div>
     <p class="full small muted" style="margin:0">Telas de Empresas, Usuários, Perfis e Permissões são sempre só do administrador. "Meu Perfil" fica liberado para todos.</p></div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="pfSalvar" onclick="salvarPerfilAc(${id||'null'})">Salvar</button>`, true);
 }
 async function salvarPerfilAc(id){
-  const o = { nome:$('pfNome').value.trim(), descricao:$('pfDesc').value.trim() || null, ativo:$('pfAtivo').value==='1', telas:[...document.querySelectorAll('.pfTl:checked')].map(i => i.value) };
+  const o = { nome:$('pfNome').value.trim(), descricao:$('pfDesc').value.trim() || null, ativo:$('pfAtivo').value==='1', telas:[...document.querySelectorAll('.pfTl:checked')].map(i => i.value), ve_todos_planos:$('pfVeTodos').checked };
   if(!o.nome) return toast('Informe o nome do perfil.', 'err');
   if(db.perfis.some(p => p.id !== id && p.nome.toLowerCase() === o.nome.toLowerCase())) return toast('Já existe um perfil com esse nome.', 'err');
   const marc = new Set([...document.querySelectorAll('.pfUs:checked')].map(i => i.value));
@@ -2151,95 +2191,166 @@ function paCiente(x){
   if(x.responsavel_id === x.criado_por) return '';
   return x.ciente_em ? `<span class="tag ok">Ciente ${fmtDH(x.ciente_em).slice(0,16)}</span>` : '<span class="tag warn">Aguardando ciente</span>';
 }
-function paFiltradas(){
-  const p = st.pa, me = db.me.id, q = p.q.trim().toLowerCase();
+/* Quem pode ver os planos de todas as pessoas: administrador e perfis com "ver todos" (ex.: Diretor, Gerente) */
+function veTodosPlanos(){ if(isAdmin()) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
+const paConc = () => st.page === 'planoconc';
+const paEncerrada = x => ['Concluído','Cancelado'].includes(paStatus(x));
+const paTipo = x => { const me = db.me.id; return x.criado_por === me && x.responsavel_id !== me ? 'env' : x.responsavel_id === me && x.criado_por !== me ? 'rec' : x.criado_por === me ? 'meu' : 'eq'; };
+const paCopias = x => x.grupo ? (db.planos||[]).filter(y => y.grupo === x.grupo).length : 1;
+function novoUUID(){ if(window.crypto && crypto.randomUUID) return crypto.randomUUID(); return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c === 'x' ? r : (r&3|8)).toString(16); }); }
+function paFiltradas(semStatus){
+  const p = st.pa, me = db.me.id, q = p.q.trim().toLowerCase(), conc = paConc(), todos = veTodosPlanos();
+  const stOk = conc ? ['Concluído','Cancelado'] : ['Não iniciado','Em andamento','Atrasado'];
   return (db.planos||[]).filter(x => {
+    if(paEncerrada(x) !== conc) return false;
+    const minha = x.criado_por === me || x.responsavel_id === me;
+    if((p.ver === 'todos' || !todos) && p.ver !== 'equipe' && !minha) return false;
+    if(p.ver === 'equipe' && !todos && !minha) return false;
     if(p.ver === 'criados' && x.criado_por !== me) return false;
     if(p.ver === 'meus' && x.responsavel_id !== me) return false;
     if(p.ver === 'ciente' && !(x.responsavel_id === me && !x.ciente_em && x.criado_por !== me)) return false;
-    if(p.status && paStatus(x) !== p.status) return false;
+    if(todos && p.pessoa && x.responsavel_id !== p.pessoa) return false;
+    if(!semStatus && p.status && stOk.includes(p.status) && paStatus(x) !== p.status) return false;
     if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, pessoaNome(x.responsavel_id), pessoaNome(x.criado_por)].join(' ').toLowerCase().includes(q)) return false;
     return true;
-  }).sort((a,b) => a.id - b.id);
+  }).sort((a,b) => conc ? String(b.concluido_em||b.updated_at||'').localeCompare(String(a.concluido_em||a.updated_at||'')) : a.id - b.id);
 }
 function pgPlano(){
   if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
-  const p = st.pa, me = db.me.id, l = paFiltradas(), todos = db.planos;
-  const n = s => todos.filter(x => paStatus(x) === s).length, pend = paPend().length;
-  $('content').innerHTML = `
-  <div class="kpis">
-    <div class="kpi dk"><div class="l">Ações</div><div class="v">${fmtN(todos.length)}</div><div class="s">${todos.filter(x=>x.criado_por===me).length} criadas por você</div></div>
+  const p = st.pa, me = db.me.id, conc = paConc(), todos = veTodosPlanos(), l = paFiltradas(), base = paFiltradas(true), pend = paPend().length;
+  if(!todos && (p.ver === 'equipe' || p.pessoa)){ p.ver = 'todos'; p.pessoa = ''; }
+  const n = s => base.filter(x => paStatus(x) === s).length, mes = mesAtual();
+  const nConc = (db.planos||[]).filter(x => paEncerrada(x) && (x.criado_por === me || x.responsavel_id === me)).length;
+  const kpis = conc ? `
+    <div class="kpi ok"><div class="l">Concluídas</div><div class="v">${n('Concluído')}</div><div class="s">${base.filter(x => paStatus(x)==='Concluído' && (x.concluido_em||'').slice(0,7)===mes).length} neste mês</div></div>
+    <div class="kpi dk"><div class="l">Canceladas</div><div class="v">${n('Cancelado')}</div></div>
+    <div class="kpi info click" onclick="ir('plano')"><div class="l">Ações em aberto</div><div class="v">${(db.planos||[]).filter(x => !paEncerrada(x) && (x.criado_por === me || x.responsavel_id === me)).length}</div><div class="s">Ir para o Plano de Ação</div></div>`
+    : `
+    <div class="kpi dk"><div class="l">Ações em aberto</div><div class="v">${fmtN(base.length)}</div><div class="s">${base.filter(x=>x.criado_por===me).length} criadas por você</div></div>
+    <div class="kpi warn"><div class="l">Não iniciadas</div><div class="v">${n('Não iniciado')}</div></div>
     <div class="kpi info"><div class="l">Em andamento</div><div class="v">${n('Em andamento')}</div></div>
-    <div class="kpi ok"><div class="l">Concluídas</div><div class="v">${n('Concluído')}</div></div>
     <div class="kpi bad"><div class="l">Atrasadas</div><div class="v">${n('Atrasado')}</div></div>
     <div class="kpi warn click ${p.ver==='ciente'?'sel':''}" onclick="st.pa.ver='ciente';pgPlano()"><div class="l">Aguardando seu ciente</div><div class="v">${pend}</div></div>
-  </div>
+    <div class="kpi ok click" onclick="ir('planoconc')"><div class="l">Concluídas</div><div class="v">${nConc}</div><div class="s">Ver planos concluídos</div></div>`;
+  const verOps = [['todos','Todas as minhas'], ...(todos ? [['equipe','Todas as pessoas']] : []), ['criados','Criadas por mim'], ['meus','Enviadas para mim'], ...(conc ? [] : [['ciente','Aguardando meu ciente']])];
+  const stOps = conc ? ['Concluído','Cancelado'] : ['Não iniciado','Em andamento','Atrasado'];
+  const pessoas = (db.pessoas||[]).slice().sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  $('content').innerHTML = `
+  <div class="kpis">${kpis}</div>
   <div class="filters">
-    <div class="f"><label>Exibir</label><select onchange="st.pa.ver=this.value;pgPlano()">${[['todos','Todas as minhas'],['criados','Criadas por mim'],['meus','Enviadas para mim'],['ciente','Aguardando meu ciente']].map(([v,t])=>`<option value="${v}" ${p.ver===v?'selected':''}>${t}</option>`).join('')}</select></div>
-    <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${PA_STATUS.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="f"><label>Exibir</label><select onchange="st.pa.ver=this.value;if(this.value!=='equipe'&&this.value!=='todos')st.pa.pessoa='';pgPlano()">${verOps.map(([v,t])=>`<option value="${v}" ${p.ver===v?'selected':''}>${t}</option>`).join('')}</select></div>
+    ${todos ? `<div class="f"><label>Pessoa (quem)</label><select onchange="st.pa.pessoa=this.value;if(this.value)st.pa.ver='equipe';pgPlano()"><option value="">Todas</option>${pessoas.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select></div>` : ''}
+    <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${stOps.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="paQ" value="${esc(p.q)}" placeholder="O quê, como, onde, quem…" oninput="st.pa.q=this.value;clearTimeout(window._paq);window._paq=setTimeout(()=>{pgPlano();const i=$('paQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
     <div class="seg"><button class="${p.orient==='paisagem'?'on':''}" onclick="st.pa.orient='paisagem';pgPlano()">Paisagem</button><button class="${p.orient==='retrato'?'on':''}" onclick="st.pa.orient='retrato';pgPlano()">Retrato</button></div>
     <button class="btn sec" onclick="pdfPA()">📄 Gerar PDF</button>
-    <button class="btn" onclick="abrirPA()">+ Nova ação</button>
+    ${conc ? '' : '<button class="btn" onclick="abrirPA()">+ Nova ação</button>'}
   </div>
-  <div class="pa-leg"><span><b style="background:var(--ok)"></b>No prazo ou concluído</span><span><b style="background:var(--warn)"></b>Um pouco atrás do previsto</span><span><b style="background:var(--bad)"></b>Atrasado em relação ao prazo</span><span><b style="background:var(--or)"></b>Sem datas para comparar</span><span><b style="background:var(--gr);width:2px;height:12px"></b>Previsto para hoje</span></div>
-  <div class="pa-title">PLANO DE AÇÃO • 5W2H</div>
-  <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Início</th><th>Horário previsto</th><th>Fim</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th><th>%</th><th>Observações</th><th></th></tr></thead><tbody>
-  ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me;
-    return `<tr><td><b>${x.id}</b></td><td class="pa-txt"><b>${esc(x.o_que)}</b></td><td class="pa-txt">${esc(x.por_que)}</td><td class="pa-txt">${esc(x.como)}</td>
+  <div class="pa-leg"><span><b class="pa-sw meu"></b>Minha ação</span><span><b class="pa-sw env"></b>Criada por mim para outra pessoa</span><span><b class="pa-sw rec"></b>Recebida de outra pessoa</span>${todos?'<span><b class="pa-sw eq"></b>Ação de outra pessoa (equipe)</span>':''}
+    ${conc ? '' : '<span style="margin-left:auto"><b style="background:var(--ok)"></b>No prazo</span><span><b style="background:var(--warn)"></b>Pouco atrás</span><span><b style="background:var(--bad)"></b>Atrasado</span><span><b style="background:var(--gr);width:2px;height:12px"></b>Previsto hoje</span>'}</div>
+  <div class="pa-title ${conc?'conc':''}">${conc ? 'PLANOS DE AÇÃO CONCLUÍDOS' : 'PLANO DE AÇÃO • 5W2H'}</div>
+  <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Início</th><th>Horário previsto</th><th>Fim</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th>${conc?'<th>Concluído em</th>':''}<th>%</th><th>Observações</th><th></th></tr></thead><tbody>
+  ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
+    return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td><td class="pa-txt"><b>${esc(x.o_que)}</b></td><td class="pa-txt">${esc(x.por_que)}</td><td class="pa-txt">${esc(x.como)}</td>
       <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>`}</td>
       <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}</td><td>${paLead(x) ?? ''}${x.inicio && !x.fim ? '<div class="small muted">até hoje</div>' : ''}</td>
       <td class="pa-txt">${esc(x.onde)}</td><td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
+      ${conc ? `<td>${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
       <td style="min-width:120px">${paBar(x)}</td>
       <td class="pa-txt">${esc(x.observacoes)}</td>
-      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}<button class="btn sec sm" title="Editar" onclick="abrirPA(${x.id})">✎</button>${dono?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>`; }).join('') || '<tr><td colspan="15" class="empty">Nenhuma ação neste filtro.</td></tr>'}
+      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${dono?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
   </tbody></table></div>`;
 }
 function abrirPA(id){
-  const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me, dis = dono ? '' : 'disabled';
-  const resp = x ? x.responsavel_id : me;
-  const pess = (db.pessoas||[]).slice(); if(!pess.some(p => p.id === me)) pess.unshift({ id:me, nome:db.me.nome||db.me.email, email:db.me.email });
+  const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me, resp = x && x.responsavel_id === me;
+  const so = x && !dono && !resp, dis = dono ? '' : 'disabled', nc = x ? paCopias(x) : 1;
+  const pess = (db.pessoas||[]).slice().sort((a,b) => (a.nome||'').localeCompare(b.nome||'')); if(!pess.some(p => p.id === me)) pess.unshift({ id:me, nome:db.me.nome||db.me.email, email:db.me.email });
+  const quem = x
+    ? `<div><label>Quem? (responsável desta cópia) *</label><select id="paQuem" ${dis}>${pess.map(p => `<option value="${p.id}" ${p.id===x.responsavel_id?'selected':''}>${esc(p.nome||p.email)}${p.id===me?' (eu)':''}</option>`).join('')}</select>${nc > 1 ? `<div class="small muted">Este plano foi enviado para ${nc} pessoas; cada uma tem a sua cópia.</div>` : ''}</div>`
+    : `<div class="full"><label>Quem? (responsáveis) * <span style="font-weight:400">— marque uma ou mais pessoas; cada uma recebe a sua cópia</span></label>
+        <div class="pa-quem">${pess.map(p => `<label class="ck-row"><input type="checkbox" class="paQk" value="${p.id}" ${p.id===me?'checked':''}><span>${esc(p.nome||p.email)}${p.id===me?' <span class="tag">eu</span>':''}</span></label>`).join('')}</div>
+        ${pess.length <= 1 ? '<div class="small" style="color:var(--warn)">Só você aparece aqui porque não há outros usuários ativos. Cadastre ou ative os usuários em Usuários / Acessos.</div>' : ''}</div>`;
   abrirModal(x ? 'Ação #'+x.id : 'Nova ação · 5W2H', `<div class="form">
-    ${dono ? '' : `<div class="full box-info">Ação enviada por <b>${esc(pessoaNome(x.criado_por))}</b>. Você pode atualizar o status, o % e as observações.</div>`}
+    ${so ? `<div class="full box-info">Ação de <b>${esc(pessoaNome(x.responsavel_id))}</b>, criada por ${esc(pessoaNome(x.criado_por))}. Somente leitura.</div>` : dono ? '' : `<div class="full box-info">Ação enviada por <b>${esc(pessoaNome(x.criado_por))}</b>. Você pode marcar as etapas, atualizar o % e as observações.</div>`}
     <div class="full"><label>O quê? *</label><textarea id="paOque" ${dis}>${esc(x?x.o_que:'')}</textarea></div>
     <div class="full"><label>Por quê?</label><textarea id="paPorque" ${dis}>${esc(x?x.por_que:'')}</textarea></div>
     <div class="full"><label>Como?</label><textarea id="paComo" ${dis}>${esc(x?x.como:'')}</textarea></div>
-    <div><label>Quem? (responsável) *</label><select id="paQuem" ${dis}>${pess.map(p => `<option value="${p.id}" ${p.id===resp?'selected':''}>${esc(p.nome||p.email)}${p.id===me?' (eu)':''}</option>`).join('')}</select></div>
+    ${quem}
     <div><label>Onde?</label><input id="paOnde" value="${esc(x?x.onde:'')}" ${dis}></div>
     <div><label>Início</label><input type="date" id="paIni" value="${x&&x.inicio?x.inicio:''}" ${dis} onchange="paLeadLive()"></div>
     <div><label>Horário previsto</label><input type="time" id="paHora" value="${x&&x.horario?x.horario.slice(0,5):''}" ${dis}></div>
     <div><label>Fim</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${dis} onchange="paLeadLive()"></div>
     <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && x.inicio && !x.fim ? 'contando até hoje' : ''}</div></div>
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
-    <div><label>Status (automático)</label><select id="paStatus"><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído · fim vencido Atrasado.</div></div>
-    <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}"></div>
+    <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (vai para Planos Concluídos) · fim vencido Atrasado.</div></div>
+    <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}" ${so?'disabled':''}></div>
     <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${dono?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
-    <div class="full"><label>Observações</label><textarea id="paObs">${esc(x?x.observacoes:'')}</textarea></div>
-    ${dono ? '<div class="full small muted">Se o responsável for outra pessoa, ela recebe a ação na hora para dar ciente.</div>' : ''}</div>`,
-    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`, true);
-  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = dono; paEtRender();
+    <div class="full"><label>Observações</label><textarea id="paObs" ${so?'disabled':''}>${esc(x?x.observacoes:'')}</textarea></div>
+    ${x && dono && nc > 1 ? `<label class="full ck-row" style="margin:0"><input type="checkbox" id="paTodas" checked><span>Aplicar O quê, Por quê, Como, Onde, datas, horário, valor e etapas às <b>${nc} cópias</b> deste plano (o andamento de cada pessoa é mantido)</span></label>` : ''}
+    ${!x ? '<div class="full small muted">Cada pessoa marcada recebe a sua cópia na hora para dar ciente. Na sua lista, as cópias que você enviou aparecem em outra cor.</div>' : ''}</div>`,
+    `<button class="btn sec" onclick="fecharModal()">${so?'Fechar':'Cancelar'}</button>${so ? '' : `<button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`}`, true);
+  st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = dono && !so; paEtRender();
+  if(so) document.querySelectorAll('#paEtList input').forEach(i => i.disabled = true);
+}
+function paMergeEtapas(novas, antigas){ /* mantém o andamento de cada cópia pelas etapas de mesmo texto */
+  const ok = {}; (antigas||[]).forEach(s => { if(s.ok) ok[s.t] = s.em || new Date().toISOString(); });
+  return novas.map(s => ({ t:s.t, ok:!!ok[s.t], em:ok[s.t] || null }));
 }
 async function salvarPA(id){
-  const x = id ? db.planos.find(p => p.id === id) : null, dono = !x || x.criado_por === db.me.id;
+  const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me;
   const pct = Math.round(Number($('paPct').value) || 0);
   if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
   const et = dono ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
   let o = { status:$('paStatus').value === 'Cancelado' ? 'Cancelado' : 'Não iniciado', percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
+  let comum = null;
   if(dono){
-    Object.assign(o, { o_que:$('paOque').value.trim(), por_que:$('paPorque').value.trim() || null, como:$('paComo').value.trim() || null,
-      responsavel_id:$('paQuem').value, onde:$('paOnde').value.trim() || null, inicio:$('paIni').value || null, horario:$('paHora').value || null,
-      fim:$('paFim').value || null, lead_time:$('paIni').value && $('paFim').value ? Math.max(0, diasEntre($('paIni').value, $('paFim').value)) : null, quanto:Number($('paQuanto').value) || 0 });
-    if(!o.o_que) return toast('Preencha o campo "O quê?".', 'err');
-    if(o.inicio && o.fim && o.fim < o.inicio) return toast('O fim não pode ser antes do início.', 'err');
+    comum = { o_que:$('paOque').value.trim(), por_que:$('paPorque').value.trim() || null, como:$('paComo').value.trim() || null,
+      onde:$('paOnde').value.trim() || null, inicio:$('paIni').value || null, horario:$('paHora').value || null, fim:$('paFim').value || null, quanto:Number($('paQuanto').value) || 0 };
+    if(!comum.o_que) return toast('Preencha o campo "O quê?".', 'err');
+    if(comum.inicio && comum.fim && comum.fim < comum.inicio) return toast('O fim não pode ser antes do início.', 'err');
+    Object.assign(o, comum);
+    if(x) o.responsavel_id = $('paQuem').value;
   }
   $('paSalvar').disabled = true;
   try{
-    if(x) Object.assign(x, await api.upd('plano_acao', id, o));
-    else db.planos.push(await api.ins('plano_acao', o));
+    if(!x){
+      const quem = [...document.querySelectorAll('.paQk:checked')].map(i => i.value);
+      if(!quem.length){ $('paSalvar').disabled = false; return toast('Marque pelo menos uma pessoa em "Quem?".', 'err'); }
+      const grupo = novoUUID();
+      const r = await sbFetch('/rest/v1/plano_acao', { method:'POST', body: quem.map(uid => ({ ...o, responsavel_id:uid, grupo })), headers:{ Prefer:'return=representation' } });
+      (r||[]).forEach(n => db.planos.push(n));
+      const outros = quem.filter(u => u !== me);
+      fecharModal(true); montarNav(); pgPlano();
+      toast(outros.length ? `Ação enviada para ${outros.map(pessoaNome).join(', ')}${quem.includes(me)?' e incluída no seu plano':''}. Aguardando ciente.` : 'Ação salva.', 'ok');
+      return;
+    }
+    if(dono && $('paTodas') && $('paTodas').checked && x.grupo){
+      for(const c of db.planos.filter(y => y.grupo === x.grupo && y.id !== x.id && y.criado_por === me)){
+        Object.assign(c, await api.upd('plano_acao', c.id, { ...comum, etapas: paMergeEtapas(et, c.etapas) }));
+      }
+    }
+    Object.assign(x, await api.upd('plano_acao', id, o));
     fecharModal(true); montarNav(); pgPlano();
-    const enviou = dono && o.responsavel_id !== db.me.id && (!x || x.ciente_em === null);
-    toast(enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
+    const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
+    toast(paEncerrada(x) ? 'Ação salva e movida para Planos Concluídos.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
   }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
+}
+/* Aviso do dia: ações da pessoa com início ou prazo final hoje (uma vez por dia) */
+function paHoje(){ const h = hoje(); return (db.planos||[]).filter(x => x.responsavel_id === db.me.id && !paEncerrada(x) && (x.inicio === h || x.fim === h)).sort((a,b) => (a.horario||'99').localeCompare(b.horario||'99')); }
+function avisoDia(depois){
+  const h = hoje(), key = 'eleve_pa_dia_' + db.me.id; let visto = ''; try{ visto = localStorage.getItem(key) || ''; }catch(e){}
+  const l = db.paOk ? paHoje() : [];
+  if(visto === h || !l.length){ if(depois) depois(); return; }
+  try{ localStorage.setItem(key, h); }catch(e){}
+  abrirModal(`📅 Seus planos de ação para hoje · ${nomeDia(h)} ${fmtD(h)}`,
+    `<p style="margin-top:0">Você tem <b>${l.length}</b> ${l.length > 1 ? 'ações previstas' : 'ação prevista'} para hoje:</p>` +
+    l.map(x => `<div class="box-info"><div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:220px">
+      <b>#${x.id} · ${esc(x.o_que)}</b>
+      <div class="small">${x.inicio === h ? `<span class="tag info">Começa hoje${x.horario?' às '+x.horario.slice(0,5):''}</span> ` : ''}${x.fim === h ? '<span class="tag bad">Prazo final hoje</span> ' : ''}${x.criado_por !== db.me.id ? '<span class="muted">Enviada por '+esc(pessoaNome(x.criado_por))+'</span>' : ''}</div>
+      ${x.como ? `<div class="small" style="margin-top:4px"><b>Como:</b> ${esc(x.como)}</div>` : ''}${x.onde ? `<div class="small"><b>Onde:</b> ${esc(x.onde)}</div>` : ''}</div>
+      <div style="min-width:150px">${paBar(x)}</div></div></div>`).join(''),
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button>${pode('plano') ? `<button class="btn" onclick="fecharModal(true);ir('plano')">Abrir Plano de Ação</button>` : ''}`,
+    true, () => { if(depois) setTimeout(depois, 50); });
 }
 async function excluirPA(id){
   const x = db.planos.find(p => p.id === id); if(!x || !confirm(`Excluir a ação #${id}?\n${x.o_que}`)) return;
@@ -2250,7 +2361,7 @@ async function cientePA(ids){
   try{
     const r = await sbFetch(`/rest/v1/plano_acao?id=in.(${ids.join(',')})`, { method:'PATCH', body:{ ciente_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } });
     (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; });
-    montarNav(); if(st.page === 'plano') pgPlano();
+    montarNav(); if(st.page === 'plano' || st.page === 'planoconc') pgPlano();
     toast(ids.length > 1 ? 'Ciente registrado nas ações.' : 'Ciente registrado.', 'ok');
     return true;
   }catch(e){ toast(e.message, 'err'); return false; }
@@ -2277,17 +2388,17 @@ async function checarCiente(){
     const r = await sbFetch(`/rest/v1/plano_acao?responsavel_id=eq.${db.me.id}&ciente_em=is.null&select=*`) || [];
     r.forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; else db.planos.push(n); });
     const novos = paPend().filter(x => !st.cienteVisto.has(x.id));
-    if(!novos.length) return;
+    if(!novos.length){ if(!$('modal').classList.contains('show')) avisoDia(); return; }
     if(novos.some(n => !(db.pessoas||[]).some(p => p.id === n.criado_por))) await carregarPessoas();
     montarNav();
-    if(!$('modal').classList.contains('show')){ if(st.page === 'plano') pgPlano(); abrirCiente(null); }
+    if(!$('modal').classList.contains('show')){ if(st.page === 'plano' || st.page === 'planoconc') pgPlano(); abrirCiente(null); }
   }catch(e){}
 }
 setInterval(checarCiente, 60000);
 function pdfPA(){
   const l = paFiltradas(), ret = st.pa.orient === 'retrato'; if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
-  const ver = { todos:'Todas as minhas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver];
-  gerarPDF({ titulo:'Plano de Ação - 5W2H', arquivo:`plano_acao_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 7.2,
+  const ver = { todos:'Todas as minhas', equipe:'Todas as pessoas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver] + (st.pa.pessoa ? '  -  Pessoa: '+pessoaNome(st.pa.pessoa) : '');
+  gerarPDF({ titulo: paConc() ? 'Planos de Ação Concluídos' : 'Plano de Ação - 5W2H', arquivo:`${paConc()?'planos_concluidos':'plano_acao'}_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 7.2,
     subtitulo: ver + (st.pa.status ? '  -  Status: '+st.pa.status : '') + (st.pa.q ? '  -  Busca: '+st.pa.q : ''),
     resumo: `${l.length} ação(ões)  -  ${l.filter(x=>paStatus(x)==='Concluído').length} concluída(s)  -  ${l.filter(x=>paStatus(x)==='Em andamento').length} em andamento  -  ${l.filter(x=>paStatus(x)==='Atrasado').length} atrasada(s)  -  Total previsto ${fmtBRL(l.reduce((s,x)=>s+(Number(x.quanto)||0),0))}`,
     colunas:['ID','O quê?','Por quê?','Como?','Quem?','Início','Horário','Fim','Lead time','Onde?','Quanto?','Status','%','Observações'],
@@ -2299,6 +2410,15 @@ function pdfPA(){
 }
 
 /* ============================ INÍCIO ============================ */
+/* Menu recolhido: só ícones (computador). A escolha fica salva neste navegador. */
+function toggleMenuMin(forcar){
+  const on = typeof forcar === 'boolean' ? forcar : !document.body.classList.contains('menu-min');
+  document.body.classList.toggle('menu-min', on);
+  const b = $('sideTg'); b.textContent = on ? '›' : '‹'; b.title = on ? 'Expandir menu' : 'Recolher menu'; b.setAttribute('aria-label', b.title);
+  try{ localStorage.setItem('eleve_menu_min', on ? '1' : ''); }catch(e){}
+  setTimeout(() => st.charts.forEach(c => c.resize()), 220);
+}
+try{ if(localStorage.getItem('eleve_menu_min')) toggleMenuMin(true); }catch(e){}
 (function init(){
   if(!/^https:\/\/[a-z0-9]+\.supabase\.co$/.test(CONFIG.SUPABASE_URL)){ mostrarLogin('Configure SUPABASE_URL e SUPABASE_ANON_KEY no início do script do index.html.'); return; }
   loadSess();
