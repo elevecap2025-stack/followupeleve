@@ -1568,7 +1568,7 @@ function pgCli(){
   ${vis.map(c => { const u = M.ultLig[c.id]; return `<tr${c.ativo?'':' style="opacity:.5"'}><td><b>${esc(c.nome)}</b> ${clsTag(c)}${c.vendedora_id?`<div class="small muted">Carteira: ${esc(vendNome(c.vendedora_id))}</div>`:''}</td>${curEmp()?'':`<td>${empTag(c.empresa_id)}</td>`}
     <td class="phone">${esc(c.celular)}</td><td class="phone">${esc(c.telefone)}</td><td>${c.data_nascimento?fmtD(c.data_nascimento):'<span class="muted">—</span>'}</td><td>${c.data_cadastro?fmtD(c.data_cadastro):'<span class="muted">—</span>'}</td><td>${c.numero_pedido||c.data_pedido ? `${c.numero_pedido?'<b>Nº '+esc(c.numero_pedido)+'</b>':''}${c.data_pedido?'<div class="small muted">'+fmtD(c.data_pedido)+'</div>':''}` : '<span class="muted">—</span>'}</td><td>${c.data_entrega?fmtD(c.data_entrega):'<span class="muted">—</span>'}</td>
     <td class="small">${u?fmtDH(u.inicio)+'<br><span class="muted">'+esc(u.resultado)+'</span>':'<span class="muted">—</span>'}</td>
-    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Editar" onclick="abrirCliente(${c.id})">✎</button> <button class="btn sec sm" onclick="abrirFollowup({clienteId:${c.id}})">📅 Follow-up</button> <button class="playbtn" style="width:32px;height:32px;font-size:13px;vertical-align:middle" title="Ligar agora" onclick="abrirLigacao({clienteId:${c.id}})">▶</button></td></tr>`; }).join('') || `<tr><td colspan="10" class="empty">Nenhum cliente encontrado.</td></tr>`}
+    <td class="act"><button class="btn sec sm" title="Histórico" onclick="historicoCli(${c.id})">🕘</button> <button class="btn sec sm" title="Editar" onclick="abrirCliente(${c.id})">✎</button> <button class="btn sec sm" onclick="abrirFollowup({clienteId:${c.id}})">📅 Follow-up</button> <button class="playbtn" style="width:32px;height:32px;font-size:13px;vertical-align:middle" title="Ligar agora" onclick="abrirLigacao({clienteId:${c.id}})">▶</button>${isAdmin() ? ` <button class="btn danger sm" title="Excluir cliente" onclick="excluirCli(${c.id})">🗑</button>` : ''}</td></tr>`; }).join('') || `<tr><td colspan="10" class="empty">Nenhum cliente encontrado.</td></tr>`}
   </tbody></table></div>
   <div class="pager"><button class="btn sec sm" ${p.pag<=0?'disabled':''} onclick="st.cli.pag--;pgCli()">‹ Anterior</button><span class="small">Página ${p.pag+1} de ${pags}</span><button class="btn sec sm" ${p.pag>=pags-1?'disabled':''} onclick="st.cli.pag++;pgCli()">Próxima ›</button></div>`;
 }
@@ -1681,6 +1681,21 @@ function abrirCliente(id){
     <div><label>Data de entrega do pedido</label><input type="date" id="clEntrega" value="${c&&c.data_entrega?c.data_entrega:''}"></div>
     <div class="full"><label>Observação</label><textarea id="clObs">${esc(c?c.observacao:'')}</textarea></div></div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="clSalvar" onclick="salvarCliente(${id||'null'})">Salvar</button>`);
+}
+async function excluirCli(id){
+  const c = M.cli[id]; if(!c) return;
+  const nL = db.ligacoes.filter(l => l.cliente_id === id).length, nF = db.followups.filter(f => f.cliente_id === id).length;
+  if(!confirm(`Excluir o cliente ${c.nome}?${nL || nF ? `\nTambém serão apagados ${nL} ligação(ões) e ${nF} follow-up(s) dele.` : ''}\nEssa ação não pode ser desfeita.`)) return;
+  loading(true, 'Excluindo…');
+  try{
+    if(nF) await sbFetch(`/rest/v1/followups?cliente_id=eq.${id}`, { method:'PATCH', body:{ ligacao_id:null } });
+    if(nL) await sbFetch(`/rest/v1/ligacoes?cliente_id=eq.${id}`, { method:'DELETE' });
+    if(nF) await sbFetch(`/rest/v1/followups?cliente_id=eq.${id}`, { method:'DELETE' });
+    await api.del('clientes', id);
+    db.ligacoes = db.ligacoes.filter(l => l.cliente_id !== id); db.followups = db.followups.filter(f => f.cliente_id !== id);
+    db.clientes = db.clientes.filter(x => x.id !== id); indexar(); montarNav(); toast('Cliente excluído.', 'ok'); pgCli();
+  }catch(e){ toast(e.message, 'err'); }
+  finally{ loading(false); }
 }
 async function salvarCliente(id){
   const o = { nome:$('clNome').value.trim().toUpperCase(), empresa_id:Number($('clEmp').value), vendedora_id:Number($('clVend').value)||null, celular:$('clCel').value.trim()||null, telefone:$('clTel').value.trim()||null, data_nascimento:$('clNasc').value||null, ativo:$('clAtivo').value==='1', observacao:$('clObs').value.trim()||null, classificacao:$('clCls').value||null, data_cadastro:$('clCad').value||null, numero_pedido:$('clPedNum').value.trim()||null, data_pedido:$('clPedData').value||null, data_entrega:$('clEntrega').value||null };
@@ -2009,7 +2024,7 @@ async function carregarPDF(){
 }
 function logoDataURL(){ const m = getComputedStyle(document.documentElement).getPropertyValue('--logo').match(/url\(["']?(data:[^"')]+)["']?\)/); return m ? m[1] : null; }
 const pdfTxt = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\s+/g, ' ').trim();
-async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte }){
+async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto }){
   loading(true, 'Gerando PDF…');
   try{
     await carregarPDF();
@@ -2039,8 +2054,8 @@ async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, p
     if(resumo){ doc.setFontSize(9.5); doc.setTextColor(43,47,54); doc.setFont('helvetica','bold'); doc.text(pdfTxt(resumo), 12, y); y += 4; }
     doc.autoTable({
       head: [colunas.map(pdfTxt)], body: linhas.map(r => r.map(pdfTxt)), startY: y, margin: { top: 33, left: 12, right: 12, bottom: 14 },
-      styles: { font:'helvetica', fontSize: fonte || 8, cellPadding: fonte && fonte < 7 ? 1.2 : 1.8, textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak' },
-      headStyles: { fillColor:[18,125,203], textColor:255, fontStyle:'bold' },
+      styles: { font:'helvetica', fontSize: fonte || 8, cellPadding: compacto ? { top:1.4, bottom:1.4, left:1.6, right:1.6 } : (fonte && fonte < 7 ? 1.2 : 1.8), textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak', valign: compacto ? 'middle' : 'top' },
+      headStyles: { fillColor:[18,125,203], textColor:255, fontStyle:'bold', ...(compacto ? { halign:'center', valign:'middle' } : {}) },
       alternateRowStyles: { fillColor:[240,246,252] }, columnStyles: estilos || {},
       didDrawPage: d => { if(d.pageNumber > 1) cab(); }
     });
@@ -2405,7 +2420,6 @@ function pgPlano(){
     ${todos ? `<div class="f"><label>Pessoa (quem)</label><select onchange="st.pa.pessoa=this.value;if(this.value)st.pa.ver='equipe';pgPlano()"><option value="">Todas</option>${pessoas.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select></div>` : ''}
     <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${stOps.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="paQ" value="${esc(p.q)}" placeholder="O quê, como, onde, quem…" oninput="st.pa.q=this.value;clearTimeout(window._paq);window._paq=setTimeout(()=>{pgPlano();const i=$('paQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
-    <div class="seg"><button class="${p.orient==='paisagem'?'on':''}" onclick="st.pa.orient='paisagem';pgPlano()">Paisagem</button><button class="${p.orient==='retrato'?'on':''}" onclick="st.pa.orient='retrato';pgPlano()">Retrato</button></div>
     <button class="btn sec" onclick="pdfPA()">📄 Gerar PDF</button>
     ${conc ? '' : '<button class="btn" onclick="abrirPA()">+ Nova ação</button>'}
   </div>
@@ -2645,18 +2659,55 @@ function avisoEntrega(depois){
       setTimeout(() => { if(ir_) ir('planoconc'); else if(f) f(); }, 50); });
 }
 setInterval(checarCiente, 30000);
+/* ---------- PDF do Plano de Ação: escolha de colunas, layout compacto ---------- */
+const PA_PDF_COLS = [
+  { k:'id',     t:'ID',          w:5,  al:'center', v:x => x.id },
+  { k:'oque',   t:'O quê?',      w:24, v:x => x.o_que },
+  { k:'porque', t:'Por quê?',    w:20, v:x => x.por_que||'' },
+  { k:'como',   t:'Como?',       w:22, v:x => x.como||'' },
+  { k:'quem',   t:'Quem?',       w:14, v:x => pessoaNome(x.responsavel_id) },
+  { k:'criou',  t:'Criado por',  w:14, v:x => pessoaNome(x.criado_por) },
+  { k:'inicio', t:'Início',      w:10, al:'center', v:x => x.inicio?fmtD(x.inicio):'' },
+  { k:'hora',   t:'Horário',     w:7,  al:'center', v:x => x.horario?x.horario.slice(0,5):'' },
+  { k:'fim',    t:'Fim',         w:10, al:'center', v:x => x.fim?fmtD(x.fim):'' },
+  { k:'lead',   t:'Lead time',   w:7,  al:'center', v:x => paLead(x) ?? '' },
+  { k:'onde',   t:'Onde?',       w:12, v:x => x.onde||'' },
+  { k:'quanto', t:'Quanto?',     w:11, al:'right',  v:x => fmtBRL(x.quanto) },
+  { k:'status', t:'Status',      w:11, v:x => paStatus(x) },
+  { k:'pct',    t:'%',           w:6,  al:'center', v:x => paPct(x)+'%' },
+  { k:'etapas', t:'Etapas',      w:7,  al:'center', v:x => paEtapas(x).length ? paEtapas(x).filter(e=>e.ok).length+'/'+paEtapas(x).length : '' },
+  { k:'conc',   t:'Concluído em',w:10, al:'center', v:x => x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : '' },
+  { k:'obs',    t:'Observações', w:20, v:x => x.observacoes||'' }
+];
+const PA_PDF_PADRAO = ['id','oque','porque','como','quem','inicio','fim','status','pct','obs'];
 function pdfPA(){
-  const l = paFiltradas(), ret = st.pa.orient === 'retrato'; if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
+  const l = paFiltradas(); if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
+  let sel = PA_PDF_PADRAO; try{ const v = JSON.parse(localStorage.getItem('eleve_pa_pdfcols')); if(Array.isArray(v) && v.length) sel = v; }catch(e){}
+  const cols = PA_PDF_COLS.filter(c => c.k !== 'conc' || paConc());
+  abrirModal('📄 Gerar PDF · ' + (paConc() ? 'Planos Concluídos' : 'Plano de Ação'), `
+    <p style="margin-top:0">${l.length} ação(ões) no filtro atual. Escolha as colunas e a orientação.</p>
+    <label style="display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px">Orientação</label>
+    <div class="seg" style="margin-bottom:14px"><button id="ppPais" class="${st.pa.orient!=='retrato'?'on':''}" onclick="st.pa.orient='paisagem';$('ppPais').classList.add('on');$('ppRet').classList.remove('on')">Paisagem</button><button id="ppRet" class="${st.pa.orient==='retrato'?'on':''}" onclick="st.pa.orient='retrato';$('ppRet').classList.add('on');$('ppPais').classList.remove('on')">Retrato</button></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><label style="font-size:12px;font-weight:600;color:var(--mut)">Colunas do relatório</label>
+      <button class="btn sec sm" style="margin-left:auto" onclick="document.querySelectorAll('.ppCk').forEach(i=>i.checked=true)">Todas</button>
+      <button class="btn sec sm" onclick="document.querySelectorAll('.ppCk').forEach(i=>i.checked=${JSON.stringify(PA_PDF_PADRAO).replace(/"/g,"'")}.includes(i.value))">Padrão</button></div>
+    <div class="pa-quem">${cols.map(c => `<label class="ck-row"><input type="checkbox" class="ppCk" value="${c.k}" ${sel.includes(c.k)?'checked':''}><span>${esc(c.t)}</span></label>`).join('')}</div>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" onclick="gerarPdfPA()">📄 Gerar PDF</button>`, true);
+}
+function gerarPdfPA(){
+  const ks = [...document.querySelectorAll('.ppCk:checked')].map(i => i.value);
+  if(!ks.length) return toast('Marque pelo menos uma coluna.', 'err');
+  try{ localStorage.setItem('eleve_pa_pdfcols', JSON.stringify(ks)); }catch(e){}
+  fecharModal(true);
+  const l = paFiltradas(), ret = st.pa.orient === 'retrato', cols = PA_PDF_COLS.filter(c => ks.includes(c.k));
+  const W = (ret ? 210 : 297) - 24, soma = cols.reduce((a,c) => a + c.w, 0), estilos = {};
+  cols.forEach((c,i) => { estilos[i] = { cellWidth: c.w / soma * W, halign: c.al || 'left' }; });
   const ver = { todos:'Todas as minhas', equipe:'Todas as pessoas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver] + (st.pa.pessoa ? '  -  Pessoa: '+pessoaNome(st.pa.pessoa) : '');
-  gerarPDF({ titulo: paConc() ? 'Planos de Ação Concluídos' : 'Plano de Ação - 5W2H', arquivo:`${paConc()?'planos_concluidos':'plano_acao'}_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 7.2,
+  const n = s => l.filter(x => paStatus(x) === s).length;
+  gerarPDF({ titulo: paConc() ? 'Planos de Ação Concluídos' : 'Plano de Ação - 5W2H', arquivo:`${paConc()?'planos_concluidos':'plano_acao'}_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 6.5 : 7.5, compacto:true,
     subtitulo: ver + (st.pa.status ? '  -  Status: '+st.pa.status : '') + (st.pa.q ? '  -  Busca: '+st.pa.q : ''),
-    resumo: `${l.length} ação(ões)  -  ${l.filter(x=>paStatus(x)==='Concluído').length} concluída(s)  -  ${l.filter(x=>paStatus(x)==='Em andamento').length} em andamento  -  ${l.filter(x=>paStatus(x)==='Atrasado').length} atrasada(s)  -  Total previsto ${fmtBRL(l.reduce((s,x)=>s+(Number(x.quanto)||0),0))}`,
-    colunas:['ID','O quê?','Por quê?','Como?','Quem?','Início','Horário','Fim','Lead time','Onde?','Quanto?','Status','%','Observações'],
-    linhas: l.map(x => [x.id, x.o_que, x.por_que||'', x.como||'', pessoaNome(x.responsavel_id) + (x.responsavel_id === x.criado_por ? '' : x.ciente_em ? ' (ciente '+fmtDH(x.ciente_em).slice(0,10)+')' : ' (aguardando ciente)'),
-      x.inicio?fmtD(x.inicio):'', x.horario?x.horario.slice(0,5):'', x.fim?fmtD(x.fim):'', paLead(x) ?? '', x.onde||'', fmtBRL(x.quanto), paStatus(x), paPct(x)+'%' + (paPrev(x) != null && !['Concluído','Cancelado'].includes(paStatus(x)) ? ' (prev. '+paPrev(x)+'%)' : '') + (paEtapas(x).length ? ' - '+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+' etapas' : ''), x.observacoes||'']),
-    estilos: ret
-      ? { 0:{cellWidth:6}, 1:{cellWidth:20}, 2:{cellWidth:18}, 3:{cellWidth:22}, 4:{cellWidth:16}, 5:{cellWidth:13}, 6:{cellWidth:9}, 7:{cellWidth:13}, 8:{cellWidth:8,halign:'center'}, 9:{cellWidth:12}, 10:{cellWidth:13,halign:'right'}, 11:{cellWidth:13}, 12:{cellWidth:7,halign:'center'} }
-      : { 0:{cellWidth:8}, 1:{cellWidth:30}, 2:{cellWidth:28}, 3:{cellWidth:34}, 4:{cellWidth:24}, 5:{cellWidth:16}, 6:{cellWidth:13}, 7:{cellWidth:16}, 8:{cellWidth:11,halign:'center'}, 9:{cellWidth:18}, 10:{cellWidth:18,halign:'right'}, 11:{cellWidth:18}, 12:{cellWidth:9,halign:'center'} } });
+    resumo: paConc() ? `${l.length} ação(ões) concluída(s)` : `${l.length} ação(ões)  |  ${n('Em andamento')} em andamento  |  ${n('Não iniciado')} não iniciada(s)  |  ${n('Atrasado')} atrasada(s)  |  Total previsto ${fmtBRL(l.reduce((a,x)=>a+(Number(x.quanto)||0),0))}`,
+    colunas: cols.map(c => c.t), linhas: l.map(x => cols.map(c => c.v(x))), estilos });
 }
 
 /* ============================ INÍCIO ============================ */
