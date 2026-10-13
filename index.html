@@ -278,6 +278,15 @@ tr.hl td{background:var(--t-rec)!important;animation:hl 2.5s ease}
 .pa-txt.cortado .pa-mais{display:inline-block}
 .pa-txt.cortado .pa-clamp{cursor:pointer}
 @media(max-width:700px){.pa-tbl td.pa-txt{max-width:none}.pa-tbl td.pa-txt::before{float:none;display:block}}
+.ci-steps{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ci-steps i{flex:1;height:2px;background:var(--line)}
+.ci-step{display:flex;align-items:center;gap:8px;color:var(--mut);font-weight:600;font-size:13px}
+.ci-step b{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--chip);color:var(--mut);font-size:13px}
+.ci-step.on{color:var(--tx)}.ci-step.on b{background:var(--or);color:#fff}
+.ci-step.ok b{background:var(--ok);color:#fff}
+.ci-pergunta{margin-top:12px;text-align:center;border:2px solid var(--or);background:var(--orl);border-radius:12px;padding:16px}
+.ci-pergunta.ok{border-color:var(--ok);background:var(--t-ok)}
+.ci-data{font-size:24px;font-weight:800;color:var(--tx);margin:4px 0 8px;text-transform:capitalize}
 .ci-prazo{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
 .ci-prazo label{display:block;font-size:11px;font-weight:600;color:var(--mut);margin-bottom:3px}
 .ci-prazo input{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surf)}
@@ -2616,7 +2625,7 @@ function pgPlano(){
       ${conc ? `<td>${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
       <td style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
       ${paCel(x,'observacoes')}
-      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null)">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
+      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
   </tbody></table></div>`;
   requestAnimationFrame(paMarcarCortes);
 }
@@ -2815,12 +2824,6 @@ async function excluirPA(id){
     db.planos = db.planos.filter(p => p.id !== id); montarNav(); pgPlano(); toast('Ação excluída.', 'ok'); }
   catch(e){ toast(e.message, 'err'); }
 }
-function ciMudou(id){
-  const x = db.planos.find(p => p.id === id), v = $('cFim_'+id).value, mud = v !== (x.fim || '');
-  $('cMotBox_'+id).classList.toggle('hidden', !mud);
-  $('cInfo_'+id).innerHTML = mud ? `<span style="color:var(--warn);font-weight:600">Nova data prevista: ${v ? fmtD(v) : 'sem data'}${x.fim ? ' (era ' + fmtD(x.fim) + ')' : ''}. Quem enviou verá a alteração.</span>` : 'Concorde com a data ou altere antes de dar ciente.';
-  $('cBtn_'+id).textContent = mud ? '✔ Ciente com nova data' : '✔ Concordo e estou ciente';
-}
 /* Ciente com data alterada passa pelo banco (registra a data original e quem alterou) */
 async function paAlterarPrazo(id, inicio, horario, fim, ciente, motivo){
   try{
@@ -2828,41 +2831,66 @@ async function paAlterarPrazo(id, inicio, horario, fim, ciente, motivo){
     return Array.isArray(r) ? r[0] : r;
   }catch(e){ throw new Error(/plano_alterar_prazo/i.test(e.message) ? 'Execute o 17_plano_prazo.sql no Supabase para alterar datas.' : e.message); }
 }
-async function cientePA(ids){
-  try{
-    const alt = [], igual = [];
-    ids.forEach(id => { const x = db.planos.find(p => p.id === id), i = $('cFim_'+id); if(x && i && i.value !== (x.fim || '')) alt.push({ x, fim:i.value || null, mot:($('cMot_'+id)||{}).value }); else igual.push(id); });
-    for(const a of alt){
-      if(a.x.inicio && a.fim && a.fim < a.x.inicio) throw new Error(`#${a.x.id}: a Data Prevista não pode ser antes da Data Início (${fmtD(a.x.inicio)}).`);
-      const n = await paAlterarPrazo(a.x.id, a.x.inicio || null, a.x.horario ? a.x.horario.slice(0,5) : null, a.fim, true, a.mot);
-      const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n;
-    }
-    const r = igual.length ? await sbFetch(`/rest/v1/plano_acao?id=in.(${igual.join(',')})`, { method:'PATCH', body:{ ciente_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } }) : [];
-    (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; });
-    montarNav(); if(st.page === 'plano' || st.page === 'planoconc') pgPlano();
-    toast((ids.length > 1 ? 'Ciente registrado nas ações.' : 'Ciente registrado.') + (alt.length ? ` Data prevista alterada em ${alt.length}.` : ''), 'ok');
-    return true;
-  }catch(e){ toast(e.message, 'err'); return false; }
-}
-/* Aprovação imediata: quem recebe a ação vê o aviso ao entrar e a cada minuto */
-function abrirCiente(depois){
+/* Ciência em 2 etapas: 1) concordar com a Data Prevista ou alterá-la (com motivo)  2) só então dar ciência */
+function abrirCiente(depois, idEsc){
   if(depois !== undefined) st.cienteDepois = depois;
   const l = paPend(); l.forEach(x => st.cienteVisto.add(x.id));
   const seguir = () => { const f = st.cienteDepois; st.cienteDepois = null; if(f) setTimeout(f, 50); };
-  if(!l.length){ fecharModal(true); seguir(); return; }
-  abrirModal(`📌 ${l.length > 1 ? l.length+' ações enviadas' : 'Ação enviada'} para você`,
-    `<p style="margin-top:0">Confirme que está ciente ${l.length > 1 ? 'das ações' : 'da ação'} do plano de ação:</p>` +
-    l.map(x => `<div class="box-info"><div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap"><div style="flex:1;min-width:220px">
-      <b>#${x.id} · ${esc(x.o_que)}</b><div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>
-      ${x.por_que?`<div><b>Por quê:</b> ${esc(x.por_que)}</div>`:''}${x.como?`<div><b>Como:</b> ${esc(x.como)}</div>`:''}${x.onde?`<div><b>Onde:</b> ${esc(x.onde)}</div>`:''}
-      <div class="small">${[x.inicio?'Data Início '+fmtD(x.inicio):'', x.horario?'às '+x.horario.slice(0,5):'', Number(x.quanto)?fmtBRL(x.quanto):''].filter(Boolean).join(' · ')}</div>
-      <div class="ci-prazo"><div><label>Data Prevista</label><input type="date" id="cFim_${x.id}" value="${x.fim||''}" min="${x.inicio||''}" oninput="ciMudou(${x.id})"></div>
-        <div class="ci-mot hidden" id="cMotBox_${x.id}"><label>Motivo da nova data</label><input id="cMot_${x.id}" placeholder="Ex.: depende de entrega do fornecedor"></div>
-        <div class="small" id="cInfo_${x.id}">${x.fim ? 'Concorde com a data ou altere antes de dar ciente.' : 'Sem data prevista: você pode informar uma.'}</div></div></div>
-      <button class="btn ok sm" id="cBtn_${x.id}" onclick="cientePA([${x.id}]).then(ok=>{ if(ok) abrirCiente(); })">✔ Concordo e estou ciente</button></div></div>`).join(''),
-    `<button class="btn sec" onclick="fecharModal()">Ver depois</button>${l.length > 1 ? `<button class="btn ok" onclick="cientePA([${l.map(x=>x.id).join(',')}]).then(ok=>{ if(ok) abrirCiente(); })">✔ Dar ciente em todas</button>` : ''}`,
-    true, () => { seguir(); });
+  if(!l.length){ st.ci = null; fecharModal(true); seguir(); return; }
+  if(idEsc && l.some(x => x.id === idEsc)) st.ci = { id:idEsc, etapa:'data', fim:null, mot:'' };
+  else if(!st.ci || !l.some(x => x.id === st.ci.id)) st.ci = { id:l[0].id, etapa:'data', fim:null, mot:'' };
+  const c = st.ci, x = l.find(y => y.id === c.id), pos = l.indexOf(x) + 1, quem = esc(pessoaNome(x.criado_por));
+  const passo = (n, t, on, ok) => `<div class="ci-step ${on?'on':''} ${ok?'ok':''}"><b>${ok?'✓':n}</b><span>${t}</span></div>`;
+  const dataOk = c.etapa === 'ciente';
+  let corpo = `<div class="ci-steps">${passo(1,'Data prevista', c.etapa !== 'ciente', dataOk)}<i></i>${passo(2,'Ciência', dataOk, false)}</div>
+    <div class="box-info"><b>#${x.id} · ${esc(x.o_que)}</b><div class="small muted">Enviada por ${quem}</div>
+      ${x.por_que?`<div><b>Por quê:</b> ${esc(x.por_que)}</div>`:''}${x.como?`<div class="pa-ver-t"><b>Como:</b> ${esc(x.como)}</div>`:''}${x.onde?`<div><b>Onde:</b> ${esc(x.onde)}</div>`:''}
+      <div class="small">${[x.inicio?'Data Início '+fmtD(x.inicio):'', x.horario?'às '+x.horario.slice(0,5):'', Number(x.quanto)?fmtBRL(x.quanto):''].filter(Boolean).join(' · ')}</div></div>`;
+  let rod = '';
+  if(c.etapa === 'data'){
+    corpo += `<div class="ci-pergunta">${x.fim
+      ? `<div class="small muted">Data prevista estipulada por ${quem}</div><div class="ci-data">${nomeDia(x.fim)}, ${fmtD(x.fim)}</div><div><b>Você concorda com esta data?</b></div>`
+      : `<div class="ci-data" style="font-size:18px">Nenhuma data prevista foi definida</div><div>Você pode seguir sem data ou informar uma data prevista.</div>`}</div>`;
+    rod = `<button class="btn sec" onclick="fecharModal()">Ver depois</button><button class="btn sec" onclick="ciEtapa('alterar')">✏ ${x.fim?'Não, alterar a data':'Definir data'}</button><button class="btn ok" onclick="ciConcordo()">✔ ${x.fim?'Sim, concordo com a data':'Seguir sem data'}</button>`;
+  } else if(c.etapa === 'alterar'){
+    corpo += `<div class="ci-pergunta"><div class="small muted">${x.fim ? 'Data estipulada: <b>'+fmtD(x.fim)+'</b>' : 'Sem data estipulada'}</div>
+      <div class="form" style="margin-top:10px;text-align:left"><div><label>Nova Data Prevista *</label><input type="date" id="ciFim" value="${c.fim || x.fim || ''}" min="${x.inicio||''}"></div>
+      <div><label>Motivo da alteração *</label><input id="ciMot" value="${esc(c.mot)}" placeholder="Ex.: depende de entrega do fornecedor"></div></div>
+      <div class="small muted" style="margin-top:8px">${quem} verá a nova data, a data original e o motivo.</div></div>`;
+    rod = `<button class="btn sec" onclick="ciEtapa('data')">‹ Voltar</button><button class="btn" onclick="ciConfirmarData()">Confirmar nova data</button>`;
+  } else {
+    corpo += `<div class="ci-pergunta ok"><div class="small muted">Data prevista ${c.fim ? 'proposta por você' : 'acordada'}</div>
+      <div class="ci-data">${(c.fim || x.fim) ? nomeDia(c.fim || x.fim)+', '+fmtD(c.fim || x.fim) : 'Sem data'}</div>
+      ${c.fim ? `<div class="small">Alterada de ${x.fim ? fmtD(x.fim) : 'sem data'} · motivo: ${esc(c.mot)}</div>` : ''}
+      <div style="margin-top:6px"><b>Agora confirme que está ciente da ação.</b></div></div>`;
+    rod = `<button class="btn sec" onclick="ciEtapa('alterar')">‹ Alterar data</button><button class="btn ok" id="ciOk" onclick="ciDarCiencia()">✔ Dar ciência</button>`;
+  }
+  abrirModal(`📌 Ação enviada para você${l.length > 1 ? ` · ${pos} de ${l.length}` : ''}`, corpo, rod, true, () => { st.ci = null; seguir(); });
 }
+function ciEtapa(e){ if(!st.ci) return; if(e === 'data'){ st.ci.fim = null; st.ci.mot = ''; } st.ci.etapa = e; abrirCiente(); const i = $('ciFim'); if(i) i.focus(); }
+function ciConcordo(){ if(!st.ci) return; st.ci.fim = null; st.ci.mot = ''; st.ci.etapa = 'ciente'; abrirCiente(); }
+function ciConfirmarData(){
+  const c = st.ci, x = db.planos.find(p => p.id === c.id), v = $('ciFim').value, m = $('ciMot').value.trim();
+  if(!v) return toast('Informe a nova Data Prevista.', 'err');
+  if(v === (x.fim || '')) return ciConcordo();
+  if(x.inicio && v < x.inicio) return toast(`A Data Prevista não pode ser antes da Data Início (${fmtD(x.inicio)}).`, 'err');
+  if(!m) return toast('Informe o motivo da alteração.', 'err');
+  c.fim = v; c.mot = m; c.etapa = 'ciente'; abrirCiente();
+}
+async function ciDarCiencia(){
+  const c = st.ci; if(!c || c.etapa !== 'ciente') return;
+  const x = db.planos.find(p => p.id === c.id); $('ciOk').disabled = true;
+  try{
+    let n;
+    if(c.fim) n = await paAlterarPrazo(x.id, x.inicio || null, x.horario ? x.horario.slice(0,5) : null, c.fim, true, c.mot);
+    else n = (await sbFetch(`/rest/v1/plano_acao?id=eq.${x.id}`, { method:'PATCH', body:{ ciente_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } }) || [])[0];
+    if(n){ const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; }
+    montarNav(); if(st.page === 'plano' || st.page === 'planoconc') pgPlano();
+    toast(c.fim ? `Ciência registrada com nova data prevista ${fmtD(c.fim)}.` : 'Ciência registrada.', 'ok');
+    st.ci = null; abrirCiente();
+  }catch(e){ toast(e.message, 'err'); const b = $('ciOk'); if(b) b.disabled = false; }
+}
+/* Aprovação imediata: quem recebe a ação vê o aviso ao entrar e a cada minuto */
 /* Sincroniza o plano a cada 30 s: andamento compartilhado, ciente, entregas e aviso do dia */
 async function checarCiente(){
   if(!S || !db.me || !db.paOk || $('app').classList.contains('hidden')) return;
