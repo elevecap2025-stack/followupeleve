@@ -2429,7 +2429,9 @@ function paCiente(x){
 const PA_EXCLUI_TODOS = ['elevecap2025@gmail.com'];
 const paExcluiTodos = () => !!(db.me && PA_EXCLUI_TODOS.includes(String(db.me.email||'').toLowerCase()));
 const podeExcluirPA = x => x.criado_por === db.me.id || paExcluiTodos();
-function veTodosPlanos(){ if(isAdmin() || paExcluiTodos()) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
+/* Logins que veem os planos de ação de todas as pessoas (sem ser administrador) */
+const PA_VE_TODOS = ['diegoeleve@gmail.com'];
+function veTodosPlanos(){ if(isAdmin() || paExcluiTodos() || (db.me && PA_VE_TODOS.includes(String(db.me.email||'').toLowerCase()))) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
 const paConc = () => st.page === 'planoconc';
 const paEncerrada = x => paStatus(x) === 'Concluído';  /* só sai para Planos Concluídos com 100% */
 const paTipo = x => { const me = db.me.id; return x.criado_por === me && x.responsavel_id !== me ? 'env' : x.responsavel_id === me && x.criado_por !== me ? 'rec' : x.criado_por === me ? 'meu' : 'eq'; };
