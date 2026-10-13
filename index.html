@@ -259,9 +259,32 @@ tr.hl td{background:var(--t-rec)!important;animation:hl 2.5s ease}
 @media(max-width:600px){.form.f4{grid-template-columns:1fr}}
 .pa-title{background:var(--or);color:#fff;font-weight:800;font-size:22px;letter-spacing:.02em;text-align:center;padding:10px;border-radius:12px 12px 0 0}
 .pa-tbl{border-radius:0 0 12px 12px}
+/* Tabela do plano com rolagem própria: a barra horizontal fica sempre visível na tela */
+@media(min-width:701px){
+  .pa-tbl{max-height:calc(100vh - 150px);overflow:auto;scrollbar-width:auto;scrollbar-color:var(--or) var(--track)}
+  .pa-tbl thead th{position:sticky;top:0;z-index:3}
+  .pa-tbl::-webkit-scrollbar{width:12px;height:14px}
+  .pa-tbl::-webkit-scrollbar-track{background:var(--track);border-radius:0 0 12px 12px}
+  .pa-tbl::-webkit-scrollbar-thumb{background:var(--or);border-radius:8px;border:3px solid var(--track)}
+  .pa-tbl::-webkit-scrollbar-thumb:hover{background:var(--or2)}
+  .pa-tbl::-webkit-scrollbar-corner{background:var(--track)}
+}
 .pa-tbl th{background:var(--gr);color:#fff;text-align:center}
 .pa-tbl td{text-align:center;font-size:13px}
-.pa-tbl td.pa-txt{white-space:pre-wrap;min-width:150px}
+.pa-tbl td.pa-txt{min-width:150px;max-width:240px;text-align:left}
+.pa-clamp{white-space:pre-wrap;word-break:break-word;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pa-mais{display:none;margin-top:4px;border:0;background:none;padding:0;color:var(--or2);font-size:12px;font-weight:600;cursor:pointer}
+.pa-mais:hover{text-decoration:underline}
+.pa-txt.cortado .pa-mais{display:inline-block}
+.pa-txt.cortado .pa-clamp{cursor:pointer}
+@media(max-width:700px){.pa-tbl td.pa-txt{max-width:none}.pa-tbl td.pa-txt::before{float:none;display:block}}
+.pa-ver-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.pa-ver-meta div{background:var(--surf2);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px}
+.pa-ver-meta span{display:block;font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
+.pa-ver-b{border:1px solid var(--line);border-left:4px solid var(--or);border-radius:8px;padding:10px 12px;margin-bottom:10px}
+.pa-ver-b.on{background:var(--orl)}
+.pa-ver-l{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+.pa-ver-t{white-space:pre-wrap;word-break:break-word;line-height:1.5}
 .pa-tbl td.act{text-align:right}
 .pa-title.conc{background:var(--ok)}
 .pa-tbl tr.pa-env td{background:var(--t-env)}
@@ -2024,7 +2047,11 @@ async function carregarPDF(){
 }
 function logoDataURL(){ const m = getComputedStyle(document.documentElement).getPropertyValue('--logo').match(/url\(["']?(data:[^"')]+)["']?\)/); return m ? m[1] : null; }
 const pdfTxt = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\s+/g, ' ').trim();
-async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto }){
+/* Mantém as quebras de linha (para o detalhamento do texto completo) */
+const pdfTxtML = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\r/g, '').replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+/* Corta no fim de uma palavra */
+const pdfCorta = (s, n) => { if(s.length <= n) return s; const c = s.slice(0, n); const i = c.lastIndexOf(' '); return (i > n * .6 ? c.slice(0, i) : c).replace(/[\s,.;:-]+$/, '') + '...'; };
+async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto, anexo }){
   loading(true, 'Gerando PDF…');
   try{
     await carregarPDF();
@@ -2072,6 +2099,22 @@ async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, p
         alturaLinha = Math.max(alturaLinha, gh + 8);
         if(col === 1){ gy += alturaLinha; col = 0; alturaLinha = 0; } else col = 1;
       }
+    }
+    if(anexo && anexo.itens && anexo.itens.length){
+      let ay = doc.lastAutoTable.finalY + 10;
+      if(ay > H - 45){ doc.addPage(); cab(); ay = 36; }
+      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(43,47,54); doc.text(pdfTxt(anexo.titulo), 12, ay);
+      if(anexo.nota){ doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(107,114,128); doc.text(pdfTxt(anexo.nota), 12, ay + 4.5); ay += 4.5; }
+      ay += 4;
+      anexo.itens.forEach(it => {
+        doc.autoTable({ head: [[{ content: pdfTxt(it.cab), colSpan: 2 }]], body: it.linhas.map(([r,t]) => [pdfTxt(r), pdfTxtML(t)]), startY: ay,
+          margin: { top: 33, left: 12, right: 12, bottom: 14 }, rowPageBreak:'auto', showHead:'everyPage',
+          styles: { font:'helvetica', fontSize:8.5, cellPadding:2, textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak', valign:'top' },
+          headStyles: { fillColor:[58,63,71], textColor:255, fontStyle:'bold', halign:'left' },
+          columnStyles: { 0: { cellWidth: 28, fontStyle:'bold', textColor:[75,81,91], fillColor:[248,249,251] } },
+          didDrawPage: d => { if(d.pageNumber > 1) cab(); } });
+        ay = doc.lastAutoTable.finalY + 5;
+      });
     }
     const n = doc.internal.getNumberOfPages();
     for(let i = 1; i <= n; i++){ doc.setPage(i); doc.setFontSize(8); doc.setTextColor(107,114,128); doc.setDrawColor(58,63,71); doc.setLineWidth(0.3); doc.line(12, H-10, W-12, H-10);
@@ -2361,9 +2404,20 @@ function paEtDoComo(){
 const fmtBRL = n => (Number(n)||0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 function pessoaNome(id){ const p = (db.pessoas||[]).find(x => x.id === id); return p ? (p.nome || p.email) : (db.me && id === db.me.id ? (db.me.nome || db.me.email) : '—'); }
 const paPend = () => db.me ? (db.planos||[]).filter(p => p.responsavel_id === db.me.id && !p.ciente_em && p.criado_por !== db.me.id) : [];
+/* Planos reservados: os planos destes logins ficam ocultos para os logins da lista abaixo
+   (mesmo sendo administradores), exceto quando o próprio login participa do plano. O banco aplica a mesma regra (15_plano_reservados.sql). */
+const PA_RESERVADOS = ['lucaseleve@gmail.com','diegoeleve@gmail.com'];
+const PA_SEM_RESERVADOS = ['boaideiajessica@gmail.com'];
+const paRestrito = () => !!(db.me && PA_SEM_RESERVADOS.includes(String(db.me.email||'').toLowerCase()));
+const paIdsReservados = () => new Set((db.pessoas||[]).filter(p => PA_RESERVADOS.includes(String(p.email||'').toLowerCase())).map(p => p.id));
+function paRes(l){
+  if(!paRestrito()) return l || [];
+  const ids = paIdsReservados(), me = db.me.id;
+  return (l||[]).filter(x => x.criado_por === me || x.responsavel_id === me || !(ids.has(x.criado_por) || ids.has(x.responsavel_id)));
+}
 async function carregarPessoas(){ db.pessoas = (await sbFetch('/rest/v1/rpc/listar_usuarios', { method:'POST', body:{} })) || []; }
 async function carregarPlanos(){
-  try{ db.planos = await sbAll('plano_acao','select=*&order=id'); await carregarPessoas(); db.paOk = true; }
+  try{ db.planos = await sbAll('plano_acao','select=*&order=id'); await carregarPessoas(); db.planos = paRes(db.planos); db.paOk = true; }
   catch(e){ db.planos = []; db.pessoas = db.pessoas || []; db.paOk = false; }
 }
 function paCiente(x){
@@ -2371,7 +2425,11 @@ function paCiente(x){
   return x.ciente_em ? `<span class="tag ok">Ciente ${fmtDH(x.ciente_em).slice(0,16)}</span>` : '<span class="tag warn">Aguardando ciente</span>';
 }
 /* Quem pode ver os planos de todas as pessoas: administrador e perfis com "ver todos" (ex.: Diretor, Gerente) */
-function veTodosPlanos(){ if(isAdmin()) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
+/* Logins que podem excluir lançamentos do plano de ação de qualquer usuário */
+const PA_EXCLUI_TODOS = ['elevecap2025@gmail.com'];
+const paExcluiTodos = () => !!(db.me && PA_EXCLUI_TODOS.includes(String(db.me.email||'').toLowerCase()));
+const podeExcluirPA = x => x.criado_por === db.me.id || paExcluiTodos();
+function veTodosPlanos(){ if(isAdmin() || paExcluiTodos()) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
 const paConc = () => st.page === 'planoconc';
 const paEncerrada = x => paStatus(x) === 'Concluído';  /* só sai para Planos Concluídos com 100% */
 const paTipo = x => { const me = db.me.id; return x.criado_por === me && x.responsavel_id !== me ? 'env' : x.responsavel_id === me && x.criado_por !== me ? 'rec' : x.criado_por === me ? 'meu' : 'eq'; };
@@ -2412,7 +2470,7 @@ function pgPlano(){
     <div class="kpi ok click" onclick="ir('planoconc')"><div class="l">Concluídas</div><div class="v">${nConc}</div><div class="s">Ver planos concluídos</div></div>`;
   const verOps = [['todos','Todas as minhas'], ...(todos ? [['equipe','Todas as pessoas']] : []), ['criados','Criadas por mim'], ['meus','Enviadas para mim'], ...(conc ? [] : [['ciente','Aguardando meu ciente']])];
   const stOps = conc ? ['Concluído'] : ['Não iniciado','Em andamento','Atrasado','Cancelado'];
-  const pessoas = (db.pessoas||[]).slice().sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  const pessoas = (db.pessoas||[]).filter(x => !paRestrito() || !paIdsReservados().has(x.id)).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   $('content').innerHTML = `
   <div class="kpis">${kpis}</div>
   <div class="filters">
@@ -2428,15 +2486,37 @@ function pgPlano(){
   <div class="pa-title ${conc?'conc':''}">${conc ? 'PLANOS DE AÇÃO CONCLUÍDOS' : 'PLANO DE AÇÃO • 5W2H'}</div>
   <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Início</th><th>Horário previsto</th><th>Fim</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th>${conc?'<th>Concluído em</th>':''}<th>%</th><th>Observações</th><th></th></tr></thead><tbody>
   ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
-    return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td><td class="pa-txt"><b>${esc(x.o_que)}</b></td><td class="pa-txt">${esc(x.por_que)}</td><td class="pa-txt">${esc(x.como)}</td>
+    return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td>${paCel(x,'o_que',true)}${paCel(x,'por_que')}${paCel(x,'como')}
       <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>`}</td>
       <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}</td><td>${paLead(x) ?? ''}${x.inicio && !x.fim ? '<div class="small muted">até hoje</div>' : ''}</td>
-      <td class="pa-txt">${esc(x.onde)}</td><td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
+      ${paCel(x,'onde')}<td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
       ${conc ? `<td>${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
       <td style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
-      <td class="pa-txt">${esc(x.observacoes)}</td>
-      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${dono?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
+      ${paCel(x,'observacoes')}
+      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="cientePA([${x.id}])">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
   </tbody></table></div>`;
+  requestAnimationFrame(paMarcarCortes);
+}
+/* Texto longo na tabela: mostra 3 linhas e abre o restante em "Ver mais" */
+function paCel(x, campo, negrito){
+  const t = String(x[campo] || '').trim(); if(!t) return '<td class="pa-txt"></td>';
+  return `<td class="pa-txt"><div class="pa-clamp" onclick="if(this.parentElement.classList.contains('cortado'))paVer(${x.id},'${campo}')">${negrito ? '<b>'+esc(t)+'</b>' : esc(t)}</div><button class="pa-mais" onclick="paVer(${x.id},'${campo}')">Ver mais ›</button></td>`;
+}
+function paMarcarCortes(){ document.querySelectorAll('.pa-tbl td.pa-txt').forEach(td => { const c = td.querySelector('.pa-clamp'); td.classList.toggle('cortado', !!c && c.scrollHeight > c.clientHeight + 2); }); }
+window.addEventListener('resize', () => { clearTimeout(window._pamc); window._pamc = setTimeout(paMarcarCortes, 150); });
+const PA_CAMPOS = [['o_que','O quê?'],['por_que','Por quê?'],['como','Como?'],['onde','Onde?'],['observacoes','Observações']];
+function paVer(id, campo){
+  const x = db.planos.find(p => p.id === id); if(!x) return;
+  const me = db.me.id, ed = x.criado_por === me || x.responsavel_id === me, e = paEtapas(x);
+  const meta = [['Quem', esc(pessoaNome(x.responsavel_id))], ['Criado por', esc(pessoaNome(x.criado_por))], ['Início', x.inicio ? fmtD(x.inicio) + (x.horario ? ' · ' + x.horario.slice(0,5) : '') : '—'],
+    ['Fim', x.fim ? fmtD(x.fim) : '—'], ['Lead time', paLead(x) != null ? paLead(x) + ' dia(s)' : '—'], ['Quanto', fmtBRL(x.quanto)],
+    ['Status', `<span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span>`], ['Concluído', paPct(x) + '%' + (e.length ? ' · ' + e.filter(s=>s.ok).length + '/' + e.length + ' etapas' : '')]];
+  abrirModal(`Ação #${x.id}`,
+    `<div class="pa-ver-meta">${meta.map(([l,v]) => `<div><span>${l}</span>${v}</div>`).join('')}</div>` +
+    PA_CAMPOS.map(([k,r]) => { const t = String(x[k]||'').trim(); return t ? `<div class="pa-ver-b ${campo===k?'on':''}" id="pv_${k}"><div class="pa-ver-l">${r}</div><div class="pa-ver-t">${esc(t)}</div></div>` : ''; }).join('') +
+    (e.length ? `<div class="pa-ver-b"><div class="pa-ver-l">Etapas</div>${e.map(s => `<div class="${s.ok?'pa-et-ok':''}">${s.ok?'☑':'☐'} ${esc(s.t)}</div>`).join('')}</div>` : ''),
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button>${ed ? `<button class="btn" onclick="fecharModal(true);abrirPA(${x.id})">✎ Editar</button>` : ''}`, true);
+  if(campo) setTimeout(() => { const el = $('pv_'+campo); if(el) el.scrollIntoView({ block:'nearest' }); }, 60);
 }
 function abrirPA(id){
   const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me, resp = x && x.responsavel_id === me;
@@ -2518,7 +2598,7 @@ async function salvarPA(id){
     }
     if(!salvo) throw new Error('Outra pessoa está alterando esta ação agora. Feche, clique em Atualizar e tente de novo.');
     Object.assign(x, salvo);
-    try{ db.planos = await sbAll('plano_acao','select=*&order=id'); }catch(e){}
+    try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){}
     fecharModal(true); montarNav(); pgPlano();
     const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
     toast(paEncerrada(x) ? 'Ação salva e movida para Planos Concluídos.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
@@ -2570,7 +2650,7 @@ async function paEtRapido(id, op, val, marcado){
       if(r && r.length) salvo = r[0];
     }
     if(!salvo) throw new Error('Outra pessoa está alterando esta ação agora. Tente de novo em instantes.');
-    try{ db.planos = await sbAll('plano_acao','select=*&order=id'); }catch(e){ Object.assign(x, salvo); }
+    try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){ Object.assign(x, salvo); }
     montarNav();
     if(paEncerrada(salvo) && st.page === 'plano'){ st.paAberto.delete(id); toast('Todas as etapas concluídas! O plano foi para Planos Concluídos.', 'ok'); }
     else if(op === 'add') toast(val.length > 1 ? val.length+' etapas incluídas.' : 'Etapa incluída.', 'ok');
@@ -2595,8 +2675,13 @@ function avisoDia(depois){
     true, () => { if(depois) setTimeout(depois, 50); });
 }
 async function excluirPA(id){
-  const x = db.planos.find(p => p.id === id); if(!x || !confirm(`Excluir a ação #${id}?\n${x.o_que}`)) return;
-  try{ await api.del('plano_acao', id); db.planos = db.planos.filter(p => p.id !== id); montarNav(); pgPlano(); toast('Ação excluída.', 'ok'); }
+  const x = db.planos.find(p => p.id === id); if(!x || !podeExcluirPA(x)) return;
+  const deOutro = x.criado_por !== db.me.id ? `\nCriada por ${pessoaNome(x.criado_por)} · responsável ${pessoaNome(x.responsavel_id)}` : '';
+  if(!confirm(`Excluir a ação #${id}?\n${x.o_que}${deOutro}\nEssa ação não pode ser desfeita.`)) return;
+  try{
+    const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${id}`, { method:'DELETE', headers:{ Prefer:'return=representation' } });
+    if(!r || !r.length) throw new Error('O banco não permitiu excluir esta ação. Execute o 14_plano_excluir_todos.sql no Supabase.');
+    db.planos = db.planos.filter(p => p.id !== id); montarNav(); pgPlano(); toast('Ação excluída.', 'ok'); }
   catch(e){ toast(e.message, 'err'); }
 }
 async function cientePA(ids){
@@ -2628,7 +2713,7 @@ function abrirCiente(depois){
 async function checarCiente(){
   if(!S || !db.me || !db.paOk || $('app').classList.contains('hidden')) return;
   try{
-    const r = await sbAll('plano_acao','select=*&order=id');
+    const r = paRes(await sbAll('plano_acao','select=*&order=id'));
     const sig = a => (a||[]).map(x => x.id+':'+x.updated_at).join('|'), mudou = sig(r) !== sig(db.planos);
     db.planos = r;
     if(r.some(n => ![n.criado_por, n.responsavel_id].every(u => (db.pessoas||[]).some(p => p.id === u)))) await carregarPessoas();
@@ -2691,12 +2776,17 @@ function pdfPA(){
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><label style="font-size:12px;font-weight:600;color:var(--mut)">Colunas do relatório</label>
       <button class="btn sec sm" style="margin-left:auto" onclick="document.querySelectorAll('.ppCk').forEach(i=>i.checked=true)">Todas</button>
       <button class="btn sec sm" onclick="document.querySelectorAll('.ppCk').forEach(i=>i.checked=${JSON.stringify(PA_PDF_PADRAO).replace(/"/g,"'")}.includes(i.value))">Padrão</button></div>
-    <div class="pa-quem">${cols.map(c => `<label class="ck-row"><input type="checkbox" class="ppCk" value="${c.k}" ${sel.includes(c.k)?'checked':''}><span>${esc(c.t)}</span></label>`).join('')}</div>`,
+    <div class="pa-quem">${cols.map(c => `<label class="ck-row"><input type="checkbox" class="ppCk" value="${c.k}" ${sel.includes(c.k)?'checked':''}><span>${esc(c.t)}</span></label>`).join('')}</div>
+    <label style="display:block;font-size:12px;font-weight:600;color:var(--mut);margin:14px 0 6px">Textos longos</label>
+    <select id="ppTexto" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surf)">
+      <option value="resumo" ${st.pa.pdfTexto!=='completo'?'selected':''}>Resumir na tabela (linhas padronizadas) e mostrar a íntegra ao final — recomendado</option>
+      <option value="completo" ${st.pa.pdfTexto==='completo'?'selected':''}>Texto completo dentro da tabela</option></select>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" onclick="gerarPdfPA()">📄 Gerar PDF</button>`, true);
 }
 function gerarPdfPA(){
   const ks = [...document.querySelectorAll('.ppCk:checked')].map(i => i.value);
   if(!ks.length) return toast('Marque pelo menos uma coluna.', 'err');
+  st.pa.pdfTexto = $('ppTexto').value;
   try{ localStorage.setItem('eleve_pa_pdfcols', JSON.stringify(ks)); }catch(e){}
   fecharModal(true);
   const l = paFiltradas(), ret = st.pa.orient === 'retrato', cols = PA_PDF_COLS.filter(c => ks.includes(c.k));
@@ -2704,10 +2794,20 @@ function gerarPdfPA(){
   cols.forEach((c,i) => { estilos[i] = { cellWidth: c.w / soma * W, halign: c.al || 'left' }; });
   const ver = { todos:'Todas as minhas', equipe:'Todas as pessoas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver] + (st.pa.pessoa ? '  -  Pessoa: '+pessoaNome(st.pa.pessoa) : '');
   const n = s => l.filter(x => paStatus(x) === s).length;
+  /* Resumo: cada texto ocupa no máximo 4 linhas da sua coluna; a íntegra vai para o detalhamento */
+  const fs = ret ? 6.5 : 7.5, mmChar = fs * 0.3528 * 0.5, TXT = ['oque','porque','como','onde','obs'], cortadas = new Set();
+  const linhas = l.map(x => cols.map((c,i) => {
+    const v = c.v(x); if(st.pa.pdfTexto === 'completo' || !TXT.includes(c.k)) return v;
+    const s = pdfTxt(v), lim = Math.max(40, Math.floor((estilos[i].cellWidth - 3.2) / mmChar) * 4);
+    if(s.length <= lim) return s; cortadas.add(x.id); return pdfCorta(s, lim - 3);
+  }));
+  const anexo = cortadas.size ? { titulo:'Detalhamento das ações (texto completo)', nota:'Ações com textos resumidos na tabela (indicados com "...").',
+    itens: l.filter(x => cortadas.has(x.id)).map(x => ({ cab: `#${x.id}  -  ${pessoaNome(x.responsavel_id)}  -  ${paStatus(x)}${x.fim ? '  -  Prazo '+fmtD(x.fim) : ''}`,
+      linhas: PA_CAMPOS.filter(([k]) => String(x[k]||'').trim()).map(([k,r]) => [r, x[k]]) })) } : null;
   gerarPDF({ titulo: paConc() ? 'Planos de Ação Concluídos' : 'Plano de Ação - 5W2H', arquivo:`${paConc()?'planos_concluidos':'plano_acao'}_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 6.5 : 7.5, compacto:true,
     subtitulo: ver + (st.pa.status ? '  -  Status: '+st.pa.status : '') + (st.pa.q ? '  -  Busca: '+st.pa.q : ''),
     resumo: paConc() ? `${l.length} ação(ões) concluída(s)` : `${l.length} ação(ões)  |  ${n('Em andamento')} em andamento  |  ${n('Não iniciado')} não iniciada(s)  |  ${n('Atrasado')} atrasada(s)  |  Total previsto ${fmtBRL(l.reduce((a,x)=>a+(Number(x.quanto)||0),0))}`,
-    colunas: cols.map(c => c.t), linhas: l.map(x => cols.map(c => c.v(x))), estilos });
+    colunas: cols.map(c => c.t), linhas, estilos, anexo });
 }
 
 /* ============================ INÍCIO ============================ */
