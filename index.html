@@ -2425,10 +2425,17 @@ const PA_RESERVADOS = ['lucaseleve@gmail.com','diegoeleve@gmail.com'];
 const PA_SEM_RESERVADOS = ['boaideiajessica@gmail.com'];
 const paRestrito = () => !!(db.me && PA_SEM_RESERVADOS.includes(String(db.me.email||'').toLowerCase()));
 const paIdsReservados = () => new Set((db.pessoas||[]).filter(p => PA_RESERVADOS.includes(String(p.email||'').toLowerCase())).map(p => p.id));
+/* Não duplica: quando o plano foi enviado para outra(s) pessoa(s), a cópia em nome de quem criou fica oculta
+   (quem criou acompanha pela cópia do responsável). */
+function paSemDuplicar(l){
+  const outros = new Set((l||[]).filter(x => x.grupo && x.responsavel_id !== x.criado_por).map(x => x.grupo + '|' + x.criado_por));
+  return (l||[]).filter(x => !(x.grupo && x.responsavel_id === x.criado_por && outros.has(x.grupo + '|' + x.criado_por)));
+}
 function paRes(l){
-  if(!paRestrito()) return l || [];
+  l = paSemDuplicar(l);
+  if(!paRestrito()) return l;
   const ids = paIdsReservados(), me = db.me.id;
-  return (l||[]).filter(x => x.criado_por === me || x.responsavel_id === me || !(ids.has(x.criado_por) || ids.has(x.responsavel_id)));
+  return l.filter(x => x.criado_por === me || x.responsavel_id === me || !(ids.has(x.criado_por) || ids.has(x.responsavel_id)));
 }
 async function carregarPessoas(){ db.pessoas = (await sbFetch('/rest/v1/rpc/listar_usuarios', { method:'POST', body:{} })) || []; }
 async function carregarPlanos(){
@@ -2656,7 +2663,7 @@ function abrirPA(id){
   const pess = (db.pessoas||[]).slice().sort((a,b) => (a.nome||'').localeCompare(b.nome||'')); if(!pess.some(p => p.id === me)) pess.unshift({ id:me, nome:db.me.nome||db.me.email, email:db.me.email });
   const quem = x
     ? `<div><label>Quem? (responsável desta cópia) *</label><select id="paQuem" ${dis}>${pess.map(p => `<option value="${p.id}" ${p.id===x.responsavel_id?'selected':''}>${esc(p.nome||p.email)}${p.id===me?' (eu)':''}</option>`).join('')}</select>${nc > 1 ? `<div class="small muted">Este plano foi enviado para ${nc} pessoas; cada uma tem a sua cópia.</div>` : ''}</div>`
-    : `<div class="full"><label>Quem? (responsáveis) * <span style="font-weight:400">— marque uma ou mais pessoas; cada uma recebe a sua cópia</span></label>
+    : `<div class="full"><label>Quem? (responsáveis) * <span style="font-weight:400">— marque uma ou mais pessoas; cada uma recebe a sua cópia. Ao enviar para outra pessoa, você acompanha pela cópia dela (não fica uma cópia repetida em seu nome).</span></label>
         <div class="pa-quem">${pess.map(p => `<label class="ck-row"><input type="checkbox" class="paQk" value="${p.id}" ${p.id===me?'checked':''}><span>${esc(p.nome||p.email)}${p.id===me?' <span class="tag">eu</span>':''}</span></label>`).join('')}</div>
         ${pess.length <= 1 ? '<div class="small" style="color:var(--warn)">Só você aparece aqui porque não há outros usuários ativos. Cadastre ou ative os usuários em Usuários / Acessos.</div>' : ''}</div>`;
   abrirModal(x ? 'Ação #'+x.id : 'Nova ação · 5W2H', `<div class="form">
@@ -2710,7 +2717,8 @@ async function salvarPA(id){
   $('paSalvar').disabled = true;
   try{
     if(!x){
-      const quem = [...document.querySelectorAll('.paQk:checked')].map(i => i.value);
+      let quem = [...document.querySelectorAll('.paQk:checked')].map(i => i.value);
+      if(quem.some(u => u !== me)) quem = quem.filter(u => u !== me); /* enviado para outra pessoa: não cria cópia duplicada para quem criou */
       if(!quem.length){ $('paSalvar').disabled = false; return toast('Marque pelo menos uma pessoa em "Quem?".', 'err'); }
       const grupo = novoUUID();
       const r = await sbFetch('/rest/v1/plano_acao', { method:'POST', body: quem.map(uid => ({ ...o, responsavel_id:uid, grupo })), headers:{ Prefer:'return=representation' } });
