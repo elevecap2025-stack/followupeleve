@@ -321,7 +321,12 @@ body.menu-min .pa-et-box{width:min(1100px,calc(100vw - 130px))}
 @media(max-width:700px){.pa-et-box{position:static;width:auto}}
 .pa-et-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
 .pa-et-q{background:var(--surf);border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin-bottom:6px}
-.pa-et-q span:first-of-type{flex:1}
+.pa-et-q{align-items:flex-start}
+.pa-et-q .pa-et-tx{flex:1;min-width:0}
+.pa-et-tx{line-height:1.45;word-break:break-word}
+.pa-et-tx ul,.pa-et-tx ol{margin:2px 0;padding-left:20px}
+.pa-et-prev{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--surf);cursor:pointer}
+.pa-et-prev:hover{border-color:var(--or)}
 .pa-et-ok{text-decoration:line-through;color:var(--mut)}
 .pa-et-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .pa-et-add input{flex:1;min-width:220px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
@@ -336,6 +341,138 @@ body.menu-min .pa-et-box{width:min(1100px,calc(100vw - 130px))}
 .pa-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:0 0 8px}
 .pa-leg span{display:inline-flex;align-items:center;gap:5px}
 .pa-leg b{display:inline-block;width:14px;height:8px;border-radius:3px}
+
+/* ---------- EDITOR DE ETAPA (tela maior) ---------- */
+#rtModal{position:fixed;inset:0;background:rgba(17,19,23,.6);display:none;align-items:flex-start;justify-content:center;z-index:150;padding:30px 16px;overflow:auto}
+#rtModal.show{display:flex}
+#rtModal .mbox{max-width:940px}
+.rt-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;background:var(--surf2)}
+.rt-b{border:1px solid var(--line);background:var(--surf);color:var(--tx);border-radius:7px;min-width:34px;height:32px;padding:0 10px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:4px;position:relative}
+.rt-b:hover{border-color:var(--or);color:var(--or2)}
+.rt-pick{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+.rt-cor{width:24px;height:24px;border-radius:50%;border:2px solid var(--surf);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0;transition:transform .12s}
+.rt-cor:hover{transform:scale(1.18)}
+.rt-sep{width:1px;height:22px;background:var(--line);margin:0 2px}
+.rt-ed{min-height:320px;max-height:calc(100vh - 320px);overflow:auto;border:1px solid var(--line);border-radius:0 0 10px 10px;padding:14px 16px;background:var(--surf);color:var(--tx);font-size:15px;line-height:1.6;outline:none}
+.rt-ed:focus{border-color:var(--or);box-shadow:0 0 0 3px rgba(18,125,203,.15)}
+.rt-ed:empty::before{content:attr(data-ph);color:var(--mut)}
+.rt-ed ul,.rt-ed ol{margin:4px 0;padding-left:26px}
+
+/* ---------- TELA CHEIA (Plano de Ação) ---------- */
+body.pa-full #side,body.pa-full #top,body.pa-full #bnav,body.pa-full #content>.kpis{display:none!important}
+body.pa-full #main{margin-left:0!important}
+body.pa-full #content{padding:10px 14px}
+body.pa-full .pa-tbl{max-height:calc(100vh - 140px)!important}
+body.pa-full .pa-et-box,body.pa-full.menu-min .pa-et-box{width:min(1500px,calc(100vw - 50px))}
+
+/* ---------- CALENDÁRIO DO PLANO ---------- */
+.cal-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cal-nav .lbl{font-size:21px;font-weight:800;min-width:210px;text-align:center;color:var(--tx);letter-spacing:.01em}
+.cal-nav input[type=month]{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--tx)}
+.cal{background:var(--surf);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.cal-hd{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:linear-gradient(90deg,var(--or2),var(--or));color:#fff}
+.cal-hd div{padding:10px 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.cal-d{min-height:124px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:background .15s;min-width:0}
+.cal-d:nth-child(7n){border-right:0}
+.cal-d:hover{background:var(--hover)}
+.cal-d.fora{background:var(--surf2)} .cal-d.fora .cal-n{opacity:.4}
+.cal-d.hoje{background:var(--orl);box-shadow:inset 0 0 0 2px var(--or)}
+.cal-n{display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;color:var(--gr2);margin-bottom:2px}
+.cal-n b{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
+.cal-d.hoje .cal-n b{background:var(--or);color:#fff}
+.cal-n small{font-size:10px;color:var(--or2);text-transform:uppercase;letter-spacing:.04em}
+.cal-n .dw{display:none}
+.cal-n .q{margin-left:auto;background:var(--chip);border-radius:10px;padding:0 7px;font-size:10.5px;color:var(--gr2)}
+.cal-ev{position:relative;display:block;width:100%;text-align:left;border:0;border-left:3px solid var(--info);background:var(--infol);color:var(--tx);border-radius:6px;padding:3px 6px 4px;font-size:11.5px;line-height:1.3;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:transform .12s,box-shadow .12s;font-family:inherit}
+.cal-ev:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.12)}
+.cal-ev.at{border-left-color:var(--bad);background:var(--badl)}
+.cal-ev.ni{border-left-color:var(--warn);background:var(--warnl)}
+.cal-ev.ini{border-left-style:dashed;opacity:.85}
+.cal-ev .nm{display:block;font-size:10px;color:var(--mut);overflow:hidden;text-overflow:ellipsis}
+.cal-ev .pg{position:absolute;left:0;bottom:0;height:2px;background:var(--ok)}
+.cal-mais{font-size:11px;font-weight:700;color:var(--or2);padding:2px 4px}
+/* barra compacta do calendário */
+.cal-bar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;background:var(--surf);border:1px solid var(--line);border-radius:12px 12px 0 0;border-bottom:0;padding:8px 12px}
+.cal-nv{display:flex;align-items:center;gap:6px}
+.cal-nv h2{margin:0 6px 0 4px;font-size:17px;font-weight:800;color:var(--tx);white-space:nowrap;min-width:150px}
+.cal-nv h2 span{font-weight:500;color:var(--mut)}
+.cal-ib{width:30px;height:30px;border:1px solid var(--line);background:var(--surf);color:var(--tx);border-radius:8px;cursor:pointer;font-size:16px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.cal-ib:hover{border-color:var(--or);color:var(--or2);background:var(--orl)}
+.cal-ib.on{background:var(--or);border-color:var(--or);color:#fff}
+.cal-sm{height:30px;border:1px solid var(--line);background:var(--surf);color:var(--tx);border-radius:8px;padding:0 10px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit}
+.cal-sm:hover{border-color:var(--or);color:var(--or2)}
+select.cal-sm{font-weight:500;padding:0 6px;max-width:190px}
+.cal-sm.pri{background:var(--or);border-color:var(--or);color:#fff}
+.cal-sm.pri:hover{background:var(--or2);color:#fff}
+.cal-mi{height:30px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--tx);padding:0 6px;font-size:12.5px;font-family:inherit}
+.cal-st{display:flex;gap:6px;flex-wrap:wrap}
+.cal-pill{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:13px;background:var(--chip);color:var(--gr2);font-size:12px;border:1px solid transparent;cursor:default;white-space:nowrap;font-family:inherit}
+.cal-pill b{font-size:13px;color:var(--tx)}
+.cal-pill.info{background:var(--infol)} .cal-pill.warn{background:var(--warnl)} .cal-pill.bad{background:var(--badl)} .cal-pill.ok{background:var(--okl)}
+button.cal-pill{cursor:pointer} button.cal-pill:hover{border-color:currentColor}
+.cal-pill.sel{border-color:var(--bad);box-shadow:0 0 0 2px var(--badl)}
+.cal-act{display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap}
+.cal-bar+.cal{border-radius:0 0 14px 14px}
+.cal-d.fds{background:color-mix(in srgb,var(--surf2) 70%,var(--surf))}
+.cal-d.fer{background:repeating-linear-gradient(135deg,var(--warnl) 0 6px,transparent 6px 12px),var(--surf)}
+.cal-d.fer.fac{background:repeating-linear-gradient(135deg,var(--chip) 0 6px,transparent 6px 12px),var(--surf)}
+.cal-fer{display:block;font-size:10.5px;font-weight:700;color:var(--warn);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:-1px 0 2px}
+.cal-d.fac .cal-fer{color:var(--mut)}
+body.pa-full .cal-d{min-height:calc((100vh - 118px) / var(--sem,6))}
+/* ---------- Recado da C@P ---------- */
+.cap-card{--cap:#F2701A;--cap2:#C1662E;position:relative;display:flex;gap:14px;align-items:center;background:linear-gradient(100deg,color-mix(in srgb,var(--cap) 9%,var(--surf)) 0%,var(--surf) 60%);border:1px solid color-mix(in srgb,var(--cap) 30%,var(--line));border-left:4px solid var(--cap);border-radius:12px;padding:10px 46px 10px 12px;margin-bottom:12px}
+.cap-badge{flex-shrink:0;width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--cap),var(--cap2));color:#fff;font-weight:800;font-size:14px;letter-spacing:.02em;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(242,112,26,.3)}
+.cap-body{flex:1;min-width:0}
+.cap-hd{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--cap2)}
+body.dark .cap-hd{color:var(--cap)}
+.cap-hd span{font-weight:500;color:var(--mut);text-transform:none;letter-spacing:0}
+.cap-msg{font-size:13.5px;color:var(--tx);margin-top:2px;line-height:1.45}
+.cap-q{font-size:12.5px;color:var(--gr2);margin-top:4px;font-style:italic;line-height:1.45}
+.cap-q b{font-style:normal;font-weight:600;color:var(--mut);white-space:nowrap}
+.cap-nx{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--surf);color:var(--mut);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;padding:0}
+.cap-nx:hover{color:var(--cap2);border-color:var(--cap)}
+body.pa-full .cap-card{display:none}
+@media(max-width:700px){.cap-card{padding-right:40px}.cap-badge{width:38px;height:38px;font-size:12px}}
+
+/* ---------- Painel compacto ---------- */
+#content.pn .filters{gap:8px;margin-bottom:10px}
+#content.pn .filters label{font-size:10px}
+#content.pn .filters select,#content.pn .filters input{padding:5px 8px;min-width:96px;font-size:13px;border-radius:7px}
+#content.pn .filters .btn{padding:6px 11px;font-size:13px}
+#content.pn .kpis{grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px;margin-bottom:12px}
+#content.pn .kpi{padding:8px 11px;border-radius:10px;border-left-width:3px}
+#content.pn .kpi .l{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+#content.pn .kpi .v{font-size:20px;margin-top:1px;line-height:1.2}
+#content.pn .kpi .s{font-size:10.5px;margin-top:1px;line-height:1.3}
+#content.pn .card{padding:12px 14px}
+#content.pn .card h3{font-size:13.5px;margin-bottom:8px}
+#content.pn .chartbox{height:235px}
+#content.pn .grid{gap:10px}
+#content.pn th,#content.pn td{padding:7px 10px}
+
+/* aviso do backup */
+#bkpAviso{position:fixed;right:16px;bottom:16px;z-index:250;max-width:380px;background:var(--surf);color:var(--tx);border:1px solid var(--line);border-left:4px solid var(--or);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.25);padding:12px 14px;font-size:13px;display:none}
+#bkpAviso.show{display:block}
+#bkpAviso .bt{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+@media(max-width:900px){#bkpAviso{bottom:calc(80px + env(safe-area-inset-bottom,0px));left:12px;right:12px;max-width:none}}
+.bkp-st{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:12px}
+.bkp-st div{background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.bkp-st span{display:block;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.bkp-st b{font-size:14px;word-break:break-all}
+.cal-leg{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--mut);margin:8px 2px}
+.cal-leg span{display:inline-flex;align-items:center;gap:5px}
+.cal-leg i{display:inline-block;width:12px;height:12px;border-radius:3px}
+@media(max-width:700px){
+  .cal-hd{display:none}
+  .cal-grid{grid-template-columns:1fr}
+  .cal-d{min-height:0;border-right:0}
+  .cal-d.fora,.cal-d.vazio{display:none}
+  .cal-n .dw{display:inline;font-size:11px;color:var(--mut);text-transform:capitalize}
+  .cal-nav .lbl{flex:1;min-width:0;font-size:17px}
+  .cal-act{margin-left:0;width:100%}
+  .cal-nv h2{min-width:0}
+}
 
 /* ---------- SEMANA (arrastar) ---------- */
 .wk-nav{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
@@ -413,7 +550,7 @@ body.drag-on{cursor:grabbing;user-select:none;-webkit-user-select:none}
   .tbl-wrap td.empty::before{display:none}
   .tbl-wrap td.num{text-align:right}
   .pager{justify-content:center}
-  #modal{padding:0;align-items:stretch}
+  #modal,#rtModal{padding:0;align-items:stretch}
   .mbox,.mbox.lg{max-width:none;border-radius:0;min-height:100%;display:flex;flex-direction:column}
   .mhead{position:sticky;top:0;background:var(--surf);z-index:3;padding:12px 14px}
   .mbody{max-height:none;flex:1;padding:14px}
@@ -496,7 +633,9 @@ body.dark ::-webkit-scrollbar{width:10px;height:10px} body.dark ::-webkit-scroll
 </div>
 
 <div id="modal"><div class="mbox" id="mbox"></div></div>
+<div id="rtModal"><div class="mbox lg" id="rtBox"></div></div>
 <div id="toast"></div>
+<div id="bkpAviso"></div>
 <div id="loading"><div class="spin"></div><div id="loadingMsg">Carregando…</div></div>
 
 <script>
@@ -612,7 +751,8 @@ const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:
   lig:{ de: mesAtual()+'-01', ate: hoje(), vend:'', res:'', q:'', cls:'' },
   cli:{ q:'', dia:'', mes:'', ano:'', pag:0, cls:'' },
   pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', ped:'', entDe:'', entAte:'', sel:new Set() },
-  aniv:{ tab:'hoje', emp:'', cls:'', dia:'', mes:mesAtual().slice(5), ano:new Date().getFullYear() }
+  aniv:{ tab:'hoje', emp:'', cls:'', dia:'', mes:mesAtual().slice(5), ano:new Date().getFullYear() },
+  pcal:{ mes:mesAtual(), pessoa:'', modo:'ambos' }
 };
 const isAdmin = () => db.me && db.me.perfil === 'admin';
 /* Um login pode estar vinculado a várias vendedoras (de uma ou mais empresas) — tabela usuario_vendedoras */
@@ -747,6 +887,7 @@ async function boot(){
     $('uNome').textContent = me.nome || me.email;
     $('uPerfil').textContent = textoPerfil();
     montarEmpSel(); montarNav(); ir(st.page);
+    if(isAdmin()) setTimeout(bkpAuto, 6000);
     const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
     const dia = () => avisoEntrega(() => avisoDia(aniv));
     if(paPend().length) abrirCiente(dia); else dia();
@@ -794,11 +935,13 @@ const PAGES = {
   planodash:{ t:'Dashboard do Plano', ic:'📈', fn:()=>pgPlanoDash(), seg:'plano' },
   plano:{ t:'Plano de Ação', ic:'🎯', fn:()=>pgPlano() },
   planoconc:{ t:'Planos Concluídos', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
+  planocal:{ t:'Calendário do Plano', ic:'🗓️', fn:()=>pgPlanoCal(), seg:'plano' },
   vendedoras:{ t:'Vendedoras', ic:'👩‍💼', fn:()=>pgVend(), extra:true },
   empresas:{ t:'Empresas', ic:'🏢', fn:()=>pgEmp(), adm:true },
   usuarios:{ t:'Usuários / Acessos', ic:'🔑', fn:()=>pgUsu(), adm:true },
   perfis:{ t:'Perfis de Acesso', ic:'🧩', fn:()=>pgPerfis(), adm:true },
   permissoes:{ t:'Permissões de Telas', ic:'🛡️', fn:()=>pgPerm(), adm:true },
+  backup:{ t:'Backup do Sistema', ic:'💾', fn:()=>pgBkp(), adm:true },
   meuperfil:{ t:'Meu Perfil', ic:'👤', fn:()=>pgMeuPerfil(), livre:true }
 };
 /* Permissões de telas: usuarios.telas (null = todas as telas de operação liberadas) */
@@ -822,8 +965,8 @@ function montarNav(){
   const nAniv = anivDoDia(hoje()).length;
   const nAtras = fuVisiveis().filter(f => f.status==='pendente' && f.data_prevista <= hoje()).length;
   const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" title="${PAGES[k].t}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span><span class="lb">${PAGES[k].t}</span>${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
-  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('clientesatend') + item('planodash') + item('plano', paPend().length||'') + item('planoconc');
-  const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('perfis') + item('permissoes');
+  let h = (TELAS_OPER.some(pode) ? '<div class="sec">Operação</div>' : '') + item('painel') + item('aniversariantes', nAniv||'') + item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('clientes') + item('clientesatend') + item('planodash') + item('plano', paPend().length||'') + item('planocal') + item('planoconc');
+  const cad = item('vendedoras') + item('empresas') + item('usuarios') + item('perfis') + item('permissoes') + item('backup');
   if(cad) h += '<div class="sec">Cadastros</div>' + cad;
   h += '<div class="sec">Conta</div>' + item('meuperfil');
   $('nav').innerHTML = h;
@@ -836,8 +979,10 @@ function ir(p){
     p = [...TELAS_PERM, 'meuperfil'].find(pode);
     if(!p){ bloqueado('Nenhuma tela foi liberada para o seu usuário. Fale com o administrador.'); return; }
   }
+  if(document.body.classList.contains('pa-full') && !['plano','planoconc','planocal'].includes(p)) paTelaCheia(false);
   st.page = p; st.charts.forEach(c => c.destroy()); st.charts = [];
   $('pgTitle').textContent = PAGES[p].t; montarNav(); toggleSide(false);
+  $('content').classList.toggle('pn', p === 'painel');
   PAGES[p].fn(); window.scrollTo(0,0);
 }
 function toggleSide(on){ $('side').classList.toggle('open', on); $('overlay').classList.toggle('show', on); }
@@ -1066,6 +1211,7 @@ function pgPainel(){
     <div class="f small muted" style="padding-bottom:9px">${dia ? (diaUtil ? 'Dia útil · meta do dia = meta do mês ÷ '+duTot : 'Domingo: sem meta') : 'Dias úteis (seg a sáb): '+duAte+' de '+duTot}</div>
     <button class="btn sec" onclick="pdfPainel()">📄 Gerar PDF</button>
   </div>
+  ${capCard('vendas', { meta:T.meta, real:T.real, esp:T.esp, pm, md:T.md, hj:T.hj, atr:T.atr, efet:T.efet, duTot, duAte, mesCorr, dia:!!dia, domingo })}
   <div class="kpis">
     <div class="kpi"><div class="l">Ligações ${perDoTxt}</div><div class="v">${fmtN(T.real)}</div><div class="s">Meta ${dia?'do dia':''}: ${fmtDec(T.meta)}</div></div>
     <div class="kpi ${pm>=100?'ok':T.real>=T.esp?'info':'bad'}"><div class="l">% da meta</div><div class="v">${pm}%</div><div class="s">${dia ? perTxt : 'Ritmo esperado hoje: '+fmtN(T.esp)}</div></div>
@@ -2066,7 +2212,7 @@ const pdfTxt = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\s+/g,
 const pdfTxtML = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\r/g, '').replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 /* Corta no fim de uma palavra */
 const pdfCorta = (s, n) => { if(s.length <= n) return s; const c = s.slice(0, n); const i = c.lastIndexOf(' '); return (i > n * .6 ? c.slice(0, i) : c).replace(/[\s,.;:-]+$/, '') + '...'; };
-async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto, anexo }){
+async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto, anexo, tabela, multilinha }){
   loading(true, 'Gerando PDF…');
   try{
     await carregarPDF();
@@ -2095,11 +2241,12 @@ async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, p
     }
     if(resumo){ doc.setFontSize(9.5); doc.setTextColor(43,47,54); doc.setFont('helvetica','bold'); doc.text(pdfTxt(resumo), 12, y); y += 4; }
     doc.autoTable({
-      head: [colunas.map(pdfTxt)], body: linhas.map(r => r.map(pdfTxt)), startY: y, margin: { top: 33, left: 12, right: 12, bottom: 14 },
+      head: [colunas.map(pdfTxt)], body: linhas.map(r => r.map(multilinha ? pdfTxtML : pdfTxt)), startY: y, margin: { top: 33, left: 12, right: 12, bottom: 14 },
       styles: { font:'helvetica', fontSize: fonte || 8, cellPadding: compacto ? { top:1.4, bottom:1.4, left:1.6, right:1.6 } : (fonte && fonte < 7 ? 1.2 : 1.8), textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak', valign: compacto ? 'middle' : 'top' },
       headStyles: { fillColor:[18,125,203], textColor:255, fontStyle:'bold', ...(compacto ? { halign:'center', valign:'middle' } : {}) },
       alternateRowStyles: { fillColor:[240,246,252] }, columnStyles: estilos || {},
-      didDrawPage: d => { if(d.pageNumber > 1) cab(); }
+      didDrawPage: d => { if(d.pageNumber > 1) cab(); },
+      ...(tabela||{})
     });
     if(graficos && graficos.length){
       let gy = doc.lastAutoTable.finalY + 8, col = 0, alturaLinha = 0;
@@ -2406,7 +2553,10 @@ function paBar(x){
 function paLeadLive(){ const i = $('paIni').value, f = $('paFim').value; $('paLead').value = i ? Math.max(0, diasEntre(i, f || hoje())) : ''; $('paLeadObs').textContent = i && !f ? 'contando até hoje' : ''; }
 function paEtRender(){
   const d = st.paEtDono, l = st.paEt, ok = l.filter(s => s.ok).length, pct = $('paPct');
-  $('paEtList').innerHTML = l.map((s,i) => `<div class="pa-et"><input type="checkbox" ${s.ok?'checked':''} onchange="st.paEt[${i}].ok=this.checked;st.paEt[${i}].em=this.checked?new Date().toISOString():null;paEtRender()"><input value="${esc(s.t)}" ${d?'':'disabled'} placeholder="Descreva a etapa" oninput="st.paEt[${i}].t=this.value">${d?`<button class="btn danger sm" title="Remover" onclick="st.paEt.splice(${i},1);paEtRender()">✕</button>`:''}</div>`).join('')
+  $('paEtList').innerHTML = l.map((s,i) => { const rico = s.h || /\n/.test(s.t||'');
+    return `<div class="pa-et pa-et-q"><input type="checkbox" ${s.ok?'checked':''} onchange="st.paEt[${i}].ok=this.checked;st.paEt[${i}].em=this.checked?new Date().toISOString():null;paEtRender()">${rico
+      ? `<div class="pa-et-tx pa-et-prev ${s.ok?'pa-et-ok':''}" ${d?`onclick="paRtModal(${i})" title="Clique para abrir o editor"`:''}>${paEtHtml(s)}</div>`
+      : `<input value="${esc(s.t)}" ${d?'':'disabled'} placeholder="Descreva a etapa" oninput="st.paEt[${i}].t=this.value">`}${d?`<button class="btn sec sm" title="Abrir o editor (negrito, cor, tópicos)" onclick="paRtModal(${i})">⤢</button><button class="btn danger sm" title="Remover" onclick="st.paEt.splice(${i},1);paEtRender()">✕</button>`:''}</div>`; }).join('')
     || '<div class="small muted">Sem etapas: o % é informado manualmente. Cadastre etapas para o % ser calculado sozinho.</div>';
   if(l.length){ const v = Math.round(ok / l.length * 100); pct.value = v; pct.disabled = true; $('paEtRes').innerHTML = `<div class="pa-bar" style="margin-top:6px"><div class="pa-bar-f" style="width:${v}%;background:${v>=100?'var(--ok)':'var(--or)'}"></div></div><div class="small" style="margin-top:4px"><b>${ok} de ${l.length}</b> etapas concluídas = <b>${v}%</b></div>`; }
   else { pct.disabled = false; $('paEtRes').innerHTML = ''; }
@@ -2490,7 +2640,7 @@ function pgPlanoDash(){
   if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
   const p = st.pad, ano = String(p.ano), anoAt = new Date().getFullYear(), base = paDashBase();
   const noPer = d => !!d && d.slice(0,4) === ano && (!p.mes || d.slice(5,7) === p.mes);
-  const l = base.filter(x => noPer(paDtCri(x)));
+  const l = base.filter(x => noPer(paDtCri(x))); st.padL = l; st.padPer = (p.mes ? MESES[Number(p.mes)-1] + '/' : 'Ano ') + ano;
   const canc = l.filter(x => paStatus(x) === 'Cancelado').length, valid = l.length - canc;
   const conc = l.filter(x => paStatus(x) === 'Concluído').length, aberto = l.filter(paEhAberto).length, atras = l.filter(x => paStatus(x) === 'Atrasado').length;
   const perTxt = (p.mes ? MESES[Number(p.mes)-1] + '/' : 'Ano ') + ano;
@@ -2510,6 +2660,7 @@ function pgPlanoDash(){
     <div class="f grow small muted" style="padding-bottom:9px">Planos lançados em ${perTxt}${veTodosPlanos() ? ' · todas as pessoas' : ' · somente os seus'}. % calculado sobre os planos não cancelados${canc ? ' ('+canc+' cancelado(s))' : ''}.</div>
     <button class="btn sec" onclick="ir('plano')">🎯 Abrir Plano de Ação</button>
   </div>
+  ${capCard('plano', { total:l.length, aberto, atr:atras, conc, valid, pend:paPend().length })}
   <div class="kpis">
     <div class="kpi dk"><div class="l">Planos de ação lançados</div><div class="v">${fmtN(l.length)}</div><div class="s">${perTxt}</div></div>
     <div class="kpi warn click" onclick="st.pa.status='';ir('plano')"><div class="l">Em aberto (quantidade)</div><div class="v">${fmtN(aberto)}</div><div class="s">${atras} atrasado(s)</div></div>
@@ -2520,8 +2671,8 @@ function pgPlanoDash(){
   <div class="card"><h3>Planos de ação por mês · ${ano}</h3><div class="chartbox"><canvas id="chPA1"></canvas></div>
     <div class="small muted" style="margin-top:6px">Lançados e em aberto pelo mês de lançamento; concluídos pelo mês em que foram concluídos. Clique numa barra para filtrar o mês.</div></div>
   <div class="grid g2" style="margin-top:14px">
-    <div class="card"><h3>Planos em aberto por usuário · ${perTxt}</h3>${us.length ? `<div class="chartbox" style="height:${Math.max(280, us.length*34+60)}px"><canvas id="chPA2"></canvas></div>` : '<div class="empty">Nenhum plano no período.</div>'}</div>
-    <div class="card"><h3>% de planos concluídos por usuário · ${perTxt}</h3>${us.length ? `<div class="chartbox" style="height:${Math.max(280, us.length*34+60)}px"><canvas id="chPA3"></canvas></div>` : '<div class="empty">Nenhum plano no período.</div>'}</div>
+    <div class="card"><h3>Planos em aberto por usuário · ${perTxt}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra para abrir</span></h3>${us.length ? `<div class="chartbox" style="height:${Math.max(280, us.length*34+60)}px"><canvas id="chPA2"></canvas></div>` : '<div class="empty">Nenhum plano no período.</div>'}</div>
+    <div class="card"><h3>% de planos concluídos por usuário · ${perTxt}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra para abrir</span></h3>${us.length ? `<div class="chartbox" style="height:${Math.max(280, us.length*34+60)}px"><canvas id="chPA3"></canvas></div>` : '<div class="empty">Nenhum plano no período.</div>'}</div>
   </div>`;
 
   if(typeof Chart === 'undefined') return;
@@ -2550,15 +2701,43 @@ function pgPlanoDash(){
   st.charts.push(new Chart($('chPA2'), { type:'bar', data:{ labels: nomes(us), datasets:[
       { label:'No prazo', data: us.map(u => u.ab - u.at), backgroundColor:paGrad('#4BA6EE','#0A4E83', true), borderRadius:6, borderSkipped:false, maxBarThickness:22 },
       { label:'Atrasados', data: us.map(u => u.at), backgroundColor:paGrad('#F87171','#B91C1C', true), borderRadius:6, borderSkipped:false, maxBarThickness:22 } ] },
-    options:{ ...hz, plugins:{ rotulos:{ on:false }, rotDash:{ on:true, total:true }, legend:leg, tooltip:{ ...tip, callbacks:{ footer: it => 'Total em aberto: ' + us[it[0].dataIndex].ab } } },
+    options:{ ...hz, onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
+      onClick:(e, el, ch) => { const a = ch.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false), r = a.length ? a : ch.getElementsAtEventForMode(e, 'y', { intersect:false }, false); if(!r.length) return;
+        const u = us[r[0].index]; padDrill(u.id, a.length ? (a[0].datasetIndex === 1 ? 'atr' : 'prazo') : 'aberto'); },
+      plugins:{ rotulos:{ on:false }, rotDash:{ on:true, total:true }, legend:leg, tooltip:{ ...tip, callbacks:{ footer: it => 'Total em aberto: ' + us[it[0].dataIndex].ab } } },
       scales:{ x:{ stacked:true, beginAtZero:true, grid:{ color:grade }, border:{ display:false }, ticks:{ precision:0 } }, y:{ stacked:true, grid:{ display:false }, ticks:{ font:{ weight:'600' } } } } }, plugins:[rotDash] }));
   const pc = usPct.map(u => pct(u.conc, u.valid));
   const corPct = v => v >= 80 ? ['#4ADE80','#15803D'] : v >= 50 ? ['#FBBF24','#C2620A'] : ['#F87171','#B91C1C'];
   st.charts.push(new Chart($('chPA3'), { type:'bar', data:{ labels: nomes(usPct), datasets:[
       { label:'% concluído', data: pc, backgroundColor: c => paGrad(...corPct(pc[c.dataIndex] || 0), true)(c), borderRadius:6, borderSkipped:false, maxBarThickness:22 } ] },
-    options:{ ...hz, plugins:{ legend:{ display:false }, rotulos:{ on:false }, rotDash:{ on:true, fmt:(v,j) => v + '%  (' + usPct[j].conc + '/' + usPct[j].valid + ')', zero:true },
+    options:{ ...hz, onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
+      onClick:(e, el, ch) => { const a = ch.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false), r = a.length ? a : ch.getElementsAtEventForMode(e, 'y', { intersect:false }, false); if(r.length) padDrill(usPct[r[0].index].id, 'conc'); },
+      plugins:{ legend:{ display:false }, rotulos:{ on:false }, rotDash:{ on:true, fmt:(v,j) => v + '%  (' + usPct[j].conc + '/' + usPct[j].valid + ')', zero:true },
       tooltip:{ ...tip, callbacks:{ label: it => { const u = usPct[it.dataIndex]; return ` ${it.raw}% · ${u.conc} de ${u.valid} concluído(s)`; } } } },
       scales:{ x:{ beginAtZero:true, max:100, grid:{ color:grade }, border:{ display:false }, ticks:{ callback:v => v + '%' } }, y:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } } } }, plugins:[rotDash] }));
+}
+/* Clique nos gráficos do dashboard: lista os planos do usuário (tipo: aberto | prazo | atr | conc) */
+const PAD_TIPOS = { aberto:'em aberto', prazo:'em aberto no prazo', atr:'atrasados', conc:'concluídos' };
+function padDrill(uid, tipo){
+  st.padUlt = [uid, tipo];
+  const l = (st.padL||[]).filter(x => x.responsavel_id === uid && (
+    tipo === 'conc' ? paStatus(x) === 'Concluído' : tipo === 'atr' ? paStatus(x) === 'Atrasado' : tipo === 'prazo' ? paEhAberto(x) && paStatus(x) !== 'Atrasado' : paEhAberto(x)))
+    .sort((a,b) => (a.fim||'9999').localeCompare(b.fim||'9999') || a.id - b.id);
+  const tit = `${esc(pessoaNome(uid))} · ${l.length} plano(s) ${PAD_TIPOS[tipo]}`;
+  abrirModal(tit, `<p class="small muted" style="margin-top:0">Planos lançados em ${esc(st.padPer||'')}. Clique numa linha para abrir a ação.</p>
+    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>O quê?</th><th>Data Início</th><th>Data Prevista</th>${tipo==='conc'?'<th>Concluído em</th>':''}<th>Status</th><th>%</th></tr></thead><tbody>
+    ${l.map(x => `<tr style="cursor:pointer" onclick="pcalAbrir(${x.id})"><td><b>${x.id}</b></td><td><b>${esc(x.o_que)}</b>${x.criado_por !== x.responsavel_id ? `<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>` : ''}</td>
+      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.fim?fmtD(x.fim):''}</td>${tipo==='conc'?`<td>${x.concluido_em?fmtDH(x.concluido_em).slice(0,10):''}</td>`:''}
+      <td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td><td style="min-width:120px">${paBar(x)}</td></tr>`).join('') || `<tr><td colspan="7" class="empty">Nenhum plano.</td></tr>`}
+    </tbody></table></div>`,
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button><button class="btn" onclick="padIrPlano('${uid}','${tipo}')">Abrir no ${tipo==='conc'?'Planos Concluídos':'Plano de Ação'} ›</button>`, true);
+}
+function padIrPlano(uid, tipo){
+  fecharModal(true);
+  const todos = veTodosPlanos();
+  st.pa.pessoa = todos ? uid : ''; st.pa.ver = todos ? 'equipe' : 'todos'; st.pa.q = '';
+  st.pa.status = tipo === 'atr' ? 'Atrasado' : '';
+  ir(tipo === 'conc' ? 'planoconc' : 'plano');
 }
 /* Degradê das barras (vertical: de baixo para cima · horizontal: da esquerda para a direita) */
 function paGrad(c1, c2, horiz){
@@ -2612,11 +2791,14 @@ function pgPlano(){
   const pessoas = (db.pessoas||[]).filter(x => !paRestrito() || !paIdsReservados().has(x.id)).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   $('content').innerHTML = `
   <div class="kpis">${kpis}</div>
+  ${capCard('plano', { total:base.length, aberto: conc ? 0 : base.length, atr: conc ? 0 : n('Atrasado'), conc: conc ? base.length : nConc, valid: base.length + (conc ? 0 : nConc), pend, concTela:conc })}
   <div class="filters">
     <div class="f"><label>Exibir</label><select onchange="st.pa.ver=this.value;if(this.value!=='equipe'&&this.value!=='todos')st.pa.pessoa='';pgPlano()">${verOps.map(([v,t])=>`<option value="${v}" ${p.ver===v?'selected':''}>${t}</option>`).join('')}</select></div>
     ${todos ? `<div class="f"><label>Pessoa (quem)</label><select onchange="st.pa.pessoa=this.value;if(this.value)st.pa.ver='equipe';pgPlano()"><option value="">Todas</option>${pessoas.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select></div>` : ''}
     <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${stOps.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="paQ" value="${esc(p.q)}" placeholder="O quê, como, onde, quem…" oninput="st.pa.q=this.value;clearTimeout(window._paq);window._paq=setTimeout(()=>{pgPlano();const i=$('paQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <button class="btn sec" id="paFullBtn" onclick="paTelaCheia()" title="Expandir para a tela toda">${document.body.classList.contains('pa-full') ? '⤡ Sair da tela cheia' : '⛶ Tela cheia'}</button>
+    <button class="btn sec" onclick="ir('planocal')">🗓️ Calendário</button>
     <button class="btn sec" onclick="pdfPA()">📄 Gerar PDF</button>
     ${conc ? '' : '<button class="btn" onclick="abrirPA()">+ Nova ação</button>'}
   </div>
@@ -2626,7 +2808,7 @@ function pgPlano(){
   <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Data Início</th><th>Horário previsto</th><th>Data Prevista</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th>${conc?'<th>Concluído em</th>':''}<th>%</th><th>Observações</th><th></th></tr></thead><tbody>
   ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
     return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td>${paCel(x,'o_que',true)}${paCel(x,'por_que')}${paCel(x,'como')}
-      <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por ${esc(pessoaNome(x.criado_por))}</div>`}</td>
+      <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>`}</td>
       <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}${paPrazoMudou(x) ? `<div class="small muted" title="Data prevista alterada${x.prazo_alterado_por?' por '+esc(pessoaNome(x.prazo_alterado_por)):''}">orig. ${fmtD(x.fim_original)}</div>` : ''}</td><td>${paLead(x) ?? ''}${x.inicio && !x.fim ? '<div class="small muted">até hoje</div>' : ''}</td>
       ${paCel(x,'onde')}<td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
       ${conc ? `<td>${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
@@ -2653,7 +2835,7 @@ function paVer(id, campo){
   abrirModal(`Ação #${x.id}`,
     `<div class="pa-ver-meta">${meta.map(([l,v]) => `<div><span>${l}</span>${v}</div>`).join('')}</div>` +
     PA_CAMPOS.map(([k,r]) => { const t = String(x[k]||'').trim(); return t ? `<div class="pa-ver-b ${campo===k?'on':''}" id="pv_${k}"><div class="pa-ver-l">${r}</div><div class="pa-ver-t">${esc(t)}</div></div>` : ''; }).join('') +
-    (e.length ? `<div class="pa-ver-b"><div class="pa-ver-l">Etapas</div>${e.map(s => `<div class="${s.ok?'pa-et-ok':''}">${s.ok?'☑':'☐'} ${esc(s.t)}</div>`).join('')}</div>` : ''),
+    (e.length ? `<div class="pa-ver-b"><div class="pa-ver-l">Etapas</div>${e.map(s => `<div class="pa-et" style="align-items:flex-start"><span>${s.ok?'☑':'☐'}</span><div class="pa-et-tx ${s.ok?'pa-et-ok':''}">${paEtHtml(s)}</div></div>`).join('')}</div>` : ''),
     `<button class="btn sec" onclick="fecharModal()">Fechar</button>${ed ? `<button class="btn" onclick="fecharModal(true);abrirPA(${x.id})">✎ Editar</button>` : ''}`, true);
   if(campo) setTimeout(() => { const el = $('pv_'+campo); if(el) el.scrollIntoView({ block:'nearest' }); }, 60);
 }
@@ -2680,7 +2862,7 @@ function abrirPA(id){
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
     <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (só então vai para Planos Concluídos) · fim vencido Atrasado.</div></div>
     <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}" ${so?'disabled':''}></div>
-    <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${(dono || resp) && !so?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="st.paEt.push({t:\'\',ok:false});paEtRender()">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
+    <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${(dono || resp) && !so?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="paRtModal(null)">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
     <div class="full"><label>Observações</label><textarea id="paObs" ${so?'disabled':''}>${esc(x?x.observacoes:'')}</textarea></div>
     ${x && dono && nc > 1 ? `<label class="full ck-row" style="margin:0"><input type="checkbox" id="paTodas" checked><span>Aplicar O quê, Por quê, Como, Onde, datas, horário, valor e etapas às <b>${nc} cópias</b> deste plano (etapas e andamento já são compartilhados)</span></label>` : ''}
     ${!x ? '<div class="full small muted">Cada pessoa marcada recebe a ação na hora para dar ciente. Etapas, % e status são compartilhados: você acompanha o andamento em tempo real e recebe o aviso quando for entregue.</div>' : ''}</div>`,
@@ -2696,7 +2878,7 @@ async function salvarPA(id){
   const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me;
   const pct = Math.round(Number($('paPct').value) || 0);
   if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
-  const et = (dono || (x && x.responsavel_id === me)) ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
+  const et = (dono || (x && x.responsavel_id === me)) ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ...(s.h ? { h:s.h } : {}), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
   let o = { status:$('paStatus').value === 'Cancelado' ? 'Cancelado' : 'Não iniciado', percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
   let comum = null;
   if(dono){
@@ -2724,7 +2906,7 @@ async function salvarPA(id){
       const r = await sbFetch('/rest/v1/plano_acao', { method:'POST', body: quem.map(uid => ({ ...o, responsavel_id:uid, grupo })), headers:{ Prefer:'return=representation' } });
       (r||[]).forEach(n => db.planos.push(n));
       const outros = quem.filter(u => u !== me);
-      fecharModal(true); montarNav(); pgPlano();
+      fecharModal(true); montarNav(); paRefresh();
       toast(outros.length ? `Ação enviada para ${outros.map(pessoaNome).join(', ')}${quem.includes(me)?' e incluída no seu plano':''}. Aguardando ciente.` : 'Ação salva.', 'ok');
       return;
     }
@@ -2747,7 +2929,7 @@ async function salvarPA(id){
     Object.assign(x, salvo);
     if(novoPrazo) Object.assign(x, await paAlterarPrazo(id, novoPrazo.ni, novoPrazo.nh, novoPrazo.nf, false));
     try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){}
-    fecharModal(true); montarNav(); pgPlano();
+    fecharModal(true); montarNav(); paRefresh();
     const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
     toast(paEncerrada(x) ? 'Ação salva e movida para Planos Concluídos.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
   }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
@@ -2756,22 +2938,121 @@ async function salvarPA(id){
 function paMesclar(orig, mine, fresh){
   const k = e => (e.t || '').trim(), O = new Map(orig.map(e => [k(e), e])), Mi = new Map(mine.map(e => [k(e), e]));
   const out = fresh.map(e => ({ ...e })).filter(e => !(O.has(k(e)) && !Mi.has(k(e))));
-  out.forEach(e => { const a = O.get(k(e)), b = Mi.get(k(e)); if(a && b && !!a.ok !== !!b.ok){ e.ok = !!b.ok; e.em = b.ok ? (b.em || new Date().toISOString()) : null; } });
+  out.forEach(e => { const a = O.get(k(e)), b = Mi.get(k(e)); if(a && b && !!a.ok !== !!b.ok){ e.ok = !!b.ok; e.em = b.ok ? (b.em || new Date().toISOString()) : null; } if(a && b && (a.h||'') !== (b.h||'')){ if(b.h) e.h = b.h; else delete e.h; } });
   mine.forEach(e => { if(!O.has(k(e)) && !out.some(f => k(f) === k(e))) out.push({ ...e }); });
   return out;
 }
 /* ---------- Etapas direto na tabela (sem abrir a ação) ---------- */
+const jsAttr = v => esc(JSON.stringify(v));
 function paEtLinha(x, cols){
   const ed = x.criado_por === db.me.id || x.responsavel_id === db.me.id, e = paEtapas(x), ok = e.filter(s => s.ok).length;
   return `<tr class="pa-et-row"><td colspan="${cols}"><div class="pa-et-box">
-    <div class="pa-et-hd"><b>Etapas de #${x.id}</b> <span class="muted small">${e.length ? `${ok} de ${e.length} concluída(s) — o plano só é concluído quando todas forem marcadas` : 'Nenhuma etapa ainda'}</span>
+    <div class="pa-et-hd"><b>Etapas de #${x.id}</b> <span class="muted small">${e.length ? `${ok} de ${e.length} concluída(s) — o plano só é concluído quando todas forem entregues` : 'Nenhuma etapa ainda'}</span>
       <button class="btn sec sm" style="margin-left:auto" onclick="paTogEt(${x.id})">Fechar ✕</button></div>
-    ${e.map((s,i) => `<div class="pa-et pa-et-q"><input type="checkbox" ${s.ok?'checked':''} ${ed?'':'disabled'} onchange="paEtRapido(${x.id},'tog',${JSON.stringify(s.t).replace(/"/g,'&quot;')},this.checked)">
-      <span class="${s.ok?'pa-et-ok':''}">${esc(s.t)}</span>${s.ok && s.em ? `<span class="small muted">${fmtDH(s.em)}</span>` : ''}
-      ${ed ? `<button class="btn danger sm" title="Remover etapa" onclick="paEtRapido(${x.id},'del',${JSON.stringify(s.t).replace(/"/g,'&quot;')})">✕</button>` : ''}</div>`).join('')}
-    ${ed ? `<div class="pa-et-add"><input id="paNova${x.id}" placeholder="Nova etapa — para incluir várias, separe com ; (ex.: Levantar dados; Gerar gráfico; Apresentar)" onkeydown="if(event.key==='Enter'){event.preventDefault();paEtAdd(${x.id})}">
-      <button class="btn sm" onclick="paEtAdd(${x.id})">+ Adicionar</button>${x.como ? `<button class="btn sec sm" title="Cada linha do Como? vira uma etapa" onclick="paEtAdd(${x.id},true)">↳ Do "Como?"</button>` : ''}</div>` : ''}
+    ${e.map((s,i) => `<div class="pa-et pa-et-q"><input type="checkbox" ${s.ok?'checked':''} ${ed?'':'disabled'} onchange="paEtRapido(${x.id},'tog',${jsAttr(s.t)},this.checked)">
+      <div class="pa-et-tx ${s.ok?'pa-et-ok':''}" ${ed?`onclick="paRtEditar(${x.id},${i})" title="Clique para abrir o editor" style="cursor:pointer"`:''}>${paEtHtml(s)}</div>${s.ok && s.em ? `<span class="small muted" style="white-space:nowrap">✔ ${fmtDH(s.em)}</span>` : ''}
+      ${ed ? `${s.ok ? '' : `<button class="btn ok sm" title="Entregar / finalizar etapa" onclick="paEtRapido(${x.id},'tog',${jsAttr(s.t)},true)">✔ Entregar</button>`}<button class="btn sec sm" title="Editar no editor" onclick="paRtEditar(${x.id},${i})">✎</button><button class="btn danger sm" title="Remover etapa" onclick="paEtRapido(${x.id},'del',${jsAttr(s.t)})">✕</button>` : ''}</div>`).join('')}
+    ${ed ? `<div class="pa-et-add"><input id="paNova${x.id}" placeholder="Nova etapa — comece a escrever e o editor abre em tela maior" oninput="paRtNovo(${x.id},this)">
+      <button class="btn sm" onclick="paRtNovo(${x.id})">✎ Nova etapa</button>${x.como ? `<button class="btn sec sm" title="Cada linha do Como? vira uma etapa" onclick="paEtAdd(${x.id},true)">↳ Do "Como?"</button>` : ''}</div>` : ''}
   </div></td></tr>`;
+}
+/* Atualiza a tela atual do plano depois de salvar */
+function paRefresh(){ if(st.page === 'planocal') pgPlanoCal(); else if(st.page === 'plano' || st.page === 'planoconc') pgPlano(); else if(st.page === 'planodash') pgPlanoDash(); }
+/* Tela cheia (Plano de Ação e Planos Concluídos) */
+function paTelaCheia(on){
+  if(on === undefined) on = !document.body.classList.contains('pa-full');
+  document.body.classList.toggle('pa-full', on);
+  try{
+    if(on && !document.fullscreenElement && document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+    if(!on && document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  }catch(e){}
+  const b = $('paFullBtn'); if(b){ if(b.classList.contains('cal-ib')){ b.textContent = on ? '⤡' : '⛶'; b.title = on ? 'Sair da tela cheia' : 'Expandir calendário para a tela toda'; b.classList.toggle('on', on); } else b.textContent = on ? '⤡ Sair da tela cheia' : '⛶ Tela cheia'; }
+  requestAnimationFrame(paMarcarCortes);
+}
+document.addEventListener('fullscreenchange', () => { if(!document.fullscreenElement && document.body.classList.contains('pa-full')) paTelaCheia(false); });
+
+/* ---------- Editor de texto da etapa (negrito, sublinhado, cor, tópicos) ---------- */
+function rtLimpar(html){
+  const src = new DOMParser().parseFromString('<div>' + String(html || '') + '</div>', 'text/html').body.firstChild, out = document.createElement('div');
+  const OK = { B:'b', STRONG:'b', U:'u', I:'i', EM:'i', UL:'ul', OL:'ol', LI:'li', BR:'br', DIV:'div', P:'div', SPAN:'span', FONT:'span' };
+  const corOk = c => /^(#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\))$/i.test(String(c || '').trim());
+  (function walk(from, to){ [...from.childNodes].forEach(n => {
+    if(n.nodeType === 3){ to.appendChild(document.createTextNode(n.nodeValue)); return; }
+    if(n.nodeType !== 1) return;
+    const tag = OK[n.tagName];
+    if(!tag){ if(!['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','TEMPLATE'].includes(n.tagName)) walk(n, to); return; }
+    const el = document.createElement(tag);
+    if(tag === 'span'){ const c = n.getAttribute('color') || (n.style && n.style.color); if(corOk(c)) el.style.color = c; else { walk(n, to); return; } }
+    if(tag !== 'br') walk(n, el); to.appendChild(el);
+  }); })(src, out);
+  return out.innerHTML;
+}
+function rtTexto(html){
+  const d = new DOMParser().parseFromString('<div>' + html + '</div>', 'text/html').body.firstChild;
+  d.querySelectorAll('br').forEach(b => b.replaceWith('\n'));
+  d.querySelectorAll('li').forEach(li => { li.prepend('• '); li.append('\n'); });
+  d.querySelectorAll('div').forEach(x => x.append('\n'));
+  return d.textContent.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+function paEtHtml(s){ return s && s.h ? rtLimpar(s.h) : `<span style="white-space:pre-wrap">${esc(s ? s.t : '')}</span>`; }
+function rtSalvarSel(){ const s = getSelection(), ed = $('rtEd'); if(ed && s.rangeCount && ed.contains(s.anchorNode)) st.rtSel = s.getRangeAt(0).cloneRange(); }
+document.addEventListener('selectionchange', () => { if($('rtModal') && $('rtModal').classList.contains('show')) rtSalvarSel(); });
+function rtCmd(c, v){
+  const ed = $('rtEd'); if(!ed) return; ed.focus();
+  if(st.rtSel){ const s = getSelection(); s.removeAllRanges(); s.addRange(st.rtSel); }
+  try{ document.execCommand('styleWithCSS', false, false); }catch(e){}
+  document.execCommand(c, false, v === undefined ? null : v); rtSalvarSel();
+}
+/* o = { mode:'linha'|'modal', id, idx, old, html, txt, ok } */
+function paRtAbrir(o){
+  st.rt = o;
+  const novo = o.old == null && o.idx == null;
+  const cores = [['#DC2626','Vermelho'],['#127DCB','Azul'],['#16A34A','Verde'],['#D97706','Laranja'],['#9333EA','Roxo'],['#DB2777','Rosa']];
+  const bt = (cmd, tit, txt) => `<button class="rt-b" title="${tit}" onmousedown="event.preventDefault()" onclick="rtCmd('${cmd}')">${txt}</button>`;
+  $('rtBox').innerHTML = `<div class="mhead"><h3>${novo ? '＋ Nova etapa' : '✎ Editar etapa'}${o.id ? ' · Ação #' + o.id : ''}${o.ok ? ' <span class="tag ok">Entregue</span>' : ''}</h3><button class="x" onclick="paRtFechar(true)">×</button></div>
+    <div class="mbody"><div class="rt-bar">
+      ${bt('bold','Negrito (Ctrl+B)','<b>N</b>')}${bt('underline','Sublinhado (Ctrl+U)','<u>S</u>')}${bt('italic','Itálico (Ctrl+I)','<i>I</i>')}
+      <span class="rt-sep"></span>
+      ${cores.map(([c,n]) => `<button class="rt-cor" title="${n}" style="background:${c}" onmousedown="event.preventDefault()" onclick="rtCmd('foreColor','${c}')"></button>`).join('')}
+      <label class="rt-b" title="Outra cor">🎨<input type="color" class="rt-pick" value="#127DCB" onchange="rtCmd('foreColor',this.value)"></label>
+      <span class="rt-sep"></span>
+      ${bt('insertUnorderedList','Tópicos','• Tópicos')}${bt('insertOrderedList','Lista numerada','1. Numerada')}
+      <span class="rt-sep"></span>
+      ${bt('removeFormat','Limpar formatação do trecho selecionado','⨯ Limpar')}
+    </div>
+    <div id="rtEd" class="rt-ed" contenteditable="true" data-ph="Descreva a etapa…"></div>
+    <div class="small muted" style="margin-top:6px">Ctrl+Enter salva. A primeira linha aparece como resumo na lista de etapas.</div></div>
+    <div class="mfoot"><button class="btn sec" onclick="paRtFechar(true)">Cancelar</button><button class="btn" onclick="paRtSalvar(false)">💾 Salvar etapa</button>${o.ok ? '' : '<button class="btn ok" onclick="paRtSalvar(true)">✔ Entregar / finalizar etapa</button>'}</div>`;
+  $('rtModal').classList.add('show');
+  const ed = $('rtEd');
+  ed.innerHTML = o.html ? rtLimpar(o.html) : esc(o.txt || '').replace(/\n/g, '<br>');
+  o.ini = ed.innerHTML;
+  ed.addEventListener('keydown', ev => { if(ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)){ ev.preventDefault(); paRtSalvar(false); } });
+  ed.focus();
+  const r = document.createRange(); r.selectNodeContents(ed); r.collapse(false);
+  const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); st.rtSel = r.cloneRange();
+}
+function paRtFechar(perguntar){
+  const ed = $('rtEd');
+  if(perguntar && st.rt && ed && ed.innerHTML !== st.rt.ini && ed.textContent.trim() && !confirm('Descartar o que foi escrito nesta etapa?')) return;
+  $('rtModal').classList.remove('show'); $('rtBox').innerHTML = ''; st.rt = null; st.rtSel = null;
+}
+function paRtNovo(id, inp){ const v = inp ? inp.value : ''; if(inp) inp.value = ''; paRtAbrir({ mode:'linha', id, txt:v }); }
+function paRtEditar(id, i){ const x = db.planos.find(p => p.id === id), s = x && paEtapas(x)[i]; if(!s) return; paRtAbrir({ mode:'linha', id, old:s.t, html:s.h, txt:s.t, ok:s.ok }); }
+function paRtModal(i){ const s = i == null ? null : st.paEt[i]; paRtAbrir({ mode:'modal', idx:i, html:s && s.h, txt:s ? s.t : '', ok:s && s.ok }); }
+function paRtSalvar(entregar){
+  const o = st.rt; if(!o) return;
+  const html = rtLimpar($('rtEd').innerHTML), t = rtTexto(html);
+  if(!t) return toast('Escreva a etapa.', 'err');
+  const h = /<(b|u|i|ul|ol|span)\b/i.test(html) ? html : null;
+  paRtFechar(false);
+  if(o.mode === 'modal'){
+    const agora = new Date().toISOString();
+    if(o.idx != null){ const s = st.paEt[o.idx]; s.t = t; if(h) s.h = h; else delete s.h; if(entregar){ s.ok = true; s.em = s.em || agora; } }
+    else st.paEt.push({ t, ...(h ? { h } : {}), ok:!!entregar, em:entregar ? agora : null });
+    paEtRender(); return;
+  }
+  paEtRapido(o.id, 'set', { old:o.old, t, h, ok: entregar ? true : (o.old != null ? null : false) });
 }
 function paTogEt(id){ st.paAberto = st.paAberto || new Set(); st.paAberto.has(id) ? st.paAberto.delete(id) : st.paAberto.add(id); pgPlano(); const i = $('paNova'+id); if(i && st.paAberto.has(id)) i.focus(); }
 function paEtAdd(id, doComo){
@@ -2789,10 +3070,15 @@ async function paEtRapido(id, op, val, marcado){
     for(let t = 0; t < 4 && !salvo; t++){
       const fr = (await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&select=*`) || [])[0];
       if(!fr) throw new Error('Esta ação não existe mais. Clique em Atualizar.');
-      let e = paEtapas(fr).map(s => ({ ...s }));
+      let e = paEtapas(fr).map(s => ({ ...s })); const agora = new Date().toISOString();
       if(op === 'add') val.forEach(t => { if(!e.some(s => s.t.trim() === t)) e.push({ t, ok:false, em:null }); });
       if(op === 'del') e = e.filter(s => s.t !== val);
-      if(op === 'tog') e.forEach(s => { if(s.t === val){ s.ok = !!marcado; s.em = marcado ? new Date().toISOString() : null; } });
+      if(op === 'tog') e.forEach(s => { if(s.t === val){ s.ok = !!marcado; s.em = marcado ? agora : null; } });
+      if(op === 'set'){
+        const s0 = val.old != null ? e.find(s => s.t === val.old) : null;
+        if(s0){ s0.t = val.t; if(val.h) s0.h = val.h; else delete s0.h; if(val.ok != null){ s0.ok = !!val.ok; s0.em = val.ok ? (s0.em || agora) : null; } }
+        else if(!e.some(s => s.t.trim() === val.t)) e.push({ t:val.t, ...(val.h ? { h:val.h } : {}), ok:!!val.ok, em:val.ok ? agora : null });
+      }
       const body = { etapas:e, percentual: e.length ? Math.round(e.filter(s => s.ok).length / e.length * 100) : fr.percentual };
       const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&updated_at=eq.${encodeURIComponent(fr.updated_at)}`, { method:'PATCH', body, headers:{ Prefer:'return=representation' } });
       if(r && r.length) salvo = r[0];
@@ -2800,11 +3086,171 @@ async function paEtRapido(id, op, val, marcado){
     if(!salvo) throw new Error('Outra pessoa está alterando esta ação agora. Tente de novo em instantes.');
     try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){ Object.assign(x, salvo); }
     montarNav();
-    if(paEncerrada(salvo) && st.page === 'plano'){ st.paAberto.delete(id); toast('Todas as etapas concluídas! O plano foi para Planos Concluídos.', 'ok'); }
+    const fim = paEncerrada(salvo) && ['plano','planocal'].includes(st.page);
+    if(fim){ (st.paAberto||new Set()).delete(id); toast('Todas as etapas concluídas! O plano foi para Planos Concluídos.', 'ok'); }
     else if(op === 'add') toast(val.length > 1 ? val.length+' etapas incluídas.' : 'Etapa incluída.', 'ok');
-    pgPlano(); const i = $('paNova'+id); if(i && op === 'add') i.focus();
-  }catch(e){ toast(e.message, 'err'); pgPlano(); }
+    else if(op === 'set') toast(val.ok ? 'Etapa entregue.' : 'Etapa salva.', 'ok');
+    else if(op === 'tog' && marcado) toast('Etapa entregue.', 'ok');
+    paRefresh();
+    if(st.page === 'planocal' && st.pcalAberto === id && $('modal').classList.contains('show')){ if(fim){ st.pcalAberto = null; fecharModal(true); } else pcalAbrir(id); }
+    const i = $('paNova'+id); if(i && op === 'add') i.focus();
+  }catch(e){ toast(e.message, 'err'); paRefresh(); }
 }
+
+/* ============================ CALENDÁRIO DO PLANO DE AÇÃO ============================ */
+function pcalBase(){
+  const me = db.me.id, todos = veTodosPlanos(), p = st.pcal;
+  return (db.planos||[]).filter(x => !paEncerrada(x) && paStatus(x) !== 'Cancelado'
+    && (todos ? (!p.pessoa || x.responsavel_id === p.pessoa) : (x.criado_por === me || x.responsavel_id === me))
+    && (!p.soAtr || paStatus(x) === 'Atrasado'));
+}
+function pcalEventos(base){
+  const ev = {}, add = (d, x, t) => { if(d) (ev[d] = ev[d] || []).push({ x, t }); };
+  base.forEach(x => {
+    if(x.fim) add(x.fim, x, 'fim'); /* somente a Data Prevista vigente (a última aprovada) */
+  });
+  return ev;
+}
+const pcalOrd = (a,b) => (paStatus(b.x)==='Atrasado') - (paStatus(a.x)==='Atrasado') || (a.t==='fim'?0:1) - (b.t==='fim'?0:1) || (a.x.horario||'99').localeCompare(b.x.horario||'99') || a.x.id - b.x.id;
+const pcalCls = x => { const s = paStatus(x); return s === 'Atrasado' ? 'at' : s === 'Não iniciado' ? 'ni' : 'and'; };
+function pcalChip(e, nomes){
+  const x = e.x, me = db.me.id, pendC = x.responsavel_id === me && x.criado_por !== me && !x.ciente_em;
+  const tit = '#' + x.id + ' · ' + x.o_que + ' — ' + pessoaNome(x.responsavel_id) + ' · ' + paStatus(x) + ' · ' + paPct(x) + '%' + ' · Data prevista ' + fmtD(x.fim || '') + (paPrazoMudou(x) ? ' (alterada de ' + fmtD(x.fim_original) + ')' : '');
+  return `<button class="cal-ev ${pcalCls(x)} ${e.t}" title="${esc(tit)}" onclick="event.stopPropagation();pcalAbrir(${x.id})">${e.t === 'ini' ? '▶' : '⚑'} ${pendC ? '📌 ' : ''}${x.horario && e.t === 'ini' ? x.horario.slice(0,5) + ' ' : ''}<b>#${x.id}</b> ${esc(x.o_que)}${nomes ? `<span class="nm">${esc(pessoaNome(x.responsavel_id))}</span>` : ''}<i class="pg" style="width:${paPct(x)}%"></i></button>`;
+}
+function pcalMes(n){ const [y,m] = st.pcal.mes.split('-').map(Number), d = new Date(y, m-1+n, 1); st.pcal.mes = d.getFullYear() + '-' + pad(d.getMonth()+1); pgPlanoCal(); }
+function pcalDias(mes){
+  const [y,m] = mes.split('-').map(Number), ini = semanaIni(mes+'-01'), fim = addDias(semanaIni(isoLocal(new Date(y, m, 0))), 6), dias = [];
+  for(let d = ini; d <= fim; d = addDias(d, 1)) dias.push(d);
+  return dias;
+}
+/* Feriados nacionais (calculados, inclusive os móveis pela Páscoa). Feriados locais: incluir em FERIADOS_LOCAIS como { d:'MM-DD', n:'Nome' }. */
+const FERIADOS_LOCAIS = [];
+const _ferCache = {};
+function pascoa(y){
+  const a = y%19, b = Math.floor(y/100), c = y%100, d = Math.floor(b/4), e = b%4, f = Math.floor((b+8)/25), g = Math.floor((b-f+1)/3),
+    h = (19*a+b-d-g+15)%30, i = Math.floor(c/4), k = c%4, l = (32+2*e+2*i-h-k)%7, m = Math.floor((a+11*h+22*l)/451),
+    mes = Math.floor((h+l-7*m+114)/31), dia = ((h+l-7*m+114)%31)+1;
+  return y + '-' + pad(mes) + '-' + pad(dia);
+}
+function feriados(y){
+  if(_ferCache[y]) return _ferCache[y];
+  const f = {}, p = pascoa(y), fixo = (md, n) => f[y+'-'+md] = { n };
+  fixo('01-01','Confraternização Universal'); fixo('04-21','Tiradentes'); fixo('05-01','Dia do Trabalho'); fixo('09-07','Independência do Brasil');
+  fixo('10-12','Nossa Senhora Aparecida'); fixo('11-02','Finados'); fixo('11-15','Proclamação da República'); if(y >= 2024) fixo('11-20','Consciência Negra'); fixo('12-25','Natal');
+  f[addDias(p,-48)] = { n:'Carnaval', fac:1 }; f[addDias(p,-47)] = { n:'Carnaval', fac:1 }; f[addDias(p,-2)] = { n:'Sexta-feira Santa' }; f[p] = { n:'Páscoa' }; f[addDias(p,60)] = { n:'Corpus Christi', fac:1 };
+  FERIADOS_LOCAIS.forEach(x => f[y+'-'+x.d] = { n:x.n });
+  return (_ferCache[y] = f);
+}
+const feriadoDe = iso => feriados(Number(iso.slice(0,4)))[iso] || null;
+function pgPlanoCal(){
+  if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
+  const c = st.pcal, h = hoje(), me = db.me.id, todos = veTodosPlanos(), full = document.body.classList.contains('pa-full');
+  if(!todos) c.pessoa = '';
+  const base = pcalBase(), ev = pcalEventos(base), [y,m] = c.mes.split('-').map(Number), dias = pcalDias(c.mes), nomes = todos && !c.pessoa;
+  const tudo = (() => { const s = c.soAtr; c.soAtr = false; const r = pcalBase(); c.soAtr = s; return r; })();
+  const noMes = tudo.filter(x => (x.fim||'').slice(0,7) === c.mes).length, atr = tudo.filter(x => paStatus(x) === 'Atrasado').length;
+  const prox = tudo.filter(x => x.fim && x.fim >= h && x.fim <= addDias(h,7)).length, semData = base.filter(x => !x.fim), pend = paPend().length;
+  const ferMes = Object.entries(feriados(y)).filter(([d]) => d.slice(0,7) === c.mes).sort();
+  const pessoas = (db.pessoas||[]).filter(x => !paRestrito() || !paIdsReservados().has(x.id)).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  $('content').innerHTML = `
+  <div class="cal-bar">
+    <div class="cal-nv">
+      <button class="cal-ib" title="Mês anterior" onclick="pcalMes(-1)">‹</button><button class="cal-ib" title="Próximo mês" onclick="pcalMes(1)">›</button>
+      <h2>${MESES[m-1]} <span>${y}</span></h2>
+      <button class="cal-sm" onclick="st.pcal.mes=mesAtual();pgPlanoCal()" ${c.mes===mesAtual()?'disabled style="opacity:.5;cursor:default"':''}>Hoje</button>
+      <input type="month" class="cal-mi" value="${c.mes}" onchange="if(this.value){st.pcal.mes=this.value;pgPlanoCal()}" title="Ir para o mês">
+    </div>
+    <div class="cal-st">
+      <span class="cal-pill" title="${todos ? (c.pessoa ? esc(pessoaNome(c.pessoa)) : 'Todas as pessoas') : 'Suas ações'}"><b>${fmtN(tudo.length)}</b> em aberto</span>
+      <span class="cal-pill info"><b>${fmtN(noMes)}</b> prazo no mês</span>
+      <span class="cal-pill warn"><b>${fmtN(prox)}</b> em 7 dias</span>
+      <button class="cal-pill bad ${c.soAtr?'sel':''}" title="${c.soAtr?'Mostrar todas':'Mostrar somente as atrasadas'}" onclick="st.pcal.soAtr=!st.pcal.soAtr;pgPlanoCal()"><b>${fmtN(atr)}</b> atrasada(s)${c.soAtr?' ✕':''}</button>
+      ${pend ? `<button class="cal-pill ok" onclick="abrirCiente(null)">📌 <b>${pend}</b> aguardando ciente</button>` : ''}
+    </div>
+    <div class="cal-act">
+      ${todos ? `<select class="cal-sm" title="Pessoa (quem)" onchange="st.pcal.pessoa=this.value;pgPlanoCal()"><option value="">👥 Todas as pessoas</option>${pessoas.map(x=>`<option value="${x.id}" ${c.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select>` : ''}
+      <button class="cal-ib" title="Abrir o Plano de Ação" onclick="ir('plano')">🎯</button>
+      <button class="cal-ib" title="Imprimir PDF" onclick="pcalPdf()">🖨️</button>
+      <button class="cal-ib ${full?'on':''}" id="paFullBtn" title="${full?'Sair da tela cheia':'Expandir calendário para a tela toda'}" onclick="paTelaCheia();pgPlanoCal()">${full?'⤡':'⛶'}</button>
+      <button class="cal-sm pri" onclick="pcalNova('')">+ Nova ação</button>
+    </div>
+  </div>
+  <div class="cal">
+    <div class="cal-hd">${['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'].map(d=>`<div>${d}</div>`).join('')}</div>
+    <div class="cal-grid" style="--sem:${dias.length/7}">${dias.map((d, k) => { const l = (ev[d]||[]).slice().sort(pcalOrd), fora = d.slice(0,7) !== c.mes, fer = feriadoDe(d), lim = full ? 6 : 4;
+      return `<div class="cal-d ${fora?'fora':''} ${d===h?'hoje':''} ${k%7>=5?'fds':''} ${fer?'fer':''} ${fer&&fer.fac?'fac':''} ${!l.length && d!==h && !fer?'vazio':''}" onclick="pcalDia('${d}')">
+        <div class="cal-n"><b>${Number(d.slice(8))}</b><span class="dw">${nomeDia(d)} ${fmtDM(d)}</span>${d===h?'<small>Hoje</small>':''}${l.length?`<span class="q">${l.length}</span>`:''}</div>
+        ${fer ? `<span class="cal-fer" title="${esc(fer.n)}${fer.fac?' (ponto facultativo)':' (feriado)'}">${fer.fac?'◦':'★'} ${esc(fer.n)}</span>` : ''}
+        ${l.slice(0,lim).map(e => pcalChip(e, nomes)).join('')}${l.length > lim ? `<div class="cal-mais">+${l.length-lim} mais</div>` : ''}</div>`; }).join('')}</div>
+  </div>
+  <div class="cal-leg"><span>⚑ Data prevista (a última aprovada)</span><span><i style="background:var(--warn)"></i>Não iniciado</span><span><i style="background:var(--info)"></i>Em andamento</span><span><i style="background:var(--bad)"></i>Atrasado</span><span>📌 Aguardando seu ciente</span><span>★ Feriado</span><span>◦ Ponto facultativo</span>
+    ${ferMes.length ? `<span style="margin-left:auto">Feriados do mês: ${ferMes.map(([d,f]) => `<b>${fmtDM(d)}</b> ${esc(f.n)}`).join(' · ')}</span>` : ''}</div>
+  ${semData.length ? `<div class="card"><h3>Ações sem data prevista (${semData.length})</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px">${semData.map(x => pcalChip({ x, t:'fim' }, nomes)).join('')}</div></div>` : ''}`;
+}
+function pcalCard(x, t){
+  return `<div class="box-info" style="cursor:pointer" onclick="pcalAbrir(${x.id})"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start"><div style="flex:1;min-width:200px">
+    <b>#${x.id} · ${esc(x.o_que)}</b>
+    <div class="small">${t==='ini' ? '<span class="tag info">▶ Início'+(x.horario?' às '+x.horario.slice(0,5):'')+'</span>' : '<span class="tag or">⚑ Data prevista</span>'} <span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span> ${esc(pessoaNome(x.responsavel_id))}${x.criado_por !== x.responsavel_id ? ' · enviada por <b style="color:var(--bad)">'+esc(pessoaNome(x.criado_por))+'</b>' : ''}</div></div>
+    <div style="min-width:140px">${paBar(x)}</div></div></div>`;
+}
+function pcalDia(d){
+  const l = (pcalEventos(pcalBase())[d]||[]).slice().sort(pcalOrd);
+  const fer = feriadoDe(d);
+  abrirModal(`🗓️ ${nomeDia(d)}, ${fmtD(d)}${fer ? ` · <span style="color:var(--warn)">${fer.fac?'◦':'★'} ${esc(fer.n)}</span>` : ''}`, l.length ? l.map(e => pcalCard(e.x, e.t)).join('') : '<div class="empty">Nenhuma ação neste dia.</div>',
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button><button class="btn" onclick="pcalNova('${d}')">+ Nova ação com prazo neste dia</button>`, true);
+}
+function pcalNova(d){
+  fecharModal(true); abrirPA();
+  if(d){ const f = $('paFim'), i = $('paIni'); if(f) f.value = d; if(i && !i.value && hoje() <= d) i.value = hoje(); paLeadLive(); }
+}
+function pcalAbrir(id){
+  const x = db.planos.find(p => p.id === id); if(!x) return;
+  const me = db.me.id, dono = x.criado_por === me, resp = x.responsavel_id === me, ed = dono || resp, e = paEtapas(x), pendC = resp && !dono && !x.ciente_em;
+  st.pcalAberto = id;
+  const meta = [['Quem', esc(pessoaNome(x.responsavel_id)) + (x.responsavel_id !== x.criado_por ? '<div>' + paCiente(x) + '</div>' : '')],
+    ['Enviada por', dono ? 'Você' : `<b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b>`],
+    ['Data Início', x.inicio ? fmtD(x.inicio) + (x.horario ? ' · ' + x.horario.slice(0,5) : '') : '—'],
+    ['Data Prevista', x.fim ? fmtD(x.fim) + (paPrazoMudou(x) ? ' <span class="small muted">(orig. ' + fmtD(x.fim_original) + ')</span>' : '') : '—'],
+    ['Status', `<span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span>`],
+    ['Lead time', paLead(x) != null ? paLead(x) + ' dia(s)' : '—']];
+  abrirModal(`🎯 Ação #${x.id}`,
+    `<div class="pa-ver-meta">${meta.map(([l,v]) => `<div><span>${l}</span>${v}</div>`).join('')}</div><div style="margin-bottom:12px">${paBar(x)}</div>` +
+    PA_CAMPOS.map(([k,r]) => { const t = String(x[k]||'').trim(); return t ? `<div class="pa-ver-b"><div class="pa-ver-l">${r}</div><div class="pa-ver-t">${esc(t)}</div></div>` : ''; }).join('') +
+    `<div class="pa-ver-b"><div class="pa-ver-l" style="display:flex;align-items:center;gap:8px">Etapas ${e.length ? `(${e.filter(s=>s.ok).length}/${e.length})` : ''}${ed ? `<button class="btn sm" style="margin-left:auto" onclick="paRtAbrir({mode:'linha',id:${id}})">＋ Nova etapa</button>` : ''}</div>
+      ${e.map((s,i) => `<div class="pa-et pa-et-q"><input type="checkbox" ${s.ok?'checked':''} ${ed?'':'disabled'} onchange="paEtRapido(${id},'tog',${jsAttr(s.t)},this.checked)"><div class="pa-et-tx ${s.ok?'pa-et-ok':''}" ${ed?`onclick="paRtEditar(${id},${i})" style="cursor:pointer" title="Clique para abrir o editor"`:''}>${paEtHtml(s)}</div>${ed && !s.ok ? `<button class="btn ok sm" onclick="paEtRapido(${id},'tog',${jsAttr(s.t)},true)">✔ Entregar</button>` : ''}</div>`).join('') || '<div class="small muted">Nenhuma etapa ainda.</div>'}</div>`,
+    `${st.page === 'planodash' && st.padUlt ? `<button class="btn sec" onclick="padDrill(st.padUlt[0],st.padUlt[1])">‹ Voltar à lista</button>` : ''}<button class="btn sec" onclick="fecharModal()">Fechar</button>${pendC ? `<button class="btn ok" onclick="st.pcalAberto=null;abrirCiente(null,${id})">✔ Dar ciente</button>` : ''}<button class="btn" onclick="st.pcalAberto=null;abrirPA(${id})">${ed ? '✎ Editar ação' : '👁 Ver completo'}</button>`,
+    true, () => { st.pcalAberto = null; });
+}
+function pcalPdf(){
+  abrirModal('📄 Imprimir calendário', `<p style="margin-top:0">Calendário de <b>${MESES[Number(st.pcal.mes.slice(5))-1]} ${st.pcal.mes.slice(0,4)}</b> com os filtros atuais. Escolha a orientação da página.</p>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn sec" onclick="fecharModal(true);gerarPdfCal(true)">📄 Retrato</button><button class="btn" onclick="fecharModal(true);gerarPdfCal(false)">📄 Paisagem</button>`);
+}
+function gerarPdfCal(ret){
+  const c = st.pcal, h = hoje(), base = pcalBase(), ev = pcalEventos(base), [y,m] = c.mes.split('-').map(Number), dias = pcalDias(c.mes);
+  const nomes = veTodosPlanos() && !c.pessoa, lim = ret ? 30 : 48, sem = [], meta = [];
+  for(let w = 0; w < dias.length; w += 7){
+    const r = [], mr = [];
+    dias.slice(w, w+7).forEach(di => {
+      const fora = di.slice(0,7) !== c.mes, l = (ev[di]||[]).slice().sort(pcalOrd);
+      const fer = feriadoDe(di);
+      r.push(Number(di.slice(8)) + (di === h ? '  - HOJE' : '') + (fer && !fora ? '\n' + (fer.fac ? 'Ponto facultativo: ' : 'FERIADO: ') + fer.n : '') + (fora ? '' : l.map(e => '\n' + (e.t === 'ini' ? '> Início ' : '* Prazo ') + '#' + e.x.id + ' ' + pdfCorta(pdfTxt(e.x.o_que), lim) + (nomes ? ' (' + pdfTxt(pessoaNome(e.x.responsavel_id)) + ')' : '') + (paStatus(e.x) === 'Atrasado' ? ' [ATRASADA]' : '')).join('')));
+      mr.push({ fora, hoje: di === h, fer: !fora && !!fer, at: !fora && l.some(e => paStatus(e.x) === 'Atrasado') });
+    });
+    sem.push(r); meta.push(mr);
+  }
+  const larg = (ret ? 210 : 297) - 24, alt = (ret ? 297 : 210) - 62;
+  gerarPDF({ titulo:'Calendário do Plano de Ação', arquivo:`calendario_plano_${c.mes}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 6.6, multilinha:true,
+    subtitulo: MESES[m-1] + ' ' + y + '  -  ' + (veTodosPlanos() ? (c.pessoa ? 'Pessoa: ' + pessoaNome(c.pessoa) : 'Todas as pessoas') : 'Minhas ações') + '  -  Data prevista vigente',
+    resumo: `${base.length} ação(ões) em aberto  |  ${base.filter(x => (x.fim||'').slice(0,7) === c.mes).length} com prazo no mês  |  ${base.filter(x => paStatus(x) === 'Atrasado').length} atrasada(s)`,
+    colunas:['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'], linhas:sem,
+    estilos: Object.fromEntries([0,1,2,3,4,5,6].map(i => [i, { cellWidth: larg/7 }])),
+    tabela:{ rowPageBreak:'avoid', bodyStyles:{ minCellHeight: alt / sem.length, valign:'top' },
+      didParseCell: dd => { if(dd.section !== 'body') return; const mm = meta[dd.row.index][dd.column.index];
+        dd.cell.styles.fillColor = mm.fora ? [243,244,246] : mm.hoje ? [227,240,250] : mm.fer ? [255,246,229] : mm.at ? [254,242,242] : [255,255,255];
+        if(mm.fora) dd.cell.styles.textColor = [170,170,170]; } } });
+}
+
 /* Aviso do dia: ações da pessoa com início ou prazo final hoje (uma vez por dia) */
 function paHoje(){ const h = hoje(); return (db.planos||[]).filter(x => x.responsavel_id === db.me.id && !paEncerrada(x) && paStatus(x) !== 'Cancelado' && (x.inicio === h || x.fim === h)).sort((a,b) => (a.horario||'99').localeCompare(b.horario||'99')); }
 function avisoDia(depois){
@@ -2829,7 +3275,7 @@ async function excluirPA(id){
   try{
     const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${id}`, { method:'DELETE', headers:{ Prefer:'return=representation' } });
     if(!r || !r.length) throw new Error('O banco não permitiu excluir esta ação. Execute o 14_plano_excluir_todos.sql no Supabase.');
-    db.planos = db.planos.filter(p => p.id !== id); montarNav(); pgPlano(); toast('Ação excluída.', 'ok'); }
+    db.planos = db.planos.filter(p => p.id !== id); montarNav(); paRefresh(); toast('Ação excluída.', 'ok'); }
   catch(e){ toast(e.message, 'err'); }
 }
 /* Ciente com data alterada passa pelo banco (registra a data original e quem alterou) */
@@ -2893,7 +3339,7 @@ async function ciDarCiencia(){
     if(c.fim) n = await paAlterarPrazo(x.id, x.inicio || null, x.horario ? x.horario.slice(0,5) : null, c.fim, true, c.mot);
     else n = (await sbFetch(`/rest/v1/plano_acao?id=eq.${x.id}`, { method:'PATCH', body:{ ciente_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } }) || [])[0];
     if(n){ const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; }
-    montarNav(); if(st.page === 'plano' || st.page === 'planoconc') pgPlano();
+    montarNav(); paRefresh();
     toast(c.fim ? `Ciência registrada com nova data prevista ${fmtD(c.fim)}.` : 'Ciência registrada.', 'ok');
     st.ci = null; abrirCiente();
   }catch(e){ toast(e.message, 'err'); const b = $('ciOk'); if(b) b.disabled = false; }
@@ -2908,7 +3354,7 @@ async function checarCiente(){
     db.planos = r;
     if(r.some(n => ![n.criado_por, n.responsavel_id].every(u => (db.pessoas||[]).some(p => p.id === u)))) await carregarPessoas();
     const aberto = $('modal').classList.contains('show');
-    if(mudou){ montarNav(); if(st.page === 'planodash' && !aberto) pgPlanoDash(); if((st.page === 'plano' || st.page === 'planoconc') && !aberto && document.activeElement && document.activeElement.id !== 'paQ' && !String(document.activeElement.id).startsWith('paNova')) pgPlano(); }
+    if(mudou){ montarNav(); if(st.page === 'planodash' && !aberto) pgPlanoDash(); if(st.page === 'planocal' && !aberto && !$('rtModal').classList.contains('show')) pgPlanoCal(); if((st.page === 'plano' || st.page === 'planoconc') && !aberto && document.activeElement && document.activeElement.id !== 'paQ' && !String(document.activeElement.id).startsWith('paNova')) pgPlano(); }
     if(aberto) return;
     if(paPend().some(x => !st.cienteVisto.has(x.id))) return abrirCiente(null);
     if(paEntregas().length) return avisoEntrega(null);
@@ -2999,6 +3445,208 @@ function gerarPdfPA(){
     resumo: paConc() ? `${l.length} ação(ões) concluída(s)` : `${l.length} ação(ões)  |  ${n('Em andamento')} em andamento  |  ${n('Não iniciado')} não iniciada(s)  |  ${n('Atrasado')} atrasada(s)  |  Total previsto ${fmtBRL(l.reduce((a,x)=>a+(Number(x.quanto)||0),0))}`,
     colunas: cols.map(c => c.t), linhas, estilos, anexo });
 }
+
+/* ============================ RECADOS DA C@P CONSULTORIA ============================ */
+const CAP_VENDAS = [
+  'Meta não se bate no último dia: se bate um pouco a cada ligação. Constância vence esforço concentrado.',
+  'Cada cliente que atende é uma porta aberta. Prepare o que vai dizer antes de discar e conduza a conversa para o próximo passo.',
+  'Follow-up é respeito com o cliente: quem promete retornar e retorna conquista confiança — e confiança vira pedido.',
+  'Comece o dia pelas ligações mais importantes. O que fica para depois costuma ficar para nunca.',
+  'Não é o número de ligações que fecha vendas, é a qualidade da conversa. Ouça mais do que fala e anote tudo.',
+  'Um “não agora” bem registrado é um “sim” mais à frente. Agende o retorno e volte no dia certo.',
+  'Bater a meta é consequência de rotina: bloco de ligações, registro na hora e follow-up em dia.',
+  'Cliente lembrado é cliente que volta. Aniversários e pós-venda são as ligações mais fáceis do dia — não deixe passar.',
+  'Pequenas metas diárias constroem grandes resultados mensais. Foque no número de hoje.',
+  'Ritmo é tudo: ligação feita hoje vale mais do que duas prometidas para amanhã.'
+];
+const CAP_PLANO = [
+  'Plano de ação bom tem dono, prazo e próximo passo claro. Se faltar um dos três, ele vira só intenção.',
+  'Quebre cada ação em etapas pequenas: o que é visível é gerenciável, e o andamento aparece sozinho.',
+  'Ação atrasada não se resolve sozinha. Repactue o prazo com quem enviou, registre o motivo e siga em frente.',
+  'Revise o plano toda semana: o que foi concluído, o que travou e o que precisa de ajuda.',
+  'Prioridade é escolher o que NÃO fazer agora. Concentre a energia nas ações de maior impacto.',
+  'Dar ciente rápido mostra compromisso. Quem recebe uma ação deve confirmar o prazo no mesmo dia.',
+  'Concluir é melhor do que começar muitas. Termine o que está em andamento antes de abrir novas frentes.',
+  'Todo problema recorrente merece um padrão. Ação concluída que vira rotina não volta como problema.'
+];
+const CAP_CITACOES = [
+  { t:'Planos são apenas boas intenções, a menos que se transformem imediatamente em trabalho duro.', a:'Peter Drucker' },
+  { t:'Não há nada tão inútil quanto fazer com grande eficiência algo que não deveria ser feito.', a:'Peter Drucker' },
+  { t:'O bom é inimigo do ótimo.', a:'Jim Collins' },
+  { t:'Não é necessário mudar. Sobreviver não é obrigatório.', a:'W. Edwards Deming' },
+  { t:'Onde não há padrão, não pode haver melhoria.', a:'Taiichi Ohno' },
+  { t:'Sonhar grande ou sonhar pequeno dá o mesmo trabalho.', a:'Jorge Paulo Lemann' },
+  { t:'Mude antes que seja obrigado.', a:'Jack Welch' },
+  { t:'Seus clientes mais insatisfeitos são sua maior fonte de aprendizado.', a:'Bill Gates' },
+  { t:'A única maneira de fazer um ótimo trabalho é amar o que você faz.', a:'Steve Jobs' },
+  { t:'Leva 20 anos para construir uma reputação e cinco minutos para arruiná-la.', a:'Warren Buffett' }
+];
+st.capIdx = {}; st.capCtx = {};
+const diaDoAno = () => { const d = new Date(), i = new Date(d.getFullYear(), 0, 0); return Math.floor((d - i) / 86400000); };
+function capRecadoVendas(c){
+  if(c.dia) return c.meta ? (c.real >= c.meta ? `<b>Meta do dia batida!</b> ${fmtN(c.real)} ligações. Parabéns pelo foco. 🎯` : `No dia: <b>${fmtN(c.real)} de ${fmtDec(c.meta)}</b> ligações. ${c.real ? 'Bom começo — mantenha o ritmo.' : 'Bora começar: a primeira ligação destrava o resto.'}`) : 'Dia sem meta definida. Use para colocar os follow-ups em dia.';
+  if(!c.meta) return 'Ainda não há meta definida para o período. Com meta, conseguimos acompanhar o ritmo de cada vendedora.';
+  const falta = Math.max(0, Math.ceil(c.meta - c.real)), rest = Math.max(1, c.duTot - c.duAte + (c.mesCorr && !c.domingo ? 1 : 0)), atr = c.atr ? ` Comece pelos <b>${fmtN(c.atr)} follow-ups atrasados</b>: são clientes esperando seu retorno.` : '';
+  if(c.pm >= 100) return `<b>Meta do mês batida! 🎉</b> ${fmtN(c.real)} ligações (${c.pm}%). Agora é ampliar a vantagem e caprichar na qualidade dos contatos.` + atr;
+  if(!c.mesCorr) return `Resultado do período: <b>${c.pm}% da meta</b> (${fmtN(c.real)} de ${fmtDec(c.meta)}).`;
+  if(c.real >= c.esp) return `<b>No ritmo!</b> ${fmtN(c.real - c.esp)} ligação(ões) à frente do esperado. Faltam ${fmtN(falta)} para a meta — cerca de <b>${fmtDec(falta / rest)} por dia útil</b>.` + atr;
+  return `<b>Faltam ${fmtN(falta)} ligações</b> para bater a meta do mês: cerca de <b>${fmtDec(falta / rest)} por dia útil</b> até o fim do mês. Dá para virar o jogo — foco total hoje!` + atr;
+}
+function capRecadoPlano(c){
+  if(c.concTela) return `<b>${fmtN(c.total)} plano(s) concluído(s).</b> Resultado entregue é o que move a empresa — reconheça quem fez acontecer e transforme o aprendizado em padrão.`;
+  if(!c.valid && !c.aberto) return 'Nenhum plano de ação no período. Todo problema identificado merece uma ação com dono e prazo.';
+  const pc = pct(c.conc, c.valid), atr = c.atr ? `<b>${fmtN(c.atr)} ação(ões) atrasada(s)</b>: priorize-as hoje ou repactue o prazo com quem enviou. ` : '';
+  const pend = c.pend ? `Há <b>${c.pend}</b> ação(ões) aguardando seu ciente. ` : '';
+  if(c.atr) return pend + atr + `${fmtN(c.aberto)} em aberto no total.`;
+  if(pc >= 80) return pend + `<b>Excelente execução: ${pc}% concluído.</b> Mantenha a revisão semanal para não deixar nada escapar.`;
+  return pend + `<b>${fmtN(c.aberto)} ação(ões) em aberto</b> e nenhuma atrasada — ótimo controle de prazos. Agora é avançar nas etapas e concluir.`;
+}
+function capCard(tipo, ctx){
+  st.capCtx[tipo] = ctx;
+  const i = (diaDoAno() + (st.capIdx[tipo] || 0));
+  const msg = tipo === 'vendas' ? capRecadoVendas(ctx) : capRecadoPlano(ctx);
+  const linha2 = tipo === 'vendas'
+    ? `${esc(CAP_VENDAS[i % CAP_VENDAS.length])} <b>— C@P Consultoria</b>`
+    : (i % 2 ? `${esc(CAP_PLANO[Math.floor(i/2) % CAP_PLANO.length])} <b>— C@P Consultoria</b>` : (q => `“${esc(q.t)}” <b>— ${esc(q.a)}</b>`)(CAP_CITACOES[Math.floor(i/2) % CAP_CITACOES.length]));
+  return `<div class="cap-card" id="cap-${tipo}"><div class="cap-badge">C@P</div><div class="cap-body">
+    <div class="cap-hd">Recado da C@P Consultoria <span>· ${tipo === 'vendas' ? 'metas de ligações' : 'plano de ação'}</span></div>
+    <div class="cap-msg">${msg}</div><div class="cap-q">${linha2}</div></div>
+    <button class="cap-nx" title="Outra mensagem" onclick="capProx('${tipo}')">↻</button></div>`;
+}
+function capProx(tipo){ st.capIdx[tipo] = (st.capIdx[tipo] || 0) + 1; const el = $('cap-' + tipo); if(el) el.outerHTML = capCard(tipo, st.capCtx[tipo]); }
+
+/* ============================ BACKUP AUTOMÁTICO (somente administradores) ============================
+   Salva uma cópia completa de todas as tabelas, em JSON, numa pasta deste computador escolhida pelo administrador.
+   A pasta fica lembrada neste navegador; os arquivos antigos são apagados conforme a retenção escolhida.
+   Navegadores sem acesso a pastas (Firefox/Safari) baixam o arquivo para a pasta Downloads. */
+const BKP_CFG = 'eleve_bkp_cfg', BKP_PREFIXO = 'backup_eleve_ligacoes_';
+const BKP_TABELAS = ['empresas','vendedoras','metas','perfis','usuarios','usuario_vendedoras','clientes','followups','ligacoes','plano_acao'];
+const bkpSuporta = () => 'showDirectoryPicker' in window;
+function bkpCfg(){ let c = {}; try{ c = JSON.parse(localStorage.getItem(BKP_CFG)) || {}; }catch(e){} return { horas:24, manter:30, ...c }; }
+function bkpSalvarCfg(o){ try{ localStorage.setItem(BKP_CFG, JSON.stringify({ ...bkpCfg(), ...o })); }catch(e){} }
+function idbK(op, key, val){
+  return new Promise((ok, erro) => {
+    const rq = indexedDB.open('eleve_lig', 1);
+    rq.onupgradeneeded = () => rq.result.createObjectStore('k');
+    rq.onerror = () => erro(rq.error);
+    rq.onsuccess = () => { const t = rq.result.transaction('k', op === 'get' ? 'readonly' : 'readwrite'), so = t.objectStore('k');
+      const r = op === 'get' ? so.get(key) : op === 'del' ? so.delete(key) : so.put(val, key);
+      r.onsuccess = () => ok(r.result); r.onerror = () => erro(r.error); };
+  });
+}
+const fmtBytes = n => n < 1024 ? n + ' B' : n < 1048576 ? (n/1024).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' KB' : (n/1048576).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' MB';
+function bkpAviso(html, botoes){
+  const a = $('bkpAviso'); a.innerHTML = `<div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:20px">💾</span><div style="flex:1">${html}</div></div><div class="bt">${botoes || ''}<button class="btn sec sm" onclick="bkpAvisoFechar()">Agora não</button></div>`;
+  a.classList.add('show');
+}
+function bkpAvisoFechar(){ $('bkpAviso').classList.remove('show'); }
+async function bkpPasta(){ try{ return await idbK('get', 'bkpDir'); }catch(e){ return null; } }
+async function bkpAuto(){
+  if(!S || !db.me || !isAdmin()) return;
+  const c = bkpCfg();
+  if(!c.horas) return;
+  if(c.ultimo && Date.now() - c.ultimo < c.horas * 3600e3) return;
+  if(c.rodando && Date.now() - c.rodando < 5*60e3) return;
+  const h = bkpSuporta() ? await bkpPasta() : null;
+  if(h){
+    let p = 'prompt'; try{ p = await h.queryPermission({ mode:'readwrite' }); }catch(e){}
+    if(p === 'granted') return bkpExecutar(h, false);
+    return bkpAviso(`<b>Backup automático pendente.</b><br>O navegador precisa da sua autorização para gravar na pasta <b>${esc(h.name)}</b>.`, `<button class="btn sm" onclick="bkpAutorizar()">Autorizar e fazer backup</button>`);
+  }
+  if(bkpSuporta()) return bkpAviso(`<b>Backup automático ainda não configurado.</b><br>Escolha uma pasta deste computador para guardar os backups do sistema.`, `<button class="btn sm" onclick="bkpAvisoFechar();ir('backup')">Configurar</button>`);
+  return bkpExecutar(null, false);
+}
+async function bkpAutorizar(){
+  bkpAvisoFechar();
+  const h = await bkpPasta(); if(!h) return ir('backup');
+  try{ if(await h.requestPermission({ mode:'readwrite' }) === 'granted') return bkpExecutar(h, true); }catch(e){}
+  toast('Sem autorização para gravar na pasta. Escolha a pasta de novo em Backup do Sistema.', 'err');
+}
+async function bkpEscolher(){
+  try{
+    const h = await window.showDirectoryPicker({ id:'eleve-backup', mode:'readwrite', startIn:'documents' });
+    await idbK('put', 'bkpDir', h);
+    toast('Pasta de backup definida: ' + h.name, 'ok');
+    await bkpExecutar(h, true);
+  }catch(e){ if(e && e.name !== 'AbortError') toast('Não foi possível usar essa pasta: ' + e.message, 'err'); }
+  if(st.page === 'backup') pgBkp();
+}
+async function bkpExecutar(h, manual){
+  bkpSalvarCfg({ rodando: Date.now() });
+  if(manual) loading(true, 'Gerando backup…');
+  try{
+    const dados = {}, cont = {}, erros = [];
+    for(const t of BKP_TABELAS){
+      try{ dados[t] = await sbAll(t, t === 'usuario_vendedoras' ? 'select=*&order=usuario_id,vendedora_id' : 'select=*&order=id'); cont[t] = dados[t].length; }
+      catch(e){ dados[t] = []; cont[t] = 0; erros.push(t + ': ' + e.message); }
+    }
+    const agora = new Date(), nome = BKP_PREFIXO + isoLocal(agora) + '_' + pad(agora.getHours()) + 'h' + pad(agora.getMinutes()) + '.json';
+    const json = JSON.stringify({ sistema:'Acompanhamento de Ligações · Eleve', versao:1, gerado_em:agora.toISOString(), gerado_por:db.me.email, origem:CONFIG.SUPABASE_URL, contagens:cont, erros, dados });
+    const blob = new Blob([json], { type:'application/json' });
+    let onde = 'download';
+    if(h){
+      const fh = await h.getFileHandle(nome, { create:true }), w = await fh.createWritable();
+      await w.write(blob); await w.close(); onde = 'pasta';
+      const manter = bkpCfg().manter;
+      if(manter){
+        const nomes = []; for await (const [n, e] of h.entries()) if(e.kind === 'file' && n.startsWith(BKP_PREFIXO) && n.endsWith('.json')) nomes.push(n);
+        nomes.sort().reverse().slice(manter).forEach(n => h.removeEntry(n).catch(() => {}));
+      }
+    } else {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    }
+    bkpSalvarCfg({ ultimo: Date.now(), rodando: 0, ult: { nome, tam: blob.size, cont, onde, pasta: h ? h.name : '', erros: erros.length } });
+    const tot = Object.values(cont).reduce((a,b) => a+b, 0);
+    toast(`Backup salvo${h ? ' em ' + h.name : ' em Downloads'}: ${fmtN(tot)} registros (${fmtBytes(blob.size)})${erros.length ? ' · ' + erros.length + ' tabela(s) com erro' : ''}.`, erros.length ? 'err' : 'ok');
+  }catch(e){
+    bkpSalvarCfg({ rodando: 0 });
+    toast('Falha no backup: ' + e.message, 'err');
+  }finally{ if(manual) loading(false); if(st.page === 'backup') pgBkp(); }
+}
+async function pgBkp(){
+  const c = bkpCfg(), u = c.ult, h = bkpSuporta() ? await bkpPasta() : null;
+  let perm = '', lista = [];
+  if(h){ try{ perm = await h.queryPermission({ mode:'readwrite' }); }catch(e){}
+    if(perm === 'granted'){ try{ for await (const [n, e] of h.entries()) if(e.kind === 'file' && n.startsWith(BKP_PREFIXO)){ const f = await e.getFile(); lista.push({ n, tam:f.size, dt:f.lastModified }); } }catch(e){} lista.sort((a,b) => b.n.localeCompare(a.n)); } }
+  if(st.page !== 'backup') return;
+  const prox = c.horas ? (c.ultimo ? new Date(c.ultimo + c.horas*3600e3) : null) : null;
+  $('content').innerHTML = `
+  <div class="card" style="margin-bottom:14px"><h3>💾 Backup automático do sistema</h3>
+    <p class="small muted" style="margin-top:0">Somente administradores. Gera uma cópia completa de todas as tabelas (empresas, vendedoras, metas, perfis, usuários e vínculos, clientes, follow-ups, ligações e planos de ação) e grava num arquivo <b>.json</b> neste computador. Roda sozinho ao entrar no sistema e enquanto ele estiver aberto, conforme a frequência escolhida. As senhas não entram no backup (ficam protegidas no Supabase).</p>
+    <div class="bkp-st">
+      <div><span>Último backup</span><b>${c.ultimo ? fmtDH(new Date(c.ultimo).toISOString()) : 'Nenhum ainda'}</b></div>
+      <div><span>Próximo automático</span><b>${!c.horas ? 'Desativado' : prox ? (prox < new Date() ? 'Na próxima entrada' : fmtDH(prox.toISOString())) : 'Na próxima entrada'}</b></div>
+      <div><span>Pasta</span><b>${h ? '📁 ' + esc(h.name) + (perm === 'granted' ? '' : ' <span class="tag warn">sem autorização</span>') : bkpSuporta() ? '<span class="tag bad">Não escolhida</span>' : 'Downloads (navegador)'}</b></div>
+      <div><span>Último arquivo</span><b>${u ? esc(u.nome) + ' · ' + fmtBytes(u.tam) : '—'}</b></div>
+    </div>
+    ${u ? `<div class="small muted" style="margin-bottom:12px">Registros: ${Object.entries(u.cont||{}).map(([t,n]) => `${t.replace('_',' ')} <b>${fmtN(n)}</b>`).join(' · ')}${u.erros ? ` · <span style="color:var(--bad)">${u.erros} tabela(s) com erro</span>` : ''}</div>` : ''}
+    <div class="form f4">
+      <div><label>Frequência</label><select onchange="bkpSalvarCfg({horas:Number(this.value)});pgBkp()">${[[24,'Diário'],[12,'A cada 12 horas'],[6,'A cada 6 horas'],[168,'Semanal'],[0,'Desativado']].map(([v,t]) => `<option value="${v}" ${c.horas===v?'selected':''}>${t}</option>`).join('')}</select></div>
+      <div><label>Manter na pasta</label><select onchange="bkpSalvarCfg({manter:Number(this.value)});pgBkp()" ${h?'':'disabled'}>${[[7,'Últimos 7'],[15,'Últimos 15'],[30,'Últimos 30'],[60,'Últimos 60'],[0,'Todos']].map(([v,t]) => `<option value="${v}" ${c.manter===v?'selected':''}>${t}</option>`).join('')}</select></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+      ${bkpSuporta() ? `<button class="btn sec" onclick="bkpEscolher()">📁 ${h ? 'Trocar pasta' : 'Escolher pasta'}</button>` : ''}
+      ${h && perm !== 'granted' ? `<button class="btn sec" onclick="bkpAutorizar()">🔓 Autorizar pasta</button>` : ''}
+      <button class="btn" onclick="bkpAgora()">💾 Fazer backup agora</button>
+      <button class="btn sec" onclick="bkpExecutar(null, true)">⬇ Baixar uma cópia</button>
+    </div>
+    ${bkpSuporta() ? '' : '<p class="small muted">Este navegador não permite gravar numa pasta escolhida; o backup vai para a pasta Downloads. Para gravar numa pasta fixa, use Chrome ou Edge.</p>'}
+  </div>
+  ${h && perm === 'granted' ? `<div class="card"><h3>Backups na pasta ${esc(h.name)} (${lista.length})</h3>
+    <div class="tbl-wrap" style="border:0"><table><thead><tr><th>Arquivo</th><th>Data</th><th class="num">Tamanho</th></tr></thead><tbody>
+    ${lista.map(f => `<tr><td>${esc(f.n)}</td><td>${fmtDH(new Date(f.dt).toISOString())}</td><td class="num">${fmtBytes(f.tam)}</td></tr>`).join('') || '<tr><td colspan="3" class="empty">Nenhum backup na pasta ainda.</td></tr>'}
+    </tbody></table></div></div>` : ''}`;
+}
+async function bkpAgora(){
+  const h = bkpSuporta() ? await bkpPasta() : null;
+  if(!h) return bkpSuporta() ? bkpEscolher() : bkpExecutar(null, true);
+  let p = 'prompt'; try{ p = await h.queryPermission({ mode:'readwrite' }); }catch(e){}
+  if(p !== 'granted'){ try{ p = await h.requestPermission({ mode:'readwrite' }); }catch(e){} }
+  if(p !== 'granted') return toast('Sem autorização para gravar na pasta.', 'err');
+  bkpExecutar(h, true);
+}
+setInterval(() => { if(S && db.me && isAdmin()) bkpAuto(); }, 30*60*1000);
 
 /* ============================ INÍCIO ============================ */
 /* Tema: escuro é o padrão; a escolha fica salva neste navegador */
