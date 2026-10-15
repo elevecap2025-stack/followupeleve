@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src https://xfrnvfbkhygvyikvskia.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
-<title>Acompanhamento de Ligações · Eleve</title>
+<title>Follow-up &amp; Plano de Ação 5W2H · Eleve</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js" integrity="sha384-dug+JxfBvklEQdJ4AYuBBAIScUz0bVN73xpy273gcAwHjb3qI0fXmuYNaNfdyYJG" crossorigin="anonymous"></script>
 <style>
 :root{
@@ -459,6 +459,78 @@ body.pa-full .cap-card{display:none}
 #content.pn .grid{gap:10px}
 #content.pn th,#content.pn td{padding:7px 10px}
 
+/* ---------- Guia didático 5W2H ---------- */
+.gd{--c1:#F2701A;--c2:#C1662E;max-width:1180px;margin:0 auto}
+.gd-hero{position:relative;overflow:hidden;border-radius:16px;padding:26px 28px;background:linear-gradient(120deg,#23272D 0%,#2F343B 55%,#3A2A1F 100%);color:#fff;margin-bottom:14px}
+.gd-hero::after{content:'5W2H';position:absolute;right:-10px;bottom:-34px;font-size:150px;font-weight:900;letter-spacing:-.04em;color:rgba(242,112,26,.13);line-height:1;pointer-events:none}
+.gd-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c1);background:rgba(242,112,26,.14);border:1px solid rgba(242,112,26,.35);border-radius:20px;padding:3px 10px}
+.gd-hero h1{margin:10px 0 4px;font-size:28px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+.gd-hero h1 span{color:var(--c1)}
+.gd-hero p{margin:0;color:#C9CDD3;font-size:14px;max-width:640px}
+.gd-hero .gd-by{margin-top:14px;font-size:12px;color:#AEB6C1}
+.gd-hero .gd-by b{color:#fff}
+.gd-fases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px;position:relative;z-index:1}
+.gd-fases div{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px}
+.gd-fases b{display:block;font-size:12px;letter-spacing:.1em;color:var(--c1)}
+.gd-fases span{font-size:13px;color:#E5E7EB}
+.gd-idx{position:sticky;top:58px;z-index:5;display:flex;gap:6px;flex-wrap:wrap;background:var(--bg);padding:8px 0;margin-bottom:6px}
+.gd-idx button{border:1px solid var(--line);background:var(--surf);color:var(--gr2);border-radius:16px;padding:4px 11px;font:inherit;font-size:12px;cursor:pointer}
+.gd-idx button:hover{border-color:var(--c1);color:var(--c2)}
+.gd-sec{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;scroll-margin-top:110px}
+.gd-sec h2{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:17px;color:var(--tx)}
+.gd-sec h2 i{font-style:normal;width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.gd-sec p{margin:0 0 8px;line-height:1.6;color:var(--gr2);font-size:14px}
+.gd-w{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:6px}
+.gd-wc{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surf2);position:relative}
+.gd-wc .lt{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.gd-wc .lt b{background:var(--c1);color:#fff;border-radius:7px;padding:2px 8px;font-size:12px;letter-spacing:.04em}
+.gd-wc .lt.h b{background:var(--gr2)}
+body.dark .gd-wc .lt.h b{background:#4B5563}
+.gd-wc .lt span{font-weight:700;color:var(--tx)}
+.gd-wc p{font-size:13px;margin:0 0 6px}
+.gd-wc em{display:block;font-size:12.5px;color:var(--c2);font-style:normal;border-top:1px dashed var(--line);padding-top:6px}
+body.dark .gd-wc em{color:var(--c1)}
+.gd-dica{margin-top:12px;border-left:4px solid var(--c1);background:color-mix(in srgb,var(--c1) 8%,var(--surf));border-radius:8px;padding:9px 12px;font-size:13px;color:var(--tx)}
+.gd-tab{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:6px 0 8px}
+.gd-tab th{background:var(--gr);color:#fff;text-align:left;font-size:11px;letter-spacing:.06em;padding:9px 12px}
+body.dark .gd-tab th{background:#05070A}
+.gd-tab td{padding:9px 12px;border-top:1px solid var(--line);font-size:13.5px;color:var(--tx);vertical-align:top}
+.gd-tab td:first-child{font-weight:700;width:170px;color:var(--c2);background:var(--surf2)}
+body.dark .gd-tab td:first-child{color:var(--c1)}
+.gd-nota{font-size:12px;color:var(--mut);font-style:italic}
+.gd-ciclo{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;counter-reset:gdc}
+.gd-ciclo div{position:relative;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surf2)}
+.gd-ciclo div::before{counter-increment:gdc;content:counter(gdc);position:absolute;top:-10px;left:12px;width:22px;height:22px;border-radius:50%;background:var(--c1);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.gd-ciclo b{display:block;margin:6px 0 4px;color:var(--tx)}
+.gd-ciclo span{font-size:13px;color:var(--gr2);line-height:1.5}
+.gd-ind{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:6px 0 12px}
+.gd-ind div{border-radius:12px;padding:12px 14px;text-align:center;border:1px solid var(--line)}
+.gd-ind small{display:block;font-size:11px;letter-spacing:.08em;font-weight:700;color:var(--mut)}
+.gd-ind b{display:block;font-size:30px;font-weight:800;color:var(--tx);margin-top:2px}
+.gd-ind .a{background:var(--badl)} .gd-ind .m{background:var(--okl)} .gd-ind .p{background:var(--infol)}
+.gd-barras{display:grid;gap:6px;margin-bottom:10px}
+.gd-barras div{display:grid;grid-template-columns:150px 1fr 46px;align-items:center;gap:8px;font-size:12.5px;color:var(--gr2)}
+.gd-barras i{display:block;height:14px;border-radius:7px}
+.gd-areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.gd-areas div{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surf2)}
+.gd-areas b{display:block;font-size:14px;margin-bottom:4px;color:var(--tx)}
+.gd-areas span{font-size:13px;color:var(--gr2);line-height:1.5}
+.gd-crit{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.gd-crit div{border:1px solid var(--line);border-top:3px solid var(--c1);border-radius:10px;padding:10px;background:var(--surf2)}
+.gd-crit b{display:block;font-size:13px;color:var(--tx);margin-bottom:3px}
+.gd-crit span{font-size:12.5px;color:var(--gr2);line-height:1.45}
+.gd-cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gd-cmp div{border-radius:10px;padding:10px 12px;font-size:13px}
+.gd-cmp .no{background:var(--badl);color:var(--tx)} .gd-cmp .si{background:var(--okl);color:var(--tx)}
+.gd-cmp b{display:block;font-size:11px;letter-spacing:.06em;margin-bottom:3px}
+.gd-mod .form{grid-template-columns:repeat(2,minmax(0,1fr))}
+.gd-fim{border-radius:14px;padding:18px 20px;background:linear-gradient(120deg,var(--c1),var(--c2));color:#fff;margin-bottom:12px}
+.gd-fim h2{margin:0 0 6px;font-size:17px}
+.gd-fim p{margin:0 0 8px;line-height:1.6;font-size:14px;color:#FFF4EC}
+.gd-fim blockquote{margin:10px 0 0;padding:10px 14px;background:rgba(0,0,0,.15);border-radius:10px;font-weight:600}
+@media(max-width:800px){.gd-fases,.gd-ciclo,.gd-ind{grid-template-columns:1fr}.gd-crit{grid-template-columns:1fr 1fr}.gd-cmp,.gd-mod .form{grid-template-columns:1fr}.gd-hero h1{font-size:22px}.gd-tab td:first-child{width:auto}.gd-barras div{grid-template-columns:110px 1fr 40px}.gd-idx{top:52px}}
+@media print{#side,#top,#bnav,#overlay,.gd-idx,.gd-noprint,.cap-card,#bkpAviso{display:none!important}#main{margin-left:0!important}#content{padding:0!important}.gd-sec{break-inside:avoid}body{background:#fff}}
+
 /* aviso do backup */
 #bkpAviso{position:fixed;right:16px;bottom:16px;z-index:250;max-width:380px;background:var(--surf);color:var(--tx);border:1px solid var(--line);border-left:4px solid var(--or);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.25);padding:12px 14px;font-size:13px;display:none}
 #bkpAviso.show{display:block}
@@ -628,7 +700,7 @@ body.tema-claro.menu-min #side nav .sec{border-top-color:var(--line)}
   <button class="btn sec sm tema-btn login-tema" id="btnTemaLg" onclick="alternarTema()" title="Alternar tema claro/escuro">☀️</button>
   <form class="login-box" id="loginForm" autocomplete="on">
     <div class="logo"><div class="logo-img lg" role="img" aria-label="Eleve Telhas Metálicas"></div></div>
-    <h2>Acompanhamento de Ligações</h2>
+    <h2>Sistema de Follow-up &amp; Plano de Ação 5W2H</h2>
     <p class="sub">Eleve Telhas e Perfis Metálicos</p>
     <label for="lgEmail">E-mail</label>
     <input id="lgEmail" type="email" required autocomplete="username">
@@ -643,7 +715,7 @@ body.tema-claro.menu-min #side nav .sec{border-top-color:var(--line)}
 <!-- ====================== APP ====================== -->
 <div id="app" class="hidden">
   <aside id="side">
-    <div class="brand"><div class="brand-tile"><div class="logo-img" role="img" aria-label="Eleve Telhas Metálicas"></div></div><small>Ligações &amp; Follow-up</small><button id="sideTg" onclick="toggleMenuMin()" title="Recolher menu" aria-label="Recolher menu">‹</button></div>
+    <div class="brand"><div class="brand-tile"><div class="logo-img" role="img" aria-label="Eleve Telhas Metálicas"></div></div><small>Follow-up &amp; Plano de Ação 5W2H</small><button id="sideTg" onclick="toggleMenuMin()" title="Recolher menu" aria-label="Recolher menu">‹</button></div>
     <nav id="nav"></nav>
     <div class="user"><b id="uNome" style="cursor:pointer" title="Meu perfil" onclick="ir('meuperfil')"></b><span id="uPerfil"></span><button onclick="logout()" title="Sair">Sair</button></div>
   </aside>
@@ -962,10 +1034,11 @@ const PAGES = {
   ligacoes:{ t:'Ligações Realizadas', ic:'✅', fn:()=>pgLig() },
   clientes:{ t:'Clientes', ic:'👥', fn:()=>pgCli() },
   clientesatend:{ t:'Clientes Atendidos', ic:'☑️', fn:()=>pgCliAtend(), seg:'clientes' },
-  planodash:{ t:'Dashboard do Plano', ic:'📈', fn:()=>pgPlanoDash(), seg:'plano' },
-  plano:{ t:'Plano de Ação', ic:'🎯', fn:()=>pgPlano() },
-  planoconc:{ t:'Planos Concluídos', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
-  planocal:{ t:'Calendário do Plano', ic:'🗓️', fn:()=>pgPlanoCal(), seg:'plano' },
+  planodash:{ t:'Dashboard 5W2H', ic:'📈', fn:()=>pgPlanoDash(), seg:'plano' },
+  plano:{ t:'Plano de Ação 5W2H', ic:'🎯', fn:()=>pgPlano() },
+  planoconc:{ t:'Plano de Ação Concluído 5W2H', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
+  planocal:{ t:'Calendário 5W2H', ic:'🗓️', fn:()=>pgPlanoCal(), seg:'plano' },
+  guia5w2h:{ t:'Guia Didático 5W2H', ic:'📘', fn:()=>pgGuia(), seg:'plano' },
   vendedoras:{ t:'Vendedoras', ic:'👩‍💼', fn:()=>pgVend(), extra:true },
   empresas:{ t:'Empresas', ic:'🏢', fn:()=>pgEmp(), adm:true },
   usuarios:{ t:'Usuários / Acessos', ic:'🔑', fn:()=>pgUsu(), adm:true },
@@ -999,7 +1072,7 @@ function montarNav(){
   const h = sec('Indicadores', item('painel'))
     + sec('Ligações & Follow-up', item('planejamento', nAtras||'') + item('planejar') + item('ligacoes'))
     + sec('Clientes', item('clientes') + item('clientesatend') + item('aniversariantes', nAniv||''))
-    + sec('Plano de Ação', item('planodash') + item('plano', paPend().length||'') + item('planocal') + item('planoconc'))
+    + sec('Plano de Ação', item('planodash') + item('plano', paPend().length||'') + item('planocal') + item('planoconc') + item('guia5w2h'))
     + sec('Cadastros', item('vendedoras') + item('empresas'))
     + sec('Administração', item('usuarios') + item('perfis') + item('permissoes') + item('backup'))
     + sec('Conta', item('meuperfil'));
@@ -2314,7 +2387,7 @@ async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, p
     }
     const n = doc.internal.getNumberOfPages();
     for(let i = 1; i <= n; i++){ doc.setPage(i); doc.setFontSize(8); doc.setTextColor(107,114,128); doc.setDrawColor(58,63,71); doc.setLineWidth(0.3); doc.line(12, H-10, W-12, H-10);
-      doc.text('Eleve  -  Acompanhamento de Ligações  -  C@P Consultoria', 12, H-6); doc.text('Página ' + i + ' de ' + n, W-12, H-6, { align:'right' }); }
+      doc.text('Eleve  -  Sistema de Follow-up & Plano de Ação 5W2H  -  C@P Consultoria', 12, H-6); doc.text('Página ' + i + ' de ' + n, W-12, H-6, { align:'right' }); }
     doc.save(arquivo);
     toast('PDF gerado.', 'ok');
   }catch(e){ toast(e.message, 'err'); }
@@ -2643,7 +2716,7 @@ const podeExcluirPA = x => x.criado_por === db.me.id || paExcluiTodos();
 const PA_VE_TODOS = ['diegoeleve@gmail.com'];
 function veTodosPlanos(){ if(isAdmin() || paExcluiTodos() || (db.me && PA_VE_TODOS.includes(String(db.me.email||'').toLowerCase()))) return true; const p = perfilDe(db.me); return !!(p && p.ativo && p.ve_todos_planos); }
 const paConc = () => st.page === 'planoconc';
-const paEncerrada = x => paStatus(x) === 'Concluído';  /* só sai para Planos Concluídos com 100% */
+const paEncerrada = x => paStatus(x) === 'Concluído';  /* só sai para Plano de Ação Concluído 5W2H com 100% */
 const paTipo = x => { const me = db.me.id; return x.criado_por === me && x.responsavel_id !== me ? 'env' : x.responsavel_id === me && x.criado_por !== me ? 'rec' : x.criado_por === me ? 'meu' : 'eq'; };
 const paCopias = x => x.grupo ? (db.planos||[]).filter(y => y.grupo === x.grupo).length : 1;
 function novoUUID(){ if(window.crypto && crypto.randomUUID) return crypto.randomUUID(); return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random()*16|0; return (c === 'x' ? r : (r&3|8)).toString(16); }); }
@@ -2766,7 +2839,7 @@ function padDrill(uid, tipo){
       <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.fim?fmtD(x.fim):''}</td>${tipo==='conc'?`<td>${x.concluido_em?fmtDH(x.concluido_em).slice(0,10):''}</td>`:''}
       <td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td><td style="min-width:120px">${paBar(x)}</td></tr>`).join('') || `<tr><td colspan="7" class="empty">Nenhum plano.</td></tr>`}
     </tbody></table></div>`,
-    `<button class="btn sec" onclick="fecharModal()">Fechar</button><button class="btn" onclick="padIrPlano('${uid}','${tipo}')">Abrir no ${tipo==='conc'?'Planos Concluídos':'Plano de Ação'} ›</button>`, true);
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button><button class="btn" onclick="padIrPlano('${uid}','${tipo}')">Abrir no ${tipo==='conc'?'Plano de Ação Concluído 5W2H':'Plano de Ação'} ›</button>`, true);
 }
 function padIrPlano(uid, tipo){
   fecharModal(true);
@@ -2836,7 +2909,6 @@ function pgPlano(){
   const stOps = conc ? ['Concluído'] : ['Não iniciado','Em andamento','Atrasado','Cancelado'];
   const pessoas = (db.pessoas||[]).filter(x => !paRestrito() || !paIdsReservados().has(x.id)).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   $('content').innerHTML = `
-  <div class="kpis">${kpis}</div>
   ${capCard('plano', { total:base.length, aberto: conc ? 0 : base.length, atr: conc ? 0 : n('Atrasado'), conc: conc ? base.length : nConc, valid: base.length + (conc ? 0 : nConc), pend, concTela:conc })}
   <div class="filters">
     <div class="f"><label>Exibir</label><select onchange="st.pa.ver=this.value;if(this.value!=='equipe'&&this.value!=='todos')st.pa.pessoa='';pgPlano()">${verOps.map(([v,t])=>`<option value="${v}" ${p.ver===v?'selected':''}>${t}</option>`).join('')}</select></div>
@@ -2851,7 +2923,7 @@ function pgPlano(){
   <div class="pa-leg">${[['meu','Minha ação'],['env','Criada por mim para outra pessoa'],['rec','Recebida de outra pessoa'], ...(todos ? [['eq','Ação de outra pessoa (equipe)']] : [])].map(([k,t]) => `<button class="pa-lg ${p.tipo===k?'on':''}" title="${p.tipo===k?'Remover filtro':'Mostrar somente: '+t}" onclick="paLegTipo('${k}')"><b class="pa-sw ${k}"></b>${t}</button>`).join('')}
     ${conc ? '' : `<span style="margin-left:auto"></span>${[['ok','var(--ok)','No prazo'],['warn','var(--warn)','Pouco atrás'],['bad','var(--bad)','Atrasado'],['hoje','var(--gr)','Previsto hoje']].map(([k,c,t]) => `<button class="pa-lg ${p.ritmo===k?'on':''}" title="${p.ritmo===k?'Remover filtro':'Mostrar somente: '+t}" onclick="paLegRitmo('${k}')"><b style="background:${c}${k==='hoje'?';width:2px;height:12px':''}"></b>${t}</button>`).join('')}`}
     ${p.tipo || p.ritmo ? `<button class="pa-lg limpa" onclick="st.pa.tipo='';st.pa.ritmo='';pgPlano()">✕ Limpar filtro da legenda</button>` : ''}</div>
-  <div class="pa-title ${conc?'conc':''}">${conc ? 'PLANOS DE AÇÃO CONCLUÍDOS' : 'PLANO DE AÇÃO • 5W2H'}</div>
+  <div class="pa-title ${conc?'conc':''}">${conc ? 'PLANO DE AÇÃO CONCLUÍDO • 5W2H' : 'PLANO DE AÇÃO • 5W2H'}</div>
   <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Data Início</th><th>Horário previsto</th><th>Data Prevista</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th>${conc?'<th>Concluído em</th>':''}<th>%</th><th>Observações</th><th></th></tr></thead><tbody>
   ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
     return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td>${paCel(x,'o_que',true)}${paCel(x,'por_que')}${paCel(x,'como')}
@@ -2907,7 +2979,7 @@ function abrirPA(id){
     <div><label>Data Prevista</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${disD} onchange="paLeadLive()"></div>
     <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && x.inicio && !x.fim ? 'contando até hoje' : ''}</div></div>
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
-    <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (só então vai para Planos Concluídos) · fim vencido Atrasado.</div></div>
+    <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (só então vai para Plano de Ação Concluído 5W2H) · fim vencido Atrasado.</div></div>
     <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}" ${so?'disabled':''}></div>
     <div class="full"><label style="display:flex;align-items:center;gap:8px">Etapas da ação (o % sobe sozinho a cada etapa marcada)${(dono || resp) && !so?'<span style="margin-left:auto;display:flex;gap:6px"><button class="btn sec sm" onclick="paEtDoComo()">↳ Usar linhas do "Como?"</button><button class="btn sec sm" onclick="paRtModal(null)">+ Etapa</button></span>':''}</label><div id="paEtList"></div><div id="paEtRes"></div></div>
     <div class="full"><label>Observações</label><textarea id="paObs" ${so?'disabled':''}>${esc(x?x.observacoes:'')}</textarea></div>
@@ -2978,7 +3050,7 @@ async function salvarPA(id){
     try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){}
     fecharModal(true); montarNav(); paRefresh();
     const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
-    toast(paEncerrada(x) ? 'Ação salva e movida para Planos Concluídos.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
+    toast(paEncerrada(x) ? 'Ação salva e movida para Plano de Ação Concluído 5W2H.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
   }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
 }
 /* Junta as etapas: parte da versão atual do banco e aplica só o que ESTA pessoa mudou (incluiu, removeu, marcou ou desmarcou) */
@@ -3005,7 +3077,7 @@ function paEtLinha(x, cols){
 }
 /* Atualiza a tela atual do plano depois de salvar */
 function paRefresh(){ if(st.page === 'planocal') pgPlanoCal(); else if(st.page === 'plano' || st.page === 'planoconc') pgPlano(); else if(st.page === 'planodash') pgPlanoDash(); }
-/* Tela cheia (Plano de Ação e Planos Concluídos) */
+/* Tela cheia (Plano de Ação e Plano de Ação Concluído 5W2H) */
 function paTelaCheia(on){
   if(on === undefined) on = !document.body.classList.contains('pa-full');
   document.body.classList.toggle('pa-full', on);
@@ -3134,7 +3206,7 @@ async function paEtRapido(id, op, val, marcado){
     try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){ Object.assign(x, salvo); }
     montarNav();
     const fim = paEncerrada(salvo) && ['plano','planocal'].includes(st.page);
-    if(fim){ (st.paAberto||new Set()).delete(id); toast('Todas as etapas concluídas! O plano foi para Planos Concluídos.', 'ok'); }
+    if(fim){ (st.paAberto||new Set()).delete(id); toast('Todas as etapas concluídas! O plano foi para Plano de Ação Concluído 5W2H.', 'ok'); }
     else if(op === 'add') toast(val.length > 1 ? val.length+' etapas incluídas.' : 'Etapa incluída.', 'ok');
     else if(op === 'set') toast(val.ok ? 'Etapa entregue.' : 'Etapa salva.', 'ok');
     else if(op === 'tog' && marcado) toast('Etapa entregue.', 'ok');
@@ -3287,7 +3359,7 @@ function gerarPdfCal(ret){
     sem.push(r); meta.push(mr);
   }
   const larg = (ret ? 210 : 297) - 24, alt = (ret ? 297 : 210) - 62;
-  gerarPDF({ titulo:'Calendário do Plano de Ação', arquivo:`calendario_plano_${c.mes}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 6.6, multilinha:true,
+  gerarPDF({ titulo:'Calendário 5W2H', arquivo:`calendario_plano_${c.mes}.pdf`, paisagem:!ret, fonte: ret ? 5.8 : 6.6, multilinha:true,
     subtitulo: MESES[m-1] + ' ' + y + '  -  ' + (veTodosPlanos() ? (c.pessoa ? 'Pessoa: ' + pessoaNome(c.pessoa) : 'Todas as pessoas') : 'Minhas ações') + '  -  Data prevista vigente',
     resumo: `${base.length} ação(ões) em aberto  |  ${base.filter(x => (x.fim||'').slice(0,7) === c.mes).length} com prazo no mês  |  ${base.filter(x => paStatus(x) === 'Atrasado').length} atrasada(s)`,
     colunas:['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'], linhas:sem,
@@ -3418,11 +3490,11 @@ function avisoEntrega(depois){
     (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; }); }catch(e){ l.forEach(x => x.entrega_vista_em = 'local'); } };
   st.entregaDepois = depois || null;
   abrirModal(`✅ ${l.length > 1 ? l.length + ' tarefas entregues' : 'Tarefa entregue'}`,
-    `<p style="margin-top:0">${l.length > 1 ? 'Estas ações que você enviou foram concluídas e já estão' : 'A ação que você enviou foi concluída e já está'} em <b>Planos Concluídos</b>:</p>` +
+    `<p style="margin-top:0">${l.length > 1 ? 'Estas ações que você enviou foram concluídas e já estão' : 'A ação que você enviou foi concluída e já está'} em <b>Plano de Ação Concluído 5W2H</b>:</p>` +
     l.map(x => `<div class="box-info" style="border-left:4px solid var(--ok)"><b>#${x.id} · ${esc(x.o_que)}</b>
       <div class="small">Entregue por <b>${esc(pessoaNome(x.responsavel_id))}</b>${x.concluido_em ? ' em '+fmtDH(x.concluido_em) : ''}${x.fim ? ' · prazo '+fmtD(x.fim)+(x.concluido_em && dataDeTs(x.concluido_em) > x.fim ? ' <span class="tag bad">após o prazo</span>' : ' <span class="tag ok">no prazo</span>') : ''}</div>
       ${paEtapas(x).length ? `<div class="small muted">${paEtapas(x).length} etapa(s) concluída(s)</div>` : ''}${x.observacoes ? `<div class="small"><b>Obs.:</b> ${esc(x.observacoes)}</div>` : ''}</div>`).join(''),
-    `<button class="btn sec" onclick="fecharModal()">OK</button>${pode('plano') ? `<button class="btn ok" onclick="st.entregaIr=true;fecharModal()">Ver Planos Concluídos</button>` : ''}`,
+    `<button class="btn sec" onclick="fecharModal()">OK</button>${pode('plano') ? `<button class="btn ok" onclick="st.entregaIr=true;fecharModal()">Ver Plano de Ação Concluído 5W2H</button>` : ''}`,
     true, () => { marcar().then(() => montarNav()); const ir_ = st.entregaIr; st.entregaIr = false; const f = st.entregaDepois; st.entregaDepois = null;
       setTimeout(() => { if(ir_) ir('planoconc'); else if(f) f(); }, 50); });
 }
@@ -3452,7 +3524,7 @@ function pdfPA(){
   const l = paFiltradas(); if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
   let sel = PA_PDF_PADRAO; try{ const v = JSON.parse(localStorage.getItem('eleve_pa_pdfcols')); if(Array.isArray(v) && v.length) sel = v; }catch(e){}
   const cols = PA_PDF_COLS.filter(c => c.k !== 'conc' || paConc());
-  abrirModal('📄 Gerar PDF · ' + (paConc() ? 'Planos Concluídos' : 'Plano de Ação'), `
+  abrirModal('📄 Gerar PDF · ' + (paConc() ? 'Plano de Ação Concluído 5W2H' : 'Plano de Ação'), `
     <p style="margin-top:0">${l.length} ação(ões) no filtro atual. Escolha as colunas e a orientação.</p>
     <label style="display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:6px">Orientação</label>
     <div class="seg" style="margin-bottom:14px"><button id="ppPais" class="${st.pa.orient!=='retrato'?'on':''}" onclick="st.pa.orient='paisagem';$('ppPais').classList.add('on');$('ppRet').classList.remove('on')">Paisagem</button><button id="ppRet" class="${st.pa.orient==='retrato'?'on':''}" onclick="st.pa.orient='retrato';$('ppRet').classList.add('on');$('ppPais').classList.remove('on')">Retrato</button></div>
@@ -3487,10 +3559,125 @@ function gerarPdfPA(){
   const anexo = cortadas.size ? { titulo:'Detalhamento das ações (texto completo)', nota:'Ações com textos resumidos na tabela (indicados com "...").',
     itens: l.filter(x => cortadas.has(x.id)).map(x => ({ cab: `#${x.id}  -  ${pessoaNome(x.responsavel_id)}  -  ${paStatus(x)}${x.fim ? '  -  Prazo '+fmtD(x.fim) : ''}`,
       linhas: PA_CAMPOS.filter(([k]) => String(x[k]||'').trim()).map(([k,r]) => [r, x[k]]) })) } : null;
-  gerarPDF({ titulo: paConc() ? 'Planos de Ação Concluídos' : 'Plano de Ação - 5W2H', arquivo:`${paConc()?'planos_concluidos':'plano_acao'}_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 6.5 : 7.5, compacto:true,
+  gerarPDF({ titulo: paConc() ? 'Plano de Ação Concluído 5W2H' : 'Plano de Ação 5W2H', arquivo:`${paConc()?'planos_concluidos':'plano_acao'}_${hoje()}.pdf`, paisagem:!ret, fonte: ret ? 6.5 : 7.5, compacto:true,
     subtitulo: ver + (st.pa.status ? '  -  Status: '+st.pa.status : '') + (st.pa.q ? '  -  Busca: '+st.pa.q : ''),
     resumo: paConc() ? `${l.length} ação(ões) concluída(s)` : `${l.length} ação(ões)  |  ${n('Em andamento')} em andamento  |  ${n('Não iniciado')} não iniciada(s)  |  ${n('Atrasado')} atrasada(s)  |  Total previsto ${fmtBRL(l.reduce((a,x)=>a+(Number(x.quanto)||0),0))}`,
     colunas: cols.map(c => c.t), linhas, estilos, anexo });
+}
+
+/* ============================ GUIA DIDÁTICO 5W2H (C@P Consultoria) ============================ */
+function pgGuia(){
+  const W = [
+    ['WHAT','O quê?','Qual ação será realizada? Define exatamente o que precisa ser feito.','Reduzir o desperdício de matéria-prima.'],
+    ['WHY','Por quê?','Por que essa ação é necessária? Explica o motivo e o resultado desejado.','Diminuir os custos de produção e aumentar a margem de lucro.'],
+    ['WHERE','Onde?','Onde a ação será executada? Identifica o setor, departamento ou local.','Setor de corte e colagem.'],
+    ['WHEN','Quando?','Quando será realizada? Estabelece início, prazo de conclusão e etapas intermediárias, se necessário.','Iniciar em 20/10 e concluir até 30/10.'],
+    ['WHO','Quem?','Quem será responsável? Define quem conduzirá a ação e prestará contas do resultado.','Supervisor de produção.'],
+    ['HOW','Como?','Como a ação será executada? Descreve procedimentos, etapas e métodos necessários.','Revisar parâmetros das máquinas, treinar operadores e padronizar os cortes.'],
+    ['HOW MUCH','Quanto custa?','Qual será o custo? Identifica os recursos financeiros necessários para executar a melhoria.','R$ 500,00 para treinamento e materiais.']
+  ];
+  const tab = (cab, linhas) => `<table class="gd-tab"><thead><tr><th>${cab[0]}</th><th>${cab[1]}</th></tr></thead><tbody>${linhas.map(([a,b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('')}</tbody></table>`;
+  const secs = [['s1','O que é'],['s2','As 7 perguntas'],['s3','Exemplo prático'],['s4','Acompanhamento'],['s5','Indicador'],['s6','Problema × objetivo × ação'],['s7','Onde aplicar'],['s8','Plano eficiente'],['s9','Modelo para preencher'],['s10','Conclusão']];
+  $('content').innerHTML = `<div class="gd">
+  <div class="gd-hero">
+    <span class="gd-tag">Guia didático · C@P Consultoria</span>
+    <h1>Plano de Ação <span>5W2H</span></h1>
+    <p>Material educativo para aplicação na gestão. Uma ferramenta prática para transformar objetivos em ações, com responsáveis, prazos e resultados mensuráveis.</p>
+    <div class="gd-fases"><div><b>PLANEJAR</b><span>Definir a ação e o prazo.</span></div><div><b>EXECUTAR</b><span>Determinar responsáveis e método.</span></div><div><b>ACOMPANHAR</b><span>Medir resultados e corrigir desvios.</span></div></div>
+    <div class="gd-by">Elaborado por <b>C@P Consultoria e Assessoria Personalizada</b></div>
+  </div>
+  <div class="gd-idx">${secs.map(([id,t],i) => `<button onclick="$('gd-${id}').scrollIntoView({behavior:'smooth'})">${i+1}. ${t}</button>`).join('')}<button class="gd-noprint" style="margin-left:auto" onclick="window.print()">🖨️ Imprimir guia</button>${pode('plano') ? `<button class="gd-noprint" onclick="ir('plano')">🎯 Ir para o Plano de Ação</button>` : ''}</div>
+
+  <div class="gd-sec" id="gd-s1"><h2><i>1</i>O que é o Plano de Ação 5W2H?</h2>
+    <p>O 5W2H é uma ferramenta de gestão utilizada para transformar problemas, ideias e objetivos em ações práticas, organizadas e com responsáveis definidos. Ela ajuda a responder a sete perguntas fundamentais para que uma atividade seja executada da maneira correta, dentro do prazo e com os recursos necessários.</p>
+    <p>Imagine que uma empresa identificou um problema na produção. Todos sabem que precisam melhorar, mas ninguém sabe exatamente o que fazer, quem será responsável ou quando a melhoria deverá acontecer. O 5W2H organiza essas respostas e transforma a intenção em um plano executável.</p></div>
+
+  <div class="gd-sec" id="gd-s2"><h2><i>2</i>O que significa cada letra do 5W2H?</h2>
+    <div class="gd-w">${W.map(([en,pt,o,ex],i) => `<div class="gd-wc"><div class="lt ${i>4?'h':''}"><b>${i+1}. ${en}</b><span>${pt}</span></div><p>${o}</p><em>Exemplo: ${ex}</em></div>`).join('')}</div>
+    <div class="gd-dica"><b>Dica:</b> os cinco W e os dois H são perguntas complementares. Todas devem fazer sentido para que o plano fique claro e viável.</div></div>
+
+  <div class="gd-sec" id="gd-s3"><h2><i>3</i>Exemplo prático em uma indústria</h2>
+    <p>Imagine uma indústria que identificou desperdício elevado de matéria-prima no setor de produção. O objetivo é reduzir o desperdício de 8% para 4% em 60 dias.</p>
+    ${tab(['PERGUNTA','APLICAÇÃO PRÁTICA'], [['O quê?','Reduzir o desperdício de matéria-prima.'],['Por quê?','Diminuir os custos e melhorar a rentabilidade.'],['Onde?','Setor de corte e colagem.'],['Quando?','Concluir a implantação em 60 dias.'],['Quem?','Supervisor de produção.'],['Como?','Analisar perdas, ajustar máquinas, treinar operadores e acompanhar indicadores.'],['Quanto?','R$ 1.500,00 de investimento estimado.']])}
+    <p>Agora a empresa não tem apenas uma intenção de melhorar. Ela tem uma ação definida, um motivo, um local, um prazo, um responsável, um método e um custo.</p>
+    <p class="gd-nota">Os números deste exemplo são ilustrativos e devem ser ajustados à realidade de cada empresa.</p></div>
+
+  <div class="gd-sec" id="gd-s4"><h2><i>4</i>Como acompanhar um plano de ação?</h2>
+    <p>Criar o plano é apenas o primeiro passo. É fundamental acompanhar a execução e verificar se o resultado foi alcançado.</p>
+    <div class="gd-ciclo">
+      <div><b>Planejar</b><span>Registrar a ação, definir o responsável, estabelecer o prazo e determinar o resultado esperado.</span></div>
+      <div><b>Executar</b><span>O responsável realiza as atividades previstas e informa o andamento.</span></div>
+      <div><b>Medir os resultados</b><span>Comparar o indicador inicial com o resultado atual para verificar se houve melhoria.</span></div>
+      <div><b>Validar e padronizar</b><span>Confirmar se a meta foi atingida, registrar evidências e manter a melhoria quando ela funcionar.</span></div>
+    </div>
+    <div class="gd-dica">No sistema: as <b>etapas</b> de cada ação registram a execução, o <b>%</b> mostra o andamento e a barra compara o realizado com o previsto pelo prazo.</div></div>
+
+  <div class="gd-sec" id="gd-s5"><h2><i>5</i>Exemplo de acompanhamento por indicador</h2>
+    <p>No exemplo anterior, o indicador é o percentual de desperdício de matéria-prima.</p>
+    <div class="gd-ind"><div class="a"><small>SITUAÇÃO INICIAL</small><b>8%</b></div><div class="m"><small>META</small><b>4%</b></div><div class="p"><small>PRAZO</small><b>60 dias</b></div></div>
+    <div class="gd-barras">
+      <div><span>Situação inicial</span><i style="width:100%;background:var(--bad)"></i><b>8%</b></div>
+      <div><span>Após 60 dias</span><i style="width:62.5%;background:var(--warn)"></i><b>5%</b></div>
+      <div><span>Meta</span><i style="width:50%;background:var(--ok)"></i><b>4%</b></div>
+    </div>
+    <p>A redução desejada é de 4 pontos percentuais, equivalente a diminuir pela metade a taxa inicial de desperdício.</p>
+    <p>Se após 60 dias o desperdício cair para 5%, houve uma melhoria, mas a meta de 4% ainda não foi atingida. O responsável deverá analisar o que funcionou, identificar as causas das perdas restantes e definir as próximas medidas.</p></div>
+
+  <div class="gd-sec" id="gd-s6"><h2><i>6</i>Diferença entre problema, objetivo e plano de ação</h2>
+    ${tab(['CONCEITO','EXEMPLO'], [['Problema','O desperdício de matéria-prima está elevado.'],['Objetivo','Reduzir o desperdício de 8% para 4%.'],['Ação','Revisar os parâmetros de corte e treinar os operadores.'],['Responsável','Supervisor de produção.'],['Prazo','60 dias.'],['Indicador','Percentual de desperdício de matéria-prima.'],['Resultado esperado','Reduzir custos e melhorar a rentabilidade.']])}
+    <div class="gd-dica"><b>Em resumo:</b> o problema mostra o que está errado; o objetivo mostra onde queremos chegar; e o plano de ação define como chegaremos lá.</div></div>
+
+  <div class="gd-sec" id="gd-s7"><h2><i>7</i>Onde aplicar o 5W2H na empresa?</h2>
+    <div class="gd-areas">
+      <div><b>🏭 Produção</b><span>Reduzir desperdícios, aumentar produtividade, diminuir paradas de máquinas e melhorar a qualidade.</span></div>
+      <div><b>📦 Estoque</b><span>Reduzir materiais parados, evitar faltas, melhorar a acuracidade e controlar o estoque em elaboração.</span></div>
+      <div><b>💰 Financeiro</b><span>Reduzir inadimplência, controlar despesas, melhorar o fluxo de caixa e diminuir o endividamento.</span></div>
+      <div><b>👥 Recursos Humanos</b><span>Reduzir absenteísmo, melhorar a capacitação e diminuir a rotatividade de funcionários.</span></div>
+    </div></div>
+
+  <div class="gd-sec" id="gd-s8"><h2><i>8</i>O que torna um plano de ação eficiente?</h2>
+    <div class="gd-crit">
+      <div><b>1. Clareza</b><span>Qualquer pessoa deve entender o que precisa ser feito.</span></div>
+      <div><b>2. Responsabilidade</b><span>Cada ação deve ter um responsável definido.</span></div>
+      <div><b>3. Prazo</b><span>As atividades precisam de datas de conclusão.</span></div>
+      <div><b>4. Mensuração</b><span>É necessário saber como o resultado será medido.</span></div>
+      <div><b>5. Acompanhamento</b><span>A gestão deve verificar a execução e cobrar os resultados.</span></div>
+    </div>
+    <div class="gd-cmp"><div class="no"><b>✕ EVITE</b>Ações genéricas como “melhorar a produção” ou “reduzir custos”.</div><div class="si"><b>✔ PREFIRA</b>Ações específicas, como “reduzir as perdas de corte de 8% para 4% até 15 de dezembro, por meio da revisão dos parâmetros das máquinas”.</div></div></div>
+
+  <div class="gd-sec gd-mod" id="gd-s9"><h2><i>9</i>Modelo simples para preencher</h2>
+    <p>Use este quadro como ponto de partida para organizar uma ação real da sua empresa.${pode('plano') ? ' Ao final, clique em <b>Criar ação com este modelo</b> para levar tudo direto ao Plano de Ação 5W2H.' : ''}</p>
+    <div class="form">
+      <div class="full"><label>O quê?</label><input id="gdOque" placeholder="Ex.: reduzir as perdas de corte de 8% para 4%"></div>
+      <div class="full"><label>Por quê?</label><input id="gdPorque" placeholder="Ex.: diminuir custos e melhorar a rentabilidade"></div>
+      <div><label>Onde?</label><input id="gdOnde" placeholder="Ex.: setor de corte e colagem"></div>
+      <div><label>Quem?</label><input id="gdQuem" placeholder="Ex.: supervisor de produção"></div>
+      <div><label>Quando? · Início</label><input type="date" id="gdIni"></div>
+      <div><label>Quando? · Conclusão</label><input type="date" id="gdFim"></div>
+      <div class="full"><label>Como?</label><textarea id="gdComo" placeholder="Uma etapa por linha. Ex.:&#10;Analisar perdas&#10;Ajustar máquinas&#10;Treinar operadores"></textarea></div>
+      <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="gdQuanto"></div>
+      <div><label>Indicador / meta</label><input id="gdInd" placeholder="Ex.: % de desperdício: de 8% para 4%"></div>
+      <div class="full"><label>Status</label><div class="small muted">Não iniciado / Em andamento / Concluído / Atrasado — no sistema o status é calculado automaticamente pelo % e pelo prazo.</div></div>
+    </div>
+    ${pode('plano') ? `<div class="gd-noprint" style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px"><button class="btn sec" onclick="['gdOque','gdPorque','gdOnde','gdQuem','gdIni','gdFim','gdComo','gdQuanto','gdInd'].forEach(i=>$(i).value='')">Limpar</button><button class="btn" onclick="gdCriarAcao()">🎯 Criar ação com este modelo</button></div>` : ''}</div>
+
+  <div class="gd-fim" id="gd-s10"><h2>10. Conclusão</h2>
+    <p>O 5W2H transforma planejamento em execução. Ele organiza as ações para que cada pessoa saiba o que fazer, por que fazer, onde e quando agir, quem é responsável, como executar e quanto será necessário investir.</p>
+    <p>Quando utilizado corretamente, deixa de ser apenas uma tabela e passa a ser uma ferramenta de gestão, cobrança, acompanhamento e melhoria contínua dos resultados.</p>
+    <blockquote>Lembre-se: plano de ação sem acompanhamento vira apenas uma lista de intenções. O resultado depende da execução, da medição e da correção de rota.</blockquote></div>
+  <p class="small muted" style="text-align:center">GUIA DIDÁTICO | PLANO DE AÇÃO 5W2H · Material educativo para aplicação na gestão · C@P Consultoria e Assessoria Personalizada</p>
+  </div>`;
+}
+function gdCriarAcao(){
+  const v = id => ($(id).value || '').trim(), o = { oque:v('gdOque'), porque:v('gdPorque'), onde:v('gdOnde'), quem:v('gdQuem'), ini:v('gdIni'), fim:v('gdFim'), como:v('gdComo'), quanto:v('gdQuanto'), ind:v('gdInd') };
+  if(!o.oque) return toast('Preencha pelo menos o campo "O quê?".', 'err');
+  if(!db.paOk) return toast('O Plano de Ação ainda não está ativo no banco.', 'err');
+  abrirPA();
+  $('paOque').value = o.oque; $('paPorque').value = o.porque; $('paComo').value = o.como; $('paOnde').value = o.onde;
+  $('paIni').value = o.ini; $('paFim').value = o.fim; if(o.quanto) $('paQuanto').value = o.quanto;
+  $('paObs').value = [o.ind ? 'Indicador / meta: ' + o.ind : '', o.quem ? 'Responsável sugerido: ' + o.quem : ''].filter(Boolean).join('\n');
+  paLeadLive();
+  if(o.como) toast('Dica: use "↳ Usar linhas do Como?" para transformar cada linha em etapa. Depois marque em "Quem?" o responsável.');
 }
 
 /* ============================ RECADOS DA C@P CONSULTORIA ============================ */
