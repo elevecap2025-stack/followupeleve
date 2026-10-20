@@ -338,6 +338,71 @@ body.menu-min .pa-et-box{width:min(1100px,calc(100vw - 130px))}
 .pa-bar-f{height:100%;border-radius:6px;transition:width .4s ease}
 .pa-bar i{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;background:var(--gr);border-radius:1px}
 .pa-bar-l{font-size:12px;margin-top:5px;line-height:1.35}
+.pa-vis{display:inline-flex;align-items:center;gap:4px;margin-top:4px;padding:2px 8px;border-radius:10px;background:var(--warnl);color:#92400E;border:1px solid #F59E0B;font-size:11px;font-weight:700;white-space:nowrap}
+body.dark .pa-vis{color:#FCD34D}
+.pa-et-res{margin-top:6px;text-align:left;display:grid;gap:3px}
+.pa-et-res div{display:flex;gap:6px;align-items:flex-start;font-size:11.5px;line-height:1.3;background:var(--warnl);border:1px solid #FCD34D;border-radius:6px;padding:3px 7px;color:var(--tx)}
+.pa-et-res div i{font-style:normal;color:#D97706;font-size:9px;margin-top:2px}
+.pa-et-res div span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.pa-et-res div.ok{background:var(--t-ok);border-color:#86EFAC;color:var(--mut)}
+.pa-et-res div.ok i{color:var(--ok)}
+.pa-et-res div.ok span{text-decoration:line-through}
+.pa-et-res .mais{background:none!important;border:0!important;color:var(--or2)!important;font-weight:600;padding:0 2px!important}
+.pa-vis-box{margin-top:8px;padding:8px 12px;border-radius:8px;background:var(--warnl);border-left:4px solid #F59E0B;font-size:13px}
+/* janela de planos do dashboard (clique no gráfico) */
+.nc-hero{display:grid;grid-template-columns:1.6fr repeat(5,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.nc-hero-main{border-radius:14px;padding:16px 18px;color:#fff;background:linear-gradient(120deg,#23272D 0%,#2F343B 55%,#7C2D12 100%);display:flex;flex-direction:column;justify-content:center}
+.nc-hero-main span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#FDBA74}
+.nc-hero-main b{font-size:40px;line-height:1.1;font-weight:800}
+.nc-hero-main small{color:#D1D5DB;font-size:12.5px}
+.nc-hero-k{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+.nc-hero-k.click{cursor:pointer}.nc-hero-k.click:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);border-color:var(--or)}
+.nc-hero-k span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--mut)}
+.nc-hero-k b{font-size:28px;font-weight:800;color:var(--tx);line-height:1.2}
+.nc-hero-k b em{font-size:14px;font-style:normal;color:var(--mut)}
+.nc-hero-k small{font-size:11.5px;color:var(--mut)}
+.nc-dn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}.nc-dn>div{min-width:0}
+.nc-dn-t{font-size:12px;font-weight:700;color:var(--gr2);text-align:center;margin-bottom:4px}
+@media(max-width:1100px){.nc-hero{grid-template-columns:repeat(3,minmax(0,1fr))}.nc-hero-main{grid-column:1/-1}}
+@media(max-width:700px){.nc-hero{grid-template-columns:repeat(2,minmax(0,1fr))}.nc-dn{grid-template-columns:1fr}}
+.lt-kpi{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,var(--orl),var(--surf));border:1px solid var(--line);border-left:4px solid var(--or);border-radius:12px;padding:12px 16px;margin-bottom:12px;cursor:pointer}
+.lt-kpi:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.lt-big{font-size:34px;font-weight:800;color:var(--or2);line-height:1;white-space:nowrap}
+.lt-big small{font-size:14px;font-weight:600;color:var(--mut)}
+.rk{display:grid;gap:6px}
+.rk-it{display:grid;grid-template-columns:38px 1fr auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--surf)}
+.rk-it:hover{border-color:var(--or);box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.rk-n{width:34px;height:34px;border-radius:9px;background:var(--chip);color:var(--gr2);font-weight:800;font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.rk-n.top{background:var(--badl);color:var(--bad)}
+.rk-b{min-width:0}
+.rk-t{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx)}
+.rk-s{font-size:11.5px;color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk-s .tag{font-size:10px;padding:1px 6px}
+.rk-bar{height:5px;background:var(--track);border-radius:4px;margin-top:5px;overflow:hidden}
+.rk-bar i{display:block;height:100%;background:linear-gradient(90deg,#FBBF24,#DC2626);border-radius:4px}
+.rk-d{text-align:center;min-width:54px}
+.rk-d b{display:block;font-size:20px;color:var(--bad);line-height:1}
+.rk-d span{font-size:10px;color:var(--mut)}
+.dd-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.dd-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--or),var(--or2));color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dd-head .nm{font-size:17px;font-weight:800;color:var(--tx)}
+.dd-head .sb{font-size:12px;color:var(--mut)}
+.dd-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.dd-k{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surf2);border-top:3px solid var(--or)}
+.dd-k span{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+.dd-k b{font-size:20px;color:var(--tx)}
+.dd-k.bad{border-top-color:var(--bad)}.dd-k.warn{border-top-color:#F59E0B}.dd-k.ok{border-top-color:var(--ok)}
+.dd-it{display:grid;grid-template-columns:auto 1fr 190px;gap:14px;align-items:center;border:1px solid var(--line);border-left:4px solid var(--or);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;background:var(--surf);transition:box-shadow .15s,transform .15s}
+.dd-it:hover{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-1px)}
+.dd-it.bad{border-left-color:var(--bad)}.dd-it.warn{border-left-color:#F59E0B}.dd-it.ok{border-left-color:var(--ok)}
+.dd-id{width:44px;height:44px;border-radius:10px;background:var(--chip);color:var(--gr2);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+.dd-tt{font-weight:700;font-size:14px;line-height:1.35;color:var(--tx);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dd-mt{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:12px;color:var(--mut)}
+.dd-mt b{color:var(--tx);font-weight:600}
+.dd-late{color:var(--bad)!important;font-weight:700}
+.tag.parc{background:var(--warnl);color:#92400E;border:1px solid #F59E0B}
+body.dark .tag.parc{color:#FCD34D}
+@media(max-width:700px){.dd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-it{grid-template-columns:auto 1fr}.dd-it>div:last-child{grid-column:1/-1}}
 .pa-et{display:flex;gap:8px;align-items:center;margin-bottom:6px}
 .pa-et input[type=checkbox]{width:20px;height:20px;accent-color:var(--ok);flex-shrink:0}
 .pa-et input:not([type]){flex:1}
@@ -854,7 +919,9 @@ const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:
   cli:{ q:'', dia:'', mes:'', ano:'', pag:0, cls:'' },
   pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', ped:'', entDe:'', entAte:'', sel:new Set() },
   aniv:{ tab:'hoje', emp:'', cls:'', dia:'', mes:mesAtual().slice(5), ano:new Date().getFullYear() },
-  pcal:{ mes:mesAtual(), pessoa:'', modo:'ambos' }
+  pcal:{ mes:mesAtual(), pessoa:'', modo:'ambos' },
+  nc:{ de:'', ate:'', colab:'', tipo:'', status:'', urg:'', q:'' },
+  ncd:{ ano:new Date().getFullYear(), mes:'', colab:'' }
 };
 const isAdmin = () => db.me && db.me.perfil === 'admin';
 /* Um login pode estar vinculado a várias vendedoras (de uma ou mais empresas) — tabela usuario_vendedoras */
@@ -975,6 +1042,7 @@ async function carregarDados(){
   indexar();
   try{ db.perfis = await sbAll('perfis','select=*&order=nome'); }catch(e){ db.perfis = []; }
   await carregarPlanos();
+  await carregarNC();
 }
 
 async function carregarUV(){ try{ db.uv = await sbAll('usuario_vendedoras', isAdmin() ? 'select=*' : 'select=*&usuario_id=eq.'+db.me.id); }catch(e){ db.uv = []; if(isAdmin()) setTimeout(() => toast('Não foi possível ler os vínculos de login (usuario_vendedoras): '+e.message, 'err'), 900); } }
@@ -1034,6 +1102,9 @@ const PAGES = {
   ligacoes:{ t:'Ligações Realizadas', ic:'✅', fn:()=>pgLig() },
   clientes:{ t:'Clientes', ic:'👥', fn:()=>pgCli() },
   clientesatend:{ t:'Clientes Atendidos', ic:'☑️', fn:()=>pgCliAtend(), seg:'clientes' },
+  ncdash:{ t:'Dashboard da Qualidade', ic:'📊', fn:()=>pgNCDash(), seg:'nc' },
+  nc:{ t:'Não Conformidades', ic:'⚠️', fn:()=>pgNC() },
+  nctipos:{ t:'Cadastro de Não Conformidades', ic:'🗂️', fn:()=>pgNCTipos(), seg:'nc' },
   planodash:{ t:'Dashboard 5W2H', ic:'📈', fn:()=>pgPlanoDash(), seg:'plano' },
   plano:{ t:'Plano de Ação 5W2H', ic:'🎯', fn:()=>pgPlano() },
   planoconc:{ t:'Plano de Ação Concluído 5W2H', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
@@ -1048,11 +1119,11 @@ const PAGES = {
   meuperfil:{ t:'Meu Perfil', ic:'👤', fn:()=>pgMeuPerfil(), livre:true }
 };
 /* Permissões de telas: usuarios.telas (null = todas as telas de operação liberadas) */
-const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes','plano'];
+const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes','plano','nc'];
 /* Telas extras: só liberadas quando marcadas explicitamente em Permissões (ex.: caixa cadastrar vendedoras) */
 const TELAS_PERM = [...TELAS_OPER, 'vendedoras'];
 /* Telas que funcionam sem vendedora vinculada (ex.: gerente) */
-const SEM_VINC = ['plano', 'vendedoras'];
+const SEM_VINC = ['plano', 'vendedoras', 'nc'];
 function pode(k){
   if(!PAGES[k]) return false;
   if(PAGES[k].seg) return pode(PAGES[k].seg);
@@ -1073,6 +1144,7 @@ function montarNav(){
     + sec('Ligações & Follow-up', item('planejamento', nAtras||'') + item('planejar') + item('ligacoes'))
     + sec('Clientes', item('clientes') + item('clientesatend') + item('aniversariantes', nAniv||''))
     + sec('Plano de Ação', item('planodash') + item('plano', paPend().length||'') + item('planocal') + item('planoconc') + item('guia5w2h'))
+    + sec('Controle de Qualidade Vendas', item('ncdash') + item('nc', db.ncOk ? (db.ncs||[]).filter(n => ncStatus(n) === 'Atrasada').length || '' : '') + item('nctipos'))
     + sec('Cadastros', item('vendedoras') + item('empresas'))
     + sec('Administração', item('usuarios') + item('perfis') + item('permissoes') + item('backup'))
     + sec('Conta', item('meuperfil'));
@@ -2644,20 +2716,32 @@ const PA_STATUS = ['Não iniciado','Em andamento','Concluído','Atrasado','Cance
 function paStatus(x){ if(x.status === 'Cancelado') return 'Cancelado'; const pr = paPct(x); return pr >= 100 ? 'Concluído' : x.fim && x.fim < hoje() ? 'Atrasado' : pr > 0 ? 'Em andamento' : 'Não iniciado'; }
 const PA_TAG = { 'Não iniciado':'warn', 'Em andamento':'info', 'Concluído':'ok', 'Atrasado':'bad', 'Cancelado':'' };
 const diasEntre = (a,b) => Math.round((new Date(b+'T12:00:00') - new Date(a+'T12:00:00')) / 86400000);
-/* Lead time: dias do início até o fim (sem fim = até hoje) */
-function paLead(x){ return x.inicio ? Math.max(0, diasEntre(x.inicio, x.fim || hoje())) : null; }
+/* Lead time: dias do início (ou da criação) até a CONCLUSÃO; enquanto não concluída conta até hoje. Nunca usa a Data Prevista. */
+const paLeadIni = x => x.inicio || (x.created_at ? dataDeTs(x.created_at) : null);
+const paLeadFim = x => paStatus(x) === 'Concluído' && x.concluido_em ? dataDeTs(x.concluido_em) : hoje();
+function paLead(x){ const i = paLeadIni(x); return i ? Math.max(0, diasEntre(i, paLeadFim(x))) : null; }
 /* % previsto pelo prazo: quanto do período início→fim já passou */
 function paPrev(x){ if(!x.inicio || !x.fim) return null; const tot = diasEntre(x.inicio, x.fim); if(tot <= 0) return hoje() >= x.fim ? 100 : 0; return Math.max(0, Math.min(100, Math.round(diasEntre(x.inicio, hoje()) / tot * 100))); }
 const paEtapas = x => Array.isArray(x.etapas) ? x.etapas : [];
-/* % realizado: etapas concluídas ÷ total (sem etapas = % informado) */
-function paPct(x){ const e = paEtapas(x); return e.length ? Math.round(e.filter(s => s.ok).length / e.length * 100) : Math.max(0, Math.min(100, x.percentual || 0)); }
+/* % realizado: etapa concluída vale 100% do seu peso; etapa incluída (vista) e ainda não concluída vale a metade.
+   Ex.: 1 etapa incluída = 50% · 2 etapas incluídas = 25% cada (50%) · todas concluídas = 100%. Sem etapas = % informado. */
+function paPctEt(e){ return e.length ? Math.round(e.reduce((a,s) => a + (s.ok ? 1 : .5), 0) / e.length * 100) : 0; }
+function paPct(x){ const e = paEtapas(x); return e.length ? paPctEt(e) : Math.max(0, Math.min(100, x.percentual || 0)); }
+/* Parcialmente atendido: ação com etapas incluídas e ainda não concluída */
+const paParcial = x => paEtapas(x).length > 0 && paPct(x) < 100;
+/* Mostra o que foi definido em cada etapa, direto na tabela (até 3; o restante em "+N") */
+function paEtResumo(e){
+  const lin = s => esc(String(s.t||'').split('\n')[0].trim());
+  return `<div class="pa-et-res">${e.slice(0,3).map(s => `<div class="${s.ok?'ok':''}" title="${esc(s.t)}"><i>${s.ok?'✔':'●'}</i><span>${lin(s)}</span></div>`).join('')}${e.length > 3 ? `<div class="mais">+${e.length-3} etapa(s)</div>` : ''}</div>`;
+}
+function paVisto(e){ const n = e.filter(s => !s.ok).length; return n ? `<span class="pa-vis" title="Etapa incluída já conta metade do seu peso: o responsável viu e está executando">👁 Visto · ${n} em execução (${Math.round(50/e.length)}% cada)</span>` : ''; }
 function paBar(x){
   const pr = paPct(x), e = paEtapas(x), enc = ['Concluído','Cancelado'].includes(paStatus(x)), pv = enc ? null : paPrev(x);
   const cor = pr < 100 && pv == null && paStatus(x) !== 'Atrasado' ? 'var(--or)' : ({ ok:'var(--ok)', warn:'var(--warn)', bad:'var(--bad)' })[paRitmo(x)];
   return `<div class="pa-bar" title="Realizado ${pr}%${pv != null ? ' · previsto pelo prazo ' + pv + '%' : ''}"><div class="pa-bar-f" style="width:${pr}%;background:${cor}"></div>${pv != null ? `<i style="left:${pv}%"></i>` : ''}</div>
-    <div class="pa-bar-l"><b>${pr}%</b>${pv != null ? ` <span class="muted">· prev. ${pv}%</span>` : ''}${e.length ? `<div class="muted">${e.filter(s => s.ok).length}/${e.length} etapas</div>` : ''}</div>`;
+    <div class="pa-bar-l"><b>${pr}%</b>${pv != null ? ` <span class="muted">· prev. ${pv}%</span>` : ''}${e.length ? `<div class="muted">${e.filter(s => s.ok).length}/${e.length} etapas concluídas</div>${paVisto(e)}${paEtResumo(e)}` : ''}</div>`;
 }
-function paLeadLive(){ const i = $('paIni').value, f = $('paFim').value; $('paLead').value = i ? Math.max(0, diasEntre(i, f || hoje())) : ''; $('paLeadObs').textContent = i && !f ? 'contando até hoje' : ''; }
+function paLeadLive(){ const i = $('paIni').value || st.paLeadCri, f = st.paLeadConc || hoje(); $('paLead').value = i ? Math.max(0, diasEntre(i, f)) : ''; $('paLeadObs').textContent = i ? (st.paLeadConc ? 'até a conclusão' : 'contando até hoje (até concluir)') : ''; }
 function paEtRender(){
   const d = st.paEtDono, l = st.paEt, ok = l.filter(s => s.ok).length, pct = $('paPct');
   $('paEtList').innerHTML = l.map((s,i) => { const rico = s.h || /\n/.test(s.t||'');
@@ -2665,7 +2749,7 @@ function paEtRender(){
       ? `<div class="pa-et-tx pa-et-prev ${s.ok?'pa-et-ok':''}" ${d?`onclick="paRtModal(${i})" title="Clique para abrir o editor"`:''}>${paEtHtml(s)}</div>`
       : `<input value="${esc(s.t)}" ${d?'':'disabled'} placeholder="Descreva a etapa" oninput="st.paEt[${i}].t=this.value">`}${d?`<button class="btn sec sm" title="Abrir o editor (negrito, cor, tópicos)" onclick="paRtModal(${i})">⤢</button><button class="btn danger sm" title="Remover" onclick="st.paEt.splice(${i},1);paEtRender()">✕</button>`:''}</div>`; }).join('')
     || '<div class="small muted">Sem etapas: o % é informado manualmente. Cadastre etapas para o % ser calculado sozinho.</div>';
-  if(l.length){ const v = Math.round(ok / l.length * 100); pct.value = v; pct.disabled = true; $('paEtRes').innerHTML = `<div class="pa-bar" style="margin-top:6px"><div class="pa-bar-f" style="width:${v}%;background:${v>=100?'var(--ok)':'var(--or)'}"></div></div><div class="small" style="margin-top:4px"><b>${ok} de ${l.length}</b> etapas concluídas = <b>${v}%</b></div>`; }
+  if(l.length){ const v = paPctEt(l), nv = l.length - ok; pct.value = v; pct.disabled = true; $('paEtRes').innerHTML = `<div class="pa-bar" style="margin-top:6px"><div class="pa-bar-f" style="width:${v}%;background:${v>=100?'var(--ok)':'var(--or)'}"></div></div><div class="small" style="margin-top:4px"><b>${ok} de ${l.length}</b> etapas concluídas = <b>${v}%</b></div>${nv ? `<div class="pa-vis-box">👁 <b>Visto e em execução:</b> ${nv} etapa(s) incluída(s) e ainda não concluída(s) já contam <b>metade</b> do seu peso (${Math.round(50/l.length)}% cada). Ao concluir, cada uma passa a valer ${Math.round(100/l.length)}%.</div>` : ''}`; }
   else { pct.disabled = false; $('paEtRes').innerHTML = ''; }
 }
 function paEtDoComo(){
@@ -2757,10 +2841,15 @@ function pgPlanoDash(){
   const anos = []; for(let y = Math.min(anoAt - 1, ...(anosD.length ? anosD : [anoAt])); y <= anoAt + 1; y++) anos.push(y);
 
   /* Por usuário (responsável) no período */
-  const porU = {}; l.forEach(x => { const u = porU[x.responsavel_id] = porU[x.responsavel_id] || { id:x.responsavel_id, ab:0, at:0, conc:0, valid:0 };
-    if(paStatus(x) === 'Cancelado') return; u.valid++; if(paStatus(x) === 'Concluído') u.conc++; else { u.ab++; if(paStatus(x) === 'Atrasado') u.at++; } });
+  const porU = {}; l.forEach(x => { const u = porU[x.responsavel_id] = porU[x.responsavel_id] || { id:x.responsavel_id, ab:0, at:0, atp:0, conc:0, valid:0 };
+    if(paStatus(x) === 'Cancelado') return; u.valid++; if(paStatus(x) === 'Concluído') u.conc++; else { u.ab++; if(paStatus(x) === 'Atrasado'){ u.at++; if(paParcial(x)) u.atp++; } } });
   const us = Object.values(porU).filter(u => u.valid).sort((a,b) => b.ab - a.ab || pessoaNome(a.id).localeCompare(pessoaNome(b.id)));
   const usPct = us.slice().sort((a,b) => pct(b.conc,b.valid) - pct(a.conc,a.valid) || b.valid - a.valid);
+  /* Lead time (tempo de resposta) e ranking de planos parados */
+  const lt = padLtPeriodo(), ltConc = padConcPer(lt), ltMed = ltConc.length ? ltConc.reduce((a,x) => a + paLead(x), 0) / ltConc.length : 0;
+  const ltMap = {}; ltConc.forEach(x => { const u = ltMap[x.responsavel_id] = ltMap[x.responsavel_id] || { id:x.responsavel_id, s:0, n:0 }; u.s += paLead(x); u.n++; });
+  const ltUs = Object.values(ltMap).map(u => ({ ...u, m: u.s / u.n })).sort((a,b) => b.m - a.m);
+  const rank = padRankParado(), rkMax = rank.length ? paParado(rank[0]) : 0;
 
   $('content').innerHTML = `
   <div class="filters">
@@ -2782,6 +2871,21 @@ function pgPlanoDash(){
   <div class="grid g2" style="margin-top:14px">
     <div class="card"><h3>Planos em aberto por usuário · ${perTxt}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra para abrir</span></h3>${us.length ? `<div class="chartbox" style="height:${Math.max(280, us.length*34+60)}px"><canvas id="chPA2"></canvas></div>` : '<div class="empty">Nenhum plano no período.</div>'}</div>
     <div class="card"><h3>% de planos concluídos por usuário · ${perTxt}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra para abrir</span></h3>${us.length ? `<div class="chartbox" style="height:${Math.max(280, us.length*34+60)}px"><canvas id="chPA3"></canvas></div>` : '<div class="empty">Nenhum plano no período.</div>'}</div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3 style="flex-wrap:wrap">⏱ Tempo médio de resposta (lead time) por colaborador · ${esc(lt.txt)}
+      <span class="seg" style="margin-left:auto"><button class="${lt.ehAno?'':'on'}" onclick="st.pad.ltModo='mes';pgPlanoDash()">Mês</button><button class="${lt.ehAno?'on':''}" onclick="st.pad.ltModo='ano';pgPlanoDash()">Acumulado no ano</button></span></h3>
+    <div class="lt-kpi" onclick="padLtDrill('')" title="Ver os planos concluídos"><div class="lt-big">${ltConc.length ? fmtDec(ltMed) : '—'}<small> dia(s)</small></div>
+      <div><b>Em média, a Eleve responde em ${ltConc.length ? fmtDec(ltMed) + ' dia(s)' : '— (sem planos concluídos)'}</b><div class="small muted">${ltConc.length} plano(s) concluído(s) em ${esc(lt.txt)} · lead time = do início até a conclusão</div></div></div>
+    ${ltUs.length ? `<div class="chartbox" style="height:${Math.max(240, ltUs.length*34+60)}px"><canvas id="chPA4"></canvas></div><div class="small muted" style="margin-top:6px">Clique numa barra para ver os planos do colaborador. Linha tracejada = média da Eleve.</div>` : '<div class="empty">Nenhum plano concluído no período.</div>'}</div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Lead time médio mês a mês · ${ano}<span class="small muted" style="font-weight:400;margin-left:auto">clique no mês para filtrar</span></h3><div class="chartbox"><canvas id="chPA5"></canvas></div></div>
+    <div class="card"><h3>⏸ Planos com mais tempo parado<span style="margin-left:auto"><button class="btn sec sm" onclick="padRankModal()">Ver ranking completo</button></span></h3>
+      <div class="rk">${rank.slice(0,8).map((x,i) => `<div class="rk-it" onclick="padAbrirDoRank(${x.id})" title="Abrir a ação #${x.id}">
+        <div class="rk-n ${i<3?'top':''}">${i+1}º</div>
+        <div class="rk-b"><div class="rk-t"><b>#${x.id}</b> ${esc(x.o_que)}</div><div class="rk-s">${esc(pessoaNome(x.responsavel_id))} · ${padStatusTag(x)} · últ. mov. ${fmtD(paUltMov(x))}</div>
+          <div class="rk-bar"><i style="width:${rkMax ? Math.max(4, paParado(x)/rkMax*100) : 0}%"></i></div></div>
+        <div class="rk-d"><b>${paParado(x)}</b><span>dias parado</span></div></div>`).join('') || '<div class="empty">Nenhum plano em aberto. 👏</div>'}</div>
+      <div class="small muted" style="margin-top:6px">Situação atual · dias sem edição, ciente ou etapa concluída.</div></div>
   </div>`;
 
   if(typeof Chart === 'undefined') return;
@@ -2804,16 +2908,43 @@ function pgPlanoDash(){
       scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'12%', border:{ display:false }, grid:{ color:grade }, ticks:{ precision:0 } } },
       onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
       onClick:(e, el) => { if(el.length){ const m = pad(el[0].index+1); st.pad.mes = st.pad.mes === m ? '' : m; pgPlanoDash(); } } }, plugins:[rotDash] }));
+  /* Lead time por colaborador */
+  if(ltUs.length){
+    const linhaMedia = { id:'linhaMedia', afterDatasetsDraw(ch){ const x = ch.scales.x.getPixelForValue(ltMed), a = ch.chartArea, c = ch.ctx; c.save(); c.strokeStyle = esc_ ? '#E5E7EB' : '#1F2328'; c.setLineDash([5,4]); c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, a.top); c.lineTo(x, a.bottom); c.stroke();
+      c.setLineDash([]); c.fillStyle = c.strokeStyle; c.font = "700 11px 'Segoe UI',system-ui,Arial,sans-serif"; c.textAlign = 'left'; c.fillText('Média Eleve ' + fmtDec(ltMed) + ' d', Math.min(x + 4, a.right - 110), a.top + 10); c.restore(); } };
+    const corLt = v => v <= ltMed ? ['#4ADE80','#15803D'] : v <= ltMed * 1.5 ? ['#FBBF24','#C2620A'] : ['#F87171','#B91C1C'];
+    st.charts.push(new Chart($('chPA4'), { type:'bar', data:{ labels: ltUs.map(u => { const n = pessoaNome(u.id); return n.length > 22 ? n.slice(0,21) + '…' : n; }), datasets:[
+        { label:'Lead time médio (dias)', data: ltUs.map(u => Math.round(u.m*10)/10), backgroundColor: c => paGrad(...corLt(ltUs[c.dataIndex] ? ltUs[c.dataIndex].m : 0), true)(c), borderRadius:6, borderSkipped:false, maxBarThickness:22 } ] },
+      options:{ indexAxis:'y', maintainAspectRatio:false, layout:{ padding:{ right:70, top:14 } }, onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
+        onClick:(e, el, ch) => { const a = ch.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false), r = a.length ? a : ch.getElementsAtEventForMode(e, 'y', { intersect:false }, false); if(r.length) padLtDrill(ltUs[r[0].index].id); },
+        plugins:{ legend:{ display:false }, rotulos:{ on:false }, rotDash:{ on:true, fmt:(v,j) => fmtDec(v) + ' d  (' + ltUs[j].n + ')' }, tooltip:{ ...tip, callbacks:{ label: it => ` ${fmtDec(it.raw)} dia(s) em média · ${ltUs[it.dataIndex].n} plano(s) concluído(s)` } } },
+        scales:{ x:{ beginAtZero:true, grace:'10%', grid:{ color:grade }, border:{ display:false }, ticks:{ callback:v => v + ' d' } }, y:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } } } }, plugins:[rotDash, linhaMedia] }));
+  }
+  /* Lead time médio mês a mês */
+  const ltM = MESES.map((_,i) => { const c = base.filter(x => paStatus(x) === 'Concluído' && mesD(paDtConc(x), i) && paLead(x) != null); return { n:c.length, m: c.length ? Math.round(c.reduce((a,x) => a + paLead(x), 0) / c.length * 10) / 10 : null }; });
+  st.charts.push(new Chart($('chPA5'), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[
+      { type:'line', label:'Lead time médio (dias)', data: ltM.map(v => v.m), borderColor:'#127DCB', backgroundColor:'#127DCB', pointRadius:4, pointHoverRadius:6, borderWidth:3, tension:.3, spanGaps:true, yAxisID:'y' },
+      { type:'bar', label:'Planos concluídos', data: ltM.map(v => v.n), backgroundColor: esc_ ? 'rgba(255,255,255,.10)' : 'rgba(43,52,64,.14)', borderRadius:5, maxBarThickness:22, yAxisID:'y2' } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top:22 } }, interaction:{ mode:'index', intersect:false },
+      onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
+      onClick:(e, el) => { if(el.length){ st.pad.mes = pad(el[0].index+1); st.pad.ltModo = 'mes'; pgPlanoDash(); } },
+      plugins:{ legend:leg, rotulos:{ on:false }, tooltip:{ ...tip, callbacks:{ label: it => it.dataset.type === 'line' ? ` Lead time médio: ${it.raw == null ? '—' : fmtDec(it.raw) + ' dia(s)'}` : ` Concluídos: ${it.raw}` } },
+        rotLt:{} },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'15%', grid:{ color:grade }, border:{ display:false }, title:{ display:true, text:'dias' } },
+        y2:{ position:'right', beginAtZero:true, grid:{ display:false }, border:{ display:false }, ticks:{ precision:0 }, title:{ display:true, text:'concluídos' } } } },
+    plugins:[{ id:'rotLt', afterDatasetsDraw(ch){ const m = ch.getDatasetMeta(0), c = ch.ctx; c.save(); c.font = "700 11px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = '#127DCB'; c.textAlign = 'center'; c.textBaseline = 'bottom';
+      m.data.forEach((el, j) => { const v = ch.data.datasets[0].data[j]; if(v != null) c.fillText(fmtDec(v) + ' d', el.x, el.y - 7); }); c.restore(); } }] }));
   if(!us.length) return;
   const nomes = l2 => l2.map(u => { const n = pessoaNome(u.id); return n.length > 22 ? n.slice(0,21) + '…' : n; });
   const hz = { indexAxis:'y', maintainAspectRatio:false, layout:{ padding:{ right:58 } } };
   st.charts.push(new Chart($('chPA2'), { type:'bar', data:{ labels: nomes(us), datasets:[
       { label:'No prazo', data: us.map(u => u.ab - u.at), backgroundColor:paGrad('#4BA6EE','#0A4E83', true), borderRadius:6, borderSkipped:false, maxBarThickness:22 },
-      { label:'Atrasados', data: us.map(u => u.at), backgroundColor:paGrad('#F87171','#B91C1C', true), borderRadius:6, borderSkipped:false, maxBarThickness:22 } ] },
+      { label:'Atrasado (Parcialmente atendido)', data: us.map(u => u.atp), backgroundColor:paGrad('#FDBA74','#EA580C', true), borderRadius:6, borderSkipped:false, maxBarThickness:22 },
+      { label:'Atrasado', data: us.map(u => u.at - u.atp), backgroundColor:paGrad('#F87171','#B91C1C', true), borderRadius:6, borderSkipped:false, maxBarThickness:22 } ] },
     options:{ ...hz, onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
       onClick:(e, el, ch) => { const a = ch.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false), r = a.length ? a : ch.getElementsAtEventForMode(e, 'y', { intersect:false }, false); if(!r.length) return;
-        const u = us[r[0].index]; padDrill(u.id, a.length ? (a[0].datasetIndex === 1 ? 'atr' : 'prazo') : 'aberto'); },
-      plugins:{ rotulos:{ on:false }, rotDash:{ on:true, total:true }, legend:leg, tooltip:{ ...tip, callbacks:{ footer: it => 'Total em aberto: ' + us[it[0].dataIndex].ab } } },
+        const u = us[r[0].index]; padDrill(u.id, a.length ? ['prazo','atrparc','atrsem'][a[0].datasetIndex] : 'aberto'); },
+      plugins:{ rotulos:{ on:false }, rotDash:{ on:true, total:true }, legend:leg, tooltip:{ ...tip, callbacks:{ footer: it => { const u = us[it[0].dataIndex]; return 'Total em aberto: ' + u.ab + (u.at ? ' · atrasados: ' + u.at + (u.atp ? ' (' + u.atp + ' parcialmente atendido(s))' : '') : ''); } } } },
       scales:{ x:{ stacked:true, beginAtZero:true, grid:{ color:grade }, border:{ display:false }, ticks:{ precision:0 } }, y:{ stacked:true, grid:{ display:false }, ticks:{ font:{ weight:'600' } } } } }, plugins:[rotDash] }));
   const pc = usPct.map(u => pct(u.conc, u.valid));
   const corPct = v => v >= 80 ? ['#4ADE80','#15803D'] : v >= 50 ? ['#FBBF24','#C2620A'] : ['#F87171','#B91C1C'];
@@ -2826,26 +2957,98 @@ function pgPlanoDash(){
       scales:{ x:{ beginAtZero:true, max:100, grid:{ color:grade }, border:{ display:false }, ticks:{ callback:v => v + '%' } }, y:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } } } }, plugins:[rotDash] }));
 }
 /* Clique nos gráficos do dashboard: lista os planos do usuário (tipo: aberto | prazo | atr | conc) */
-const PAD_TIPOS = { aberto:'em aberto', prazo:'em aberto no prazo', atr:'atrasados', conc:'concluídos' };
+const PAD_TIPOS = { aberto:'em aberto', prazo:'em aberto no prazo', atr:'atrasados', atrparc:'atrasados · parcialmente atendidos', atrsem:'atrasados · sem andamento', conc:'concluídos' };
+function padFiltro(x, tipo){
+  if(tipo === 'conc') return paStatus(x) === 'Concluído';
+  if(tipo === 'atr') return paStatus(x) === 'Atrasado';
+  if(tipo === 'atrparc') return paStatus(x) === 'Atrasado' && paParcial(x);
+  if(tipo === 'atrsem') return paStatus(x) === 'Atrasado' && !paParcial(x);
+  if(tipo === 'prazo') return paEhAberto(x) && paStatus(x) !== 'Atrasado';
+  return paEhAberto(x);
+}
+function padStatusTag(x){
+  const s = paStatus(x);
+  return s === 'Atrasado' && paParcial(x) ? '<span class="tag parc">Atrasado (Parcialmente atendido)</span>' : `<span class="tag ${PA_TAG[s]||''}">${esc(s)}</span>`;
+}
+function padItem(x, extra){
+  const h = hoje(), s = paStatus(x), cls = s === 'Concluído' ? 'ok' : s === 'Atrasado' ? (paParcial(x) ? 'warn' : 'bad') : '';
+  const atraso = s === 'Atrasado' && x.fim ? diasEntre(x.fim, h) : 0;
+  return `<div class="dd-it ${cls}" onclick="pcalAbrir(${x.id})" title="Abrir a ação">
+    <div class="dd-id">#${x.id}</div>
+    <div style="min-width:0"><div class="dd-tt">${esc(x.o_que)}</div>
+      <div class="dd-mt">${extra||''}${padStatusTag(x)}
+        <span>Quem <b>${esc(pessoaNome(x.responsavel_id))}</b></span>
+        ${x.inicio ? `<span>Início <b>${fmtD(x.inicio)}</b></span>` : ''}
+        ${x.fim ? `<span>Prevista <b>${fmtD(x.fim)}</b></span>` : ''}
+        ${atraso ? `<span class="dd-late">⚠ ${atraso} dia(s) de atraso</span>` : ''}
+        ${s === 'Concluído' && x.concluido_em ? `<span>Concluído <b>${fmtD(dataDeTs(x.concluido_em))}</b></span>` : ''}
+        ${paLead(x) != null ? `<span>Lead time <b>${paLead(x)} dia(s)</b></span>` : ''}
+        ${x.criado_por !== x.responsavel_id ? `<span>Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></span>` : ''}</div></div>
+    <div>${paBar(x)}</div></div>`;
+}
+/* Tempo parado: dias desde a última movimentação (criação, edição, ciente ou etapa concluída) */
+function paUltMov(x){
+  const d = [x.created_at, x.updated_at, x.ciente_em, ...paEtapas(x).map(e => e.em)].filter(Boolean).map(dataDeTs).sort();
+  return d.length ? d[d.length-1] : (x.inicio || hoje());
+}
+const paParado = x => Math.max(0, diasEntre(paUltMov(x), hoje()));
+function padRankParado(){ return paDashBase().filter(paEhAberto).sort((a,b) => paParado(b) - paParado(a) || a.id - b.id); }
+function padRankModal(){
+  st.padVoltar = padRankModal;
+  const l = padRankParado();
+  abrirModal('⏸ Ranking · planos com mais tempo parado', `<p class="small muted" style="margin-top:0">Planos em aberto ordenados pelos dias sem nenhuma movimentação (edição, ciente ou etapa concluída). Clique num plano para abrir a ação.</p>
+    ${l.map((x,i) => padItem(x, `<span class="dd-late">${i+1}º · parado há ${paParado(x)} dia(s)</span><span>Última movimentação <b>${fmtD(paUltMov(x))}</b></span>`)).join('') || '<div class="card empty">Nenhum plano em aberto.</div>'}`,
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button>`, true);
+}
+function padAbrirDoRank(id){ st.padVoltar = null; pcalAbrir(id); }
+/* Lead time: período (mês ou acumulado no ano) e lista de planos concluídos */
+function padLtPeriodo(){
+  const p = st.pad, ano = String(p.ano), mesAt = new Date().getMonth() + 1;
+  const mes = p.mes || (Number(ano) === new Date().getFullYear() ? pad(mesAt) : '12');
+  const ehAno = p.ltModo === 'ano';
+  return { ano, mes, ehAno, txt: ehAno ? 'acumulado de ' + (p.mes ? 'jan a ' + MESES[Number(mes)-1].slice(0,3).toLowerCase() + '/' : 'Ano ') + ano : MESES[Number(mes)-1] + '/' + ano,
+    ok: d => !!d && d.slice(0,4) === ano && (ehAno ? (!p.mes || d.slice(5,7) <= mes) : d.slice(5,7) === mes) };
+}
+const padConcPer = per => paDashBase().filter(x => paStatus(x) === 'Concluído' && per.ok(paDtConc(x)) && paLead(x) != null);
+function padLtDrill(uid){
+  const per = padLtPeriodo(), l = padConcPer(per).filter(x => !uid || x.responsavel_id === uid).sort((a,b) => paLead(b) - paLead(a));
+  st.padVoltar = () => padLtDrill(uid);
+  const md = l.length ? l.reduce((a,x) => a + paLead(x), 0) / l.length : 0, nm = uid ? pessoaNome(uid) : 'Eleve (todos)';
+  const ini = nm.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
+  abrirModal('⏱ Lead time · planos concluídos', `
+    <div class="dd-head"><div class="dd-av">${esc(ini||'?')}</div><div><div class="nm">${esc(nm)}</div><div class="sb">Concluídos em ${esc(per.txt)} · do início até a conclusão</div></div></div>
+    <div class="dd-kpis">
+      <div class="dd-k"><span>Concluídos</span><b>${l.length}</b></div>
+      <div class="dd-k ok"><span>Lead time médio</span><b>${fmtDec(md)} d</b></div>
+      <div class="dd-k warn"><span>Maior</span><b>${l.length ? paLead(l[0]) : 0} d</b></div>
+      <div class="dd-k"><span>Menor</span><b>${l.length ? paLead(l[l.length-1]) : 0} d</b></div>
+    </div>
+    ${l.map(x => padItem(x)).join('') || '<div class="card empty">Nenhum plano concluído no período.</div>'}`,
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button>`, true);
+}
 function padDrill(uid, tipo){
-  st.padUlt = [uid, tipo];
-  const l = (st.padL||[]).filter(x => x.responsavel_id === uid && (
-    tipo === 'conc' ? paStatus(x) === 'Concluído' : tipo === 'atr' ? paStatus(x) === 'Atrasado' : tipo === 'prazo' ? paEhAberto(x) && paStatus(x) !== 'Atrasado' : paEhAberto(x)))
+  st.padUlt = [uid, tipo]; st.padVoltar = () => padDrill(uid, tipo);
+  const l = (st.padL||[]).filter(x => x.responsavel_id === uid && padFiltro(x, tipo))
     .sort((a,b) => (a.fim||'9999').localeCompare(b.fim||'9999') || a.id - b.id);
-  const tit = `${esc(pessoaNome(uid))} · ${l.length} plano(s) ${PAD_TIPOS[tipo]}`;
-  abrirModal(tit, `<p class="small muted" style="margin-top:0">Planos lançados em ${esc(st.padPer||'')}. Clique numa linha para abrir a ação.</p>
-    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>O quê?</th><th>Data Início</th><th>Data Prevista</th>${tipo==='conc'?'<th>Concluído em</th>':''}<th>Status</th><th>%</th></tr></thead><tbody>
-    ${l.map(x => `<tr style="cursor:pointer" onclick="pcalAbrir(${x.id})"><td><b>${x.id}</b></td><td><b>${esc(x.o_que)}</b>${x.criado_por !== x.responsavel_id ? `<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>` : ''}</td>
-      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.fim?fmtD(x.fim):''}</td>${tipo==='conc'?`<td>${x.concluido_em?fmtDH(x.concluido_em).slice(0,10):''}</td>`:''}
-      <td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td><td style="min-width:120px">${paBar(x)}</td></tr>`).join('') || `<tr><td colspan="7" class="empty">Nenhum plano.</td></tr>`}
-    </tbody></table></div>`,
+  const h = hoje(), nm = pessoaNome(uid), ini = nm.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
+  const nAt = l.filter(x => paStatus(x) === 'Atrasado').length, nPa = l.filter(x => paStatus(x) === 'Atrasado' && paParcial(x)).length;
+  const media = l.length ? Math.round(l.reduce((a,x) => a + paPct(x), 0) / l.length) : 0;
+  abrirModal(`Planos ${PAD_TIPOS[tipo]}`, `
+    <div class="dd-head"><div class="dd-av">${esc(ini || '?')}</div><div><div class="nm">${esc(nm)}</div><div class="sb">Planos lançados em ${esc(st.padPer||'')} · clique num plano para abrir a ação</div></div></div>
+    <div class="dd-kpis">
+      <div class="dd-k"><span>Planos</span><b>${l.length}</b></div>
+      <div class="dd-k bad"><span>Atrasados</span><b>${nAt}</b></div>
+      <div class="dd-k warn"><span>Parcialmente atendidos</span><b>${nPa}</b></div>
+      <div class="dd-k ok"><span>% médio realizado</span><b>${media}%</b></div>
+    </div>
+    ${l.map(x => padItem(x)).join('') || '<div class="card empty">Nenhum plano.</div>'}`,
     `<button class="btn sec" onclick="fecharModal()">Fechar</button><button class="btn" onclick="padIrPlano('${uid}','${tipo}')">Abrir no ${tipo==='conc'?'Plano de Ação Concluído 5W2H':'Plano de Ação'} ›</button>`, true);
 }
 function padIrPlano(uid, tipo){
   fecharModal(true);
   const todos = veTodosPlanos();
   st.pa.pessoa = todos ? uid : ''; st.pa.ver = todos ? 'equipe' : 'todos'; st.pa.q = '';
-  st.pa.status = tipo === 'atr' ? 'Atrasado' : '';
+  st.pa.status = ['atr','atrparc','atrsem'].includes(tipo) ? 'Atrasado' : '';
   ir(tipo === 'conc' ? 'planoconc' : 'plano');
 }
 /* Degradê das barras (vertical: de baixo para cima · horizontal: da esquerda para a direita) */
@@ -2928,7 +3131,7 @@ function pgPlano(){
   ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
     return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td>${paCel(x,'o_que',true)}${paCel(x,'por_que')}${paCel(x,'como')}
       <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>`}</td>
-      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}${paPrazoMudou(x) ? `<div class="small muted" title="Data prevista alterada${x.prazo_alterado_por?' por '+esc(pessoaNome(x.prazo_alterado_por)):''}">orig. ${fmtD(x.fim_original)}</div>` : ''}</td><td>${paLead(x) ?? ''}${x.inicio && !x.fim ? '<div class="small muted">até hoje</div>' : ''}</td>
+      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}${paPrazoMudou(x) ? `<div class="small muted" title="Data prevista alterada${x.prazo_alterado_por?' por '+esc(pessoaNome(x.prazo_alterado_por)):''}">orig. ${fmtD(x.fim_original)}</div>` : ''}</td><td>${paLead(x) ?? ''}${paLead(x) != null && paStatus(x) !== 'Concluído' ? '<div class="small muted">até hoje</div>' : ''}</td>
       ${paCel(x,'onde')}<td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
       ${conc ? `<td>${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
       <td style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
@@ -2958,7 +3161,7 @@ function paVer(id, campo){
     `<button class="btn sec" onclick="fecharModal()">Fechar</button>${ed ? `<button class="btn" onclick="fecharModal(true);abrirPA(${x.id})">✎ Editar</button>` : ''}`, true);
   if(campo) setTimeout(() => { const el = $('pv_'+campo); if(el) el.scrollIntoView({ block:'nearest' }); }, 60);
 }
-function abrirPA(id){
+function abrirPA(id, pre){
   const x = id ? db.planos.find(p => p.id === id) : null, me = db.me.id, dono = !x || x.criado_por === me, resp = x && x.responsavel_id === me;
   const so = x && !dono && !resp, dis = dono ? '' : 'disabled', nc = x ? paCopias(x) : 1, datasOk = dono || (resp && paEditaDatas()), disD = datasOk ? '' : 'disabled';
   const pess = (db.pessoas||[]).slice().sort((a,b) => (a.nome||'').localeCompare(b.nome||'')); if(!pess.some(p => p.id === me)) pess.unshift({ id:me, nome:db.me.nome||db.me.email, email:db.me.email });
@@ -2977,7 +3180,7 @@ function abrirPA(id){
     <div><label>Data Início</label><input type="date" id="paIni" value="${x&&x.inicio?x.inicio:''}" ${disD} onchange="paLeadLive()"></div>
     <div><label>Horário previsto</label><input type="time" id="paHora" value="${x&&x.horario?x.horario.slice(0,5):''}" ${dis}></div>
     <div><label>Data Prevista</label><input type="date" id="paFim" value="${x&&x.fim?x.fim:''}" ${disD} onchange="paLeadLive()"></div>
-    <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && x.inicio && !x.fim ? 'contando até hoje' : ''}</div></div>
+    <div><label>Lead time (dias · automático)</label><input id="paLead" disabled value="${x && paLead(x) != null ? paLead(x) : ''}"><div class="small muted" id="paLeadObs">${x && paLead(x) != null ? (paStatus(x) === 'Concluído' ? 'até a conclusão' : 'contando até hoje (até concluir)') : ''}</div></div>
     <div><label>Quanto? (R$)</label><input type="number" min="0" step="0.01" id="paQuanto" value="${x?x.quanto:''}" ${dis}></div>
     <div><label>Status (automático)</label><select id="paStatus" ${so?'disabled':''}><option value="auto">Automático${x && paStatus(x) !== 'Cancelado' ? ' · hoje: '+paStatus(x) : ''}</option><option value="Cancelado" ${x&&x.status==='Cancelado'?'selected':''}>Cancelado</option></select><div class="small muted">Segue o % e o prazo: 0% Não iniciado · em execução Em andamento · 100% Concluído (só então vai para Plano de Ação Concluído 5W2H) · fim vencido Atrasado.</div></div>
     <div><label>% concluído</label><input type="number" min="0" max="100" id="paPct" value="${x?paPct(x):0}" ${so?'disabled':''}></div>
@@ -2986,6 +3189,12 @@ function abrirPA(id){
     ${x && dono && nc > 1 ? `<label class="full ck-row" style="margin:0"><input type="checkbox" id="paTodas" checked><span>Aplicar O quê, Por quê, Como, Onde, datas, horário, valor e etapas às <b>${nc} cópias</b> deste plano (etapas e andamento já são compartilhados)</span></label>` : ''}
     ${!x ? '<div class="full small muted">Cada pessoa marcada recebe a ação na hora para dar ciente. Etapas, % e status são compartilhados: você acompanha o andamento em tempo real e recebe o aviso quando for entregue.</div>' : ''}</div>`,
     `<button class="btn sec" onclick="fecharModal()">${so?'Fechar':'Cancelar'}</button>${so ? '' : `<button class="btn" id="paSalvar" onclick="salvarPA(${id||'null'})">Salvar</button>`}`, true);
+  st.paVincNC = !x && pre && pre.nc ? pre.nc : null;
+  if(!x && pre){ if(pre.oque) $('paOque').value = pre.oque; if(pre.porque) $('paPorque').value = pre.porque; if(pre.onde) $('paOnde').value = pre.onde;
+    if(pre.fim){ $('paFim').value = pre.fim; if(!$('paIni').value && hoje() <= pre.fim) $('paIni').value = hoje(); }
+    if(pre.quem && pre.quem !== me){ document.querySelectorAll('.paQk').forEach(i => i.checked = i.value === pre.quem); }
+    if(pre.nc) $('mbox').querySelector('.mhead h3').textContent = 'Nova ação · 5W2H · Não conformidade #' + pre.nc; setTimeout(paLeadLive, 0); }
+  st.paLeadCri = x && x.created_at ? dataDeTs(x.created_at) : hoje(); st.paLeadConc = x && paStatus(x) === 'Concluído' && x.concluido_em ? dataDeTs(x.concluido_em) : null;
   st.paEt = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtOrig = x ? paEtapas(x).map(s => ({ ...s })) : []; st.paEtDono = (dono || resp) && !so; paEtRender();
   if(so) document.querySelectorAll('#paEtList input').forEach(i => i.disabled = true);
 }
@@ -2998,7 +3207,7 @@ async function salvarPA(id){
   const pct = Math.round(Number($('paPct').value) || 0);
   if(pct < 0 || pct > 100) return toast('O % deve ficar entre 0 e 100.', 'err');
   const et = (dono || (x && x.responsavel_id === me)) ? st.paEt.filter(s => (s.t||'').trim()).map(s => ({ t:s.t.trim(), ...(s.h ? { h:s.h } : {}), ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null })) : st.paEt.map(s => ({ ...s, ok:!!s.ok, em:s.ok ? (s.em || new Date().toISOString()) : null }));
-  let o = { status:$('paStatus').value === 'Cancelado' ? 'Cancelado' : 'Não iniciado', percentual: et.length ? Math.round(et.filter(s => s.ok).length / et.length * 100) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
+  let o = { status:$('paStatus').value === 'Cancelado' ? 'Cancelado' : 'Não iniciado', percentual: et.length ? paPctEt(et) : pct, etapas:et, observacoes:$('paObs').value.trim() || null };
   let comum = null;
   if(dono){
     comum = { o_que:$('paOque').value.trim(), por_que:$('paPorque').value.trim() || null, como:$('paComo').value.trim() || null,
@@ -3024,6 +3233,7 @@ async function salvarPA(id){
       const grupo = novoUUID();
       const r = await sbFetch('/rest/v1/plano_acao', { method:'POST', body: quem.map(uid => ({ ...o, responsavel_id:uid, grupo })), headers:{ Prefer:'return=representation' } });
       (r||[]).forEach(n => db.planos.push(n));
+      if(st.paVincNC && r && r[0]){ const ncId = st.paVincNC; st.paVincNC = null; await ncVincularPlano(ncId, r[0].id); }
       const outros = quem.filter(u => u !== me);
       fecharModal(true); montarNav(); paRefresh();
       toast(outros.length ? `Ação enviada para ${outros.map(pessoaNome).join(', ')}${quem.includes(me)?' e incluída no seu plano':''}. Aguardando ciente.` : 'Ação salva.', 'ok');
@@ -3040,7 +3250,7 @@ async function salvarPA(id){
       const fr = (await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&select=*`) || [])[0];
       if(!fr) throw new Error('Esta ação não existe mais (pode ter sido excluída). Clique em Atualizar.');
       const etM = paMesclar(st.paEtOrig || [], et, paEtapas(fr));
-      const body = { ...o, etapas:etM, percentual: etM.length ? Math.round(etM.filter(e => e.ok).length / etM.length * 100) : o.percentual };
+      const body = { ...o, etapas:etM, percentual: etM.length ? paPctEt(etM) : o.percentual };
       const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&updated_at=eq.${encodeURIComponent(fr.updated_at)}`, { method:'PATCH', body, headers:{ Prefer:'return=representation' } });
       if(r && r.length) salvo = r[0];
     }
@@ -3198,7 +3408,7 @@ async function paEtRapido(id, op, val, marcado){
         if(s0){ s0.t = val.t; if(val.h) s0.h = val.h; else delete s0.h; if(val.ok != null){ s0.ok = !!val.ok; s0.em = val.ok ? (s0.em || agora) : null; } }
         else if(!e.some(s => s.t.trim() === val.t)) e.push({ t:val.t, ...(val.h ? { h:val.h } : {}), ok:!!val.ok, em:val.ok ? agora : null });
       }
-      const body = { etapas:e, percentual: e.length ? Math.round(e.filter(s => s.ok).length / e.length * 100) : fr.percentual };
+      const body = { etapas:e, percentual: e.length ? paPctEt(e) : fr.percentual };
       const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${id}&updated_at=eq.${encodeURIComponent(fr.updated_at)}`, { method:'PATCH', body, headers:{ Prefer:'return=representation' } });
       if(r && r.length) salvo = r[0];
     }
@@ -3338,7 +3548,7 @@ function pcalAbrir(id){
     PA_CAMPOS.map(([k,r]) => { const t = String(x[k]||'').trim(); return t ? `<div class="pa-ver-b"><div class="pa-ver-l">${r}</div><div class="pa-ver-t">${esc(t)}</div></div>` : ''; }).join('') +
     `<div class="pa-ver-b"><div class="pa-ver-l" style="display:flex;align-items:center;gap:8px">Etapas ${e.length ? `(${e.filter(s=>s.ok).length}/${e.length})` : ''}${ed ? `<button class="btn sm" style="margin-left:auto" onclick="paRtAbrir({mode:'linha',id:${id}})">＋ Nova etapa</button>` : ''}</div>
       ${e.map((s,i) => `<div class="pa-et pa-et-q"><input type="checkbox" ${s.ok?'checked':''} ${ed?'':'disabled'} onchange="paEtRapido(${id},'tog',${jsAttr(s.t)},this.checked)"><div class="pa-et-tx ${s.ok?'pa-et-ok':''}" ${ed?`onclick="paRtEditar(${id},${i})" style="cursor:pointer" title="Clique para abrir o editor"`:''}>${paEtHtml(s)}</div>${ed && !s.ok ? `<button class="btn ok sm" onclick="paEtRapido(${id},'tog',${jsAttr(s.t)},true)">✔ Entregar</button>` : ''}</div>`).join('') || '<div class="small muted">Nenhuma etapa ainda.</div>'}</div>`,
-    `${st.page === 'planodash' && st.padUlt ? `<button class="btn sec" onclick="padDrill(st.padUlt[0],st.padUlt[1])">‹ Voltar à lista</button>` : ''}<button class="btn sec" onclick="fecharModal()">Fechar</button>${pendC ? `<button class="btn ok" onclick="st.pcalAberto=null;abrirCiente(null,${id})">✔ Dar ciente</button>` : ''}<button class="btn" onclick="st.pcalAberto=null;abrirPA(${id})">${ed ? '✎ Editar ação' : '👁 Ver completo'}</button>`,
+    `${st.page === 'planodash' && st.padVoltar ? `<button class="btn sec" onclick="st.padVoltar()">‹ Voltar à lista</button>` : ''}<button class="btn sec" onclick="fecharModal()">Fechar</button>${pendC ? `<button class="btn ok" onclick="st.pcalAberto=null;abrirCiente(null,${id})">✔ Dar ciente</button>` : ''}<button class="btn" onclick="st.pcalAberto=null;abrirPA(${id})">${ed ? '✎ Editar ação' : '👁 Ver completo'}</button>`,
     true, () => { st.pcalAberto = null; });
 }
 function pcalPdf(){
@@ -3680,6 +3890,302 @@ function gdCriarAcao(){
   if(o.como) toast('Dica: use "↳ Usar linhas do Como?" para transformar cada linha em etapa. Depois marque em "Quem?" o responsável.');
 }
 
+/* ============================ CONTROLE DE QUALIDADE VENDAS · NÃO CONFORMIDADES ============================ */
+const NC_URG = ['Baixa','Média','Alta','Urgente'], NC_IMP = ['Baixo','Médio','Alto','Crítico'];
+const NC_URG_CLS = { 'Baixa':'info', 'Média':'warn', 'Alta':'parc', 'Urgente':'bad' };
+const NC_IMP_CLS = { 'Baixo':'info', 'Médio':'warn', 'Alto':'parc', 'Crítico':'bad' };
+const NC_ST_CLS = { 'Aberta':'warn', 'Em tratamento':'info', 'Atrasada':'bad', 'Concluída':'ok' };
+const NC_COR_URG = { 'Baixa':'#2563EB', 'Média':'#F59E0B', 'Alta':'#EA580C', 'Urgente':'#DC2626' };
+const NC_COR_IMP = { 'Baixo':'#2563EB', 'Médio':'#F59E0B', 'Alto':'#EA580C', 'Crítico':'#DC2626' };
+async function carregarNC(){
+  try{ const [t, n] = await Promise.all([sbAll('nc_tipos','select=*&order=nome'), sbAll('nao_conformidades','select=*&order=id')]); db.ncTipos = t; db.ncs = n; db.ncOk = true; }
+  catch(e){ db.ncTipos = []; db.ncs = []; db.ncOk = false; }
+}
+const ncSemBanco = () => '<div class="card empty">O Controle de Qualidade ainda não foi ativado no banco. Execute o <b>18_nao_conformidades.sql</b> no Supabase e clique em ↻ Atualizar.</div>';
+const ncTipoNome = id => ((db.ncTipos||[]).find(t => t.id === id) || {}).nome || 'Sem tipo';
+const ncPlano = n => n.plano_id ? (db.planos||[]).find(p => p.id === n.plano_id) : null;
+function ncFim(n){ const p = ncPlano(n); return p && paStatus(p) === 'Concluído' && p.concluido_em ? dataDeTs(p.concluido_em) : null; }
+function ncStatus(n){ if(ncFim(n)) return 'Concluída'; if(n.previsao && n.previsao < hoje()) return 'Atrasada'; return n.plano_id ? 'Em tratamento' : 'Aberta'; }
+/* Lead time: da data da não conformidade até a conclusão do plano de ação vinculado (sem conclusão = até hoje) */
+const ncLead = n => Math.max(0, diasEntre(n.data, ncFim(n) || hoje()));
+const ncPodeEditar = n => !n || isAdmin() || n.criado_por === db.me.id;
+const ncTag = (v, m) => v ? `<span class="tag ${m[v]||''}">${esc(v)}</span>` : '<span class="muted">—</span>';
+function ncPlanoHtml(n){
+  if(!n.plano_id) return '<span class="muted">Sem plano</span>';
+  const p = ncPlano(n);
+  return p ? `<a href="#" onclick="event.preventDefault();pcalAbrir(${p.id})"><b>#${p.id}</b></a> <span class="tag ${PA_TAG[paStatus(p)]||''}">${esc(paStatus(p))}</span><div style="min-width:110px">${paBar(p).split('<div class="pa-bar-l">')[0]}</div>`
+    : `<b>#${n.plano_id}</b> <span class="small muted">(sem acesso)</span>`;
+}
+function ncFiltradas(){
+  const f = st.nc, q = (f.q||'').trim().toLowerCase();
+  return (db.ncs||[]).filter(n => (!f.de || n.data >= f.de) && (!f.ate || n.data <= f.ate) && (!f.colab || n.colaborador_id === f.colab)
+    && (!f.tipo || String(n.tipo_id) === f.tipo) && (!f.status || ncStatus(n) === f.status) && (!f.urg || n.urgencia === f.urg)
+    && (!q || [n.descricao, n.impacto, ncTipoNome(n.tipo_id), pessoaNome(n.colaborador_id)].join(' ').toLowerCase().includes(q)))
+    .sort((a,b) => b.data.localeCompare(a.data) || b.id - a.id);
+}
+const ncPessoasOpts = sel => (db.pessoas||[]).slice().sort((a,b) => (a.nome||a.email||'').localeCompare(b.nome||b.email||'')).map(p => `<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.nome||p.email)}</option>`).join('');
+
+/* ---------- Lançamento de Não Conformidades ---------- */
+function pgNC(){
+  if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
+  const f = st.nc, l = ncFiltradas(), n = s => l.filter(x => ncStatus(x) === s).length;
+  const conc = l.filter(x => ncFim(x)), ltm = conc.length ? conc.reduce((a,x) => a + ncLead(x), 0) / conc.length : 0;
+  $('content').innerHTML = `
+  <div class="kpis">
+    <div class="kpi dk"><div class="l">Não conformidades</div><div class="v">${fmtN(l.length)}</div><div class="s">no filtro atual</div></div>
+    <div class="kpi warn click ${f.status==='Aberta'?'sel':''}" onclick="st.nc.status=st.nc.status==='Aberta'?'':'Aberta';pgNC()"><div class="l">Abertas (sem plano)</div><div class="v">${n('Aberta')}</div></div>
+    <div class="kpi info click ${f.status==='Em tratamento'?'sel':''}" onclick="st.nc.status=st.nc.status==='Em tratamento'?'':'Em tratamento';pgNC()"><div class="l">Em tratamento</div><div class="v">${n('Em tratamento')}</div></div>
+    <div class="kpi bad click ${f.status==='Atrasada'?'sel':''}" onclick="st.nc.status=st.nc.status==='Atrasada'?'':'Atrasada';pgNC()"><div class="l">Atrasadas</div><div class="v">${n('Atrasada')}</div></div>
+    <div class="kpi ok click ${f.status==='Concluída'?'sel':''}" onclick="st.nc.status=st.nc.status==='Concluída'?'':'Concluída';pgNC()"><div class="l">Concluídas</div><div class="v">${n('Concluída')}</div><div class="s">Lead time médio ${fmtDec(ltm)} dia(s)</div></div>
+  </div>
+  <div class="filters">
+    <div class="f"><label>De</label><input type="date" value="${f.de}" onchange="st.nc.de=this.value;pgNC()"></div>
+    <div class="f"><label>Até</label><input type="date" value="${f.ate}" onchange="st.nc.ate=this.value;pgNC()"></div>
+    <div class="f"><label>Colaborador</label><select onchange="st.nc.colab=this.value;pgNC()"><option value="">Todos</option>${ncPessoasOpts(f.colab)}</select></div>
+    <div class="f"><label>Não conformidade</label><select onchange="st.nc.tipo=this.value;pgNC()"><option value="">Todas</option>${(db.ncTipos||[]).map(t => `<option value="${t.id}" ${String(t.id)===f.tipo?'selected':''}>${esc(t.nome)}</option>`).join('')}</select></div>
+    <div class="f"><label>Status</label><select onchange="st.nc.status=this.value;pgNC()"><option value="">Todos</option>${Object.keys(NC_ST_CLS).map(s => `<option ${f.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="f"><label>Urgência</label><select onchange="st.nc.urg=this.value;pgNC()"><option value="">Todas</option>${NC_URG.map(s => `<option ${f.urg===s?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="f grow"><label>Buscar</label><input id="ncQ" value="${esc(f.q)}" placeholder="Descrição, impacto, colaborador…" oninput="st.nc.q=this.value;clearTimeout(window._ncq);window._ncq=setTimeout(()=>{pgNC();const i=$('ncQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <button class="btn" onclick="ncAbrir()">+ Lançar não conformidade</button>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Data</th><th>Colaborador</th><th>Não conformidade</th><th>Impacto para a empresa</th><th>Urgência</th><th>Plano de ação</th><th>Previsão término</th><th class="num">Lead time</th><th>Status</th><th></th></tr></thead><tbody>
+  ${l.map(x => `<tr><td><b>${x.id}</b></td><td style="white-space:nowrap">${fmtD(x.data)}</td><td><b>${esc(pessoaNome(x.colaborador_id))}</b></td>
+    <td style="min-width:220px"><span class="tag or">${esc(ncTipoNome(x.tipo_id))}</span><div class="small" style="margin-top:3px;white-space:pre-wrap">${esc(x.descricao)}</div></td>
+    <td style="min-width:170px">${ncTag(x.impacto_nivel, NC_IMP_CLS)}${x.impacto?`<div class="small muted" style="margin-top:3px;white-space:pre-wrap">${esc(x.impacto)}</div>`:''}</td>
+    <td>${ncTag(x.urgencia, NC_URG_CLS)}</td><td>${ncPlanoHtml(x)}</td><td>${x.previsao?fmtD(x.previsao):'<span class="muted">—</span>'}</td>
+    <td class="num"><b>${ncLead(x)}</b> d${ncFim(x)?'':'<div class="small muted">até hoje</div>'}</td><td>${ncTag(ncStatus(x), NC_ST_CLS)}</td>
+    <td class="act"><button class="btn sec sm" title="${ncPodeEditar(x)?'Editar':'Ver'}" onclick="ncAbrir(${x.id})">${ncPodeEditar(x)?'✎':'👁'}</button>${!x.plano_id && ncPodeEditar(x) ? ` <button class="btn sec sm" title="Abrir plano de ação" onclick="ncNovoPlano(${x.id})">🎯</button>` : ''}${ncPodeEditar(x) ? ` <button class="btn danger sm" title="Excluir" onclick="ncExcluir(${x.id})">🗑</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="11" class="empty">Nenhuma não conformidade lançada neste filtro.</td></tr>'}
+  </tbody></table></div>`;
+}
+function ncAbrir(id){
+  const x = id ? (db.ncs||[]).find(n => n.id === id) : null, ed = ncPodeEditar(x), dis = ed ? '' : 'disabled';
+  const planos = (db.planos||[]).filter(p => paStatus(p) !== 'Cancelado' && (!(db.ncs||[]).some(n => n.plano_id === p.id && (!x || n.id !== x.id)) || (x && x.plano_id === p.id))).sort((a,b) => b.id - a.id);
+  abrirModal(x ? `Não conformidade #${x.id}` : 'Lançar não conformidade · Vendas', `<div class="form">
+    <div><label>Data *</label><input type="date" id="ncData" value="${x ? x.data : hoje()}" ${dis} onchange="ncLeadLive()"></div>
+    <div><label>Colaborador *</label><select id="ncColab" ${dis}><option value="">Selecione…</option>${ncPessoasOpts(x ? x.colaborador_id : '')}</select></div>
+    <div class="full"><label>Não conformidade * <span style="font-weight:400">— escolha da lista ou digite uma nova (ela é cadastrada ao salvar)</span></label>
+      <input id="ncTipo" list="ncTiposDL" value="${x ? esc(x.tipo_id ? ncTipoNome(x.tipo_id) : '') : ''}" placeholder="Ex.: Erro no pedido" ${dis} autocomplete="off">
+      <datalist id="ncTiposDL">${(db.ncTipos||[]).filter(t => t.ativo).map(t => `<option value="${esc(t.nome)}">`).join('')}</datalist></div>
+    <div class="full"><label>Descrição da não conformidade *</label><textarea id="ncDesc" ${dis} placeholder="O que aconteceu, onde e como foi identificado">${x ? esc(x.descricao) : ''}</textarea></div>
+    <div><label>Nível de impacto para a empresa</label><select id="ncImpN" ${dis}><option value="">Selecione…</option>${NC_IMP.map(v => `<option ${x && x.impacto_nivel===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div><label>Urgência do tratamento *</label><select id="ncUrg" ${dis}>${NC_URG.map(v => `<option ${(x ? x.urgencia : 'Média')===v?'selected':''}>${v}</option>`).join('')}</select></div>
+    <div class="full"><label>Impacto que essa não conformidade tem para a empresa</label><textarea id="ncImp" ${dis} placeholder="Ex.: retrabalho na produção, devolução, custo de frete, insatisfação do cliente">${x ? esc(x.impacto||'') : ''}</textarea></div>
+    <div><label>Previsão de término</label><input type="date" id="ncPrev" value="${x && x.previsao ? x.previsao : ''}" ${dis}></div>
+    <div><label>Lead time (automático)</label><input id="ncLead" disabled value="${x ? ncLead(x) + ' dia(s)' : '0 dia(s)'}"><div class="small muted" id="ncLeadObs">${x && ncFim(x) ? 'até a conclusão do plano de ação' : 'contando até hoje (até concluir o plano de ação)'}</div></div>
+    <div class="full"><label>Plano de ação vinculado</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><select id="ncPlano" style="flex:1;min-width:220px" ${dis} onchange="ncLeadLive()"><option value="">Nenhum</option>${planos.map(p => `<option value="${p.id}" ${x && x.plano_id===p.id?'selected':''}>#${p.id} · ${esc(pdfCorta(String(p.o_que||''), 70))} (${esc(paStatus(p))})</option>`).join('')}</select>
+      ${ed ? `<button class="btn sec" onclick="ncSalvar(${id||'null'}, true)">🎯 Abrir novo plano de ação</button>` : ''}</div>
+      ${x && ncPlano(x) ? `<div class="box-info" style="cursor:pointer" onclick="pcalAbrir(${x.plano_id})"><b>#${x.plano_id} · ${esc(ncPlano(x).o_que)}</b><div class="small">${esc(pessoaNome(ncPlano(x).responsavel_id))} · prevista ${ncPlano(x).fim?fmtD(ncPlano(x).fim):'—'}</div>${paBar(ncPlano(x))}</div>` : ''}
+      <div class="small muted">O lead time termina no dia em que o plano de ação vinculado for concluído.</div></div>
+  </div>`,
+    `<button class="btn sec" onclick="fecharModal()">${ed?'Cancelar':'Fechar'}</button>${ed ? `<button class="btn" id="ncOk" onclick="ncSalvar(${id||'null'})">Salvar</button>` : ''}`, true);
+}
+function ncLeadLive(){
+  const d = $('ncData').value, p = (db.planos||[]).find(y => y.id === Number($('ncPlano').value)), fim = p && paStatus(p) === 'Concluído' && p.concluido_em ? dataDeTs(p.concluido_em) : null;
+  $('ncLead').value = d ? Math.max(0, diasEntre(d, fim || hoje())) + ' dia(s)' : ''; $('ncLeadObs').textContent = fim ? 'até a conclusão do plano de ação' : 'contando até hoje (até concluir o plano de ação)';
+}
+async function ncTipoId(nome){
+  const t = (db.ncTipos||[]).find(y => y.nome.trim().toLowerCase() === nome.toLowerCase());
+  if(t) return t.id;
+  const r = await api.ins('nc_tipos', { nome }); db.ncTipos.push(r); db.ncTipos.sort((a,b) => a.nome.localeCompare(b.nome));
+  toast('Nova não conformidade cadastrada: ' + nome, 'ok'); return r.id;
+}
+async function ncSalvar(id, abrirPlano){
+  const nomeT = $('ncTipo').value.trim().replace(/\s+/g, ' ');
+  const o = { data:$('ncData').value, colaborador_id:$('ncColab').value || null, descricao:$('ncDesc').value.trim(), impacto_nivel:$('ncImpN').value || null,
+    impacto:$('ncImp').value.trim() || null, urgencia:$('ncUrg').value, previsao:$('ncPrev').value || null, plano_id:Number($('ncPlano').value) || null };
+  if(!o.data) return toast('Informe a data.', 'err');
+  if(!o.colaborador_id) return toast('Selecione o colaborador.', 'err');
+  if(!nomeT) return toast('Informe a não conformidade (escolha ou digite).', 'err');
+  if(!o.descricao) return toast('Descreva a não conformidade.', 'err');
+  if(o.previsao && o.previsao < o.data) return toast('A previsão de término não pode ser antes da data da não conformidade.', 'err');
+  if(abrirPlano && o.plano_id && !confirm('Esta não conformidade já tem um plano vinculado. Abrir um novo plano e trocar o vínculo?')) return;
+  const b = $('ncOk'); if(b) b.disabled = true;
+  try{
+    o.tipo_id = await ncTipoId(nomeT);
+    let r;
+    if(id){ r = await api.upd('nao_conformidades', id, o); Object.assign(db.ncs.find(n => n.id === id), r); }
+    else { r = await api.ins('nao_conformidades', o); db.ncs.push(r); }
+    fecharModal(true); ncRefresh();
+    if(abrirPlano) ncNovoPlano(r.id); else toast('Não conformidade salva.', 'ok');
+  }catch(e){ toast(e.message, 'err'); if(b) b.disabled = false; }
+}
+function ncNovoPlano(id){
+  const n = db.ncs.find(y => y.id === id); if(!n) return;
+  abrirPA(null, { nc:n.id, oque:'Tratar não conformidade #' + n.id + ': ' + ncTipoNome(n.tipo_id) + (n.descricao ? ' — ' + n.descricao : ''),
+    porque:[n.impacto_nivel ? 'Impacto ' + n.impacto_nivel : '', n.impacto || ''].filter(Boolean).join(': ') || null, onde:'Vendas', fim:n.previsao, quem:n.colaborador_id });
+}
+async function ncVincularPlano(ncId, planoId){
+  try{ const r = await api.upd('nao_conformidades', ncId, { plano_id:planoId }); Object.assign(db.ncs.find(n => n.id === ncId) || {}, r); toast(`Plano de ação #${planoId} vinculado à não conformidade #${ncId}.`, 'ok'); }
+  catch(e){ toast('Plano criado, mas não foi possível vincular à não conformidade: ' + e.message, 'err'); }
+  ncRefresh();
+}
+async function ncExcluir(id){
+  const n = db.ncs.find(y => y.id === id); if(!n || !confirm(`Excluir a não conformidade #${id}?\nO plano de ação vinculado (se houver) não é excluído.`)) return;
+  try{ await api.del('nao_conformidades', id); db.ncs = db.ncs.filter(y => y.id !== id); ncRefresh(); toast('Não conformidade excluída.', 'ok'); }
+  catch(e){ toast(e.message, 'err'); }
+}
+function ncRefresh(){ if(st.page === 'nc') pgNC(); else if(st.page === 'ncdash') pgNCDash(); else if(st.page === 'nctipos') pgNCTipos(); }
+
+/* ---------- Cadastro de Não Conformidades (tipos) ---------- */
+function pgNCTipos(){
+  if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
+  const qt = id => (db.ncs||[]).filter(n => n.tipo_id === id).length;
+  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Lista de não conformidades usadas no lançamento. Também é possível cadastrar uma nova digitando direto na tela de lançamento.</div><button class="btn" onclick="ncTipoAbrir()">+ Nova não conformidade</button></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Não conformidade</th><th>Descrição</th><th class="num">Lançamentos</th><th>Situação</th><th></th></tr></thead><tbody>
+  ${(db.ncTipos||[]).map(t => `<tr><td><b>${esc(t.nome)}</b></td><td class="small">${esc(t.descricao||'')}</td><td class="num">${qt(t.id)}</td><td>${t.ativo?'<span class="tag ok">Ativa</span>':'<span class="tag">Inativa</span>'}</td>
+    <td class="act"><button class="btn sec sm" onclick="ncTipoAbrir(${t.id})">✎</button>${isAdmin() ? ` <button class="btn danger sm" title="Excluir" onclick="ncTipoExcluir(${t.id})">🗑</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">Nenhuma não conformidade cadastrada.</td></tr>'}
+  </tbody></table></div>`;
+}
+function ncTipoAbrir(id){
+  const t = id ? db.ncTipos.find(y => y.id === id) : null;
+  abrirModal(t ? 'Editar não conformidade' : 'Nova não conformidade', `<div class="form">
+    <div class="full"><label>Nome *</label><input id="ntNome" value="${esc(t?t.nome:'')}" placeholder="Ex.: Erro no pedido"></div>
+    <div class="full"><label>Descrição</label><textarea id="ntDesc">${esc(t?t.descricao||'':'')}</textarea></div>
+    <div><label>Situação</label><select id="ntAtivo"><option value="1">Ativa</option><option value="0" ${t&&!t.ativo?'selected':''}>Inativa</option></select></div></div>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="ntOk" onclick="ncTipoSalvar(${id||'null'})">Salvar</button>`);
+}
+async function ncTipoSalvar(id){
+  const o = { nome:$('ntNome').value.trim().replace(/\s+/g,' '), descricao:$('ntDesc').value.trim() || null, ativo:$('ntAtivo').value === '1' };
+  if(!o.nome) return toast('Informe o nome.', 'err');
+  if(db.ncTipos.some(t => t.id !== id && t.nome.toLowerCase() === o.nome.toLowerCase())) return toast('Já existe uma não conformidade com esse nome.', 'err');
+  $('ntOk').disabled = true;
+  try{
+    if(id) Object.assign(db.ncTipos.find(t => t.id === id), await api.upd('nc_tipos', id, o)); else db.ncTipos.push(await api.ins('nc_tipos', o));
+    db.ncTipos.sort((a,b) => a.nome.localeCompare(b.nome)); fecharModal(true); toast('Salvo.', 'ok'); pgNCTipos();
+  }catch(e){ toast(e.message, 'err'); $('ntOk').disabled = false; }
+}
+async function ncTipoExcluir(id){
+  const t = db.ncTipos.find(y => y.id === id), n = db.ncs.filter(x => x.tipo_id === id).length; if(!t) return;
+  if(n) return toast(`"${t.nome}" tem ${n} lançamento(s). Inative em vez de excluir.`, 'err');
+  if(!confirm(`Excluir "${t.nome}"?`)) return;
+  try{ await api.del('nc_tipos', id); db.ncTipos = db.ncTipos.filter(y => y.id !== id); pgNCTipos(); toast('Excluído.', 'ok'); }catch(e){ toast(e.message, 'err'); }
+}
+
+/* ---------- Dashboard de Qualidade ---------- */
+function ncLista(titulo, l){
+  st.padVoltar = null;
+  l = l.slice().sort((a,b) => NC_URG.indexOf(b.urgencia) - NC_URG.indexOf(a.urgencia) || b.data.localeCompare(a.data));
+  abrirModal(titulo, `<p class="small muted" style="margin-top:0">${l.length} não conformidade(s) · clique para abrir.</p>` + (l.map(x => { const s = ncStatus(x);
+    return `<div class="dd-it ${s==='Concluída'?'ok':s==='Atrasada'?'bad':s==='Aberta'?'warn':''}" onclick="ncAbrir(${x.id})">
+      <div class="dd-id">#${x.id}</div>
+      <div style="min-width:0"><div class="dd-tt">${esc(ncTipoNome(x.tipo_id))}</div><div class="small" style="margin-top:2px;color:var(--gr2)">${esc(pdfCorta(String(x.descricao||''), 160))}</div>
+        <div class="dd-mt">${ncTag(s, NC_ST_CLS)} ${ncTag(x.urgencia, NC_URG_CLS)}<span>Colaborador <b>${esc(pessoaNome(x.colaborador_id))}</b></span><span>Data <b>${fmtD(x.data)}</b></span>
+          ${x.previsao ? `<span>Previsão <b>${fmtD(x.previsao)}</b></span>` : ''}<span>Lead time <b>${ncLead(x)} d</b></span>${x.impacto_nivel ? `<span>Impacto <b>${esc(x.impacto_nivel)}</b></span>` : ''}</div></div>
+      <div>${ncPlano(x) ? paBar(ncPlano(x)) : `<span class="tag ${x.plano_id?'':'warn'}">${x.plano_id ? 'Plano #' + x.plano_id : 'Sem plano de ação'}</span>`}</div></div>`; }).join('') || '<div class="card empty">Nenhuma não conformidade.</div>'),
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button>`, true);
+}
+function pgNCDash(){
+  if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
+  const f = st.ncd, ano = String(f.ano), anoAt = new Date().getFullYear(), h = hoje();
+  const baseC = (db.ncs||[]).filter(n => !f.colab || n.colaborador_id === f.colab);
+  const noPer = n => n.data.slice(0,4) === ano && (!f.mes || n.data.slice(5,7) === f.mes);
+  const l = baseC.filter(noPer); st.ncdL = l;
+  const perTxt = (f.mes ? MESES[Number(f.mes)-1] + '/' : 'Ano ') + ano;
+  const cnt = s => l.filter(x => ncStatus(x) === s).length, conc = l.filter(x => ncFim(x)), comPlano = l.filter(x => x.plano_id).length;
+  const ltm = conc.length ? conc.reduce((a,x) => a + ncLead(x), 0) / conc.length : 0;
+  const crit = l.filter(x => !ncFim(x) && (x.urgencia === 'Urgente' || x.urgencia === 'Alta' || ncStatus(x) === 'Atrasada'))
+    .sort((a,b) => (ncStatus(b)==='Atrasada') - (ncStatus(a)==='Atrasada') || NC_URG.indexOf(b.urgencia) - NC_URG.indexOf(a.urgencia) || ncLead(b) - ncLead(a));
+  const anosD = (db.ncs||[]).map(n => Number(n.data.slice(0,4)));
+  const anos = []; for(let y = Math.min(anoAt - 1, ...(anosD.length ? anosD : [anoAt])); y <= anoAt + 1; y++) anos.push(y);
+  /* Pareto por tipo */
+  const tp = {}; l.forEach(x => tp[x.tipo_id || 0] = (tp[x.tipo_id || 0] || 0) + 1);
+  const par = Object.entries(tp).map(([k,v]) => ({ id:Number(k), n:v })).sort((a,b) => b.n - a.n); let ac = 0; par.forEach(p => { ac += p.n; p.ac = Math.round(ac / l.length * 100); });
+  /* Por colaborador (status) */
+  const cb = {}; l.forEach(x => { const c = cb[x.colaborador_id] = cb[x.colaborador_id] || { id:x.colaborador_id, t:0, 'Aberta':0, 'Em tratamento':0, 'Atrasada':0, 'Concluída':0 }; c.t++; c[ncStatus(x)]++; });
+  const cbs = Object.values(cb).sort((a,b) => b.t - a.t);
+  $('content').innerHTML = `
+  <div class="filters">
+    <div class="f"><label>Mês</label><select onchange="st.ncd.mes=this.value;pgNCDash()"><option value="">Todos</option>${MESES.map((m,i)=>`<option value="${pad(i+1)}" ${f.mes===pad(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
+    <div class="f"><label>Ano</label><select onchange="st.ncd.ano=Number(this.value);pgNCDash()">${anos.map(y=>`<option ${Number(ano)===y?'selected':''}>${y}</option>`).join('')}</select></div>
+    <div class="f"><label>Colaborador</label><select onchange="st.ncd.colab=this.value;pgNCDash()"><option value="">Todos</option>${ncPessoasOpts(f.colab)}</select></div>
+    <div class="f grow small muted" style="padding-bottom:9px">Não conformidades de vendas lançadas em ${perTxt}. Lead time = da data da não conformidade até a conclusão do plano de ação.</div>
+    <button class="btn sec" onclick="ir('nc')">⚠️ Lançamentos</button>
+    <button class="btn" onclick="ncAbrir()">+ Lançar não conformidade</button>
+  </div>
+  <div class="nc-hero">
+    <div class="nc-hero-main"><span>Não conformidades · ${esc(perTxt)}</span><b>${fmtN(l.length)}</b><small>${pct(comPlano, l.length)}% com plano de ação vinculado</small></div>
+    <div class="nc-hero-k click" onclick="ncLista('Abertas (sem plano de ação)', st.ncdL.filter(x => ncStatus(x)==='Aberta'))"><span>Abertas</span><b style="color:var(--warn)">${cnt('Aberta')}</b><small>sem plano</small></div>
+    <div class="nc-hero-k click" onclick="ncLista('Em tratamento', st.ncdL.filter(x => ncStatus(x)==='Em tratamento'))"><span>Em tratamento</span><b style="color:var(--info)">${cnt('Em tratamento')}</b><small>com plano em andamento</small></div>
+    <div class="nc-hero-k click" onclick="ncLista('Atrasadas', st.ncdL.filter(x => ncStatus(x)==='Atrasada'))"><span>Atrasadas</span><b style="color:var(--bad)">${cnt('Atrasada')}</b><small>passou da previsão</small></div>
+    <div class="nc-hero-k click" onclick="ncLista('Concluídas', st.ncdL.filter(x => ncStatus(x)==='Concluída'))"><span>Concluídas</span><b style="color:var(--ok)">${cnt('Concluída')}</b><small>${pct(cnt('Concluída'), l.length)}% resolvidas</small></div>
+    <div class="nc-hero-k"><span>Lead time médio</span><b>${conc.length ? fmtDec(ltm) : '—'}<em> d</em></b><small>${conc.length} concluída(s)</small></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>Não conformidades por mês · ${ano}<span class="small muted" style="font-weight:400;margin-left:auto">clique no mês para filtrar</span></h3><div class="chartbox"><canvas id="chNC1"></canvas></div></div>
+    <div class="card"><h3>Pareto por tipo de não conformidade · ${esc(perTxt)}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra</span></h3>${par.length ? '<div class="chartbox"><canvas id="chNC2"></canvas></div>' : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Por colaborador · ${esc(perTxt)}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra</span></h3>${cbs.length ? `<div class="chartbox" style="height:${Math.max(260, cbs.length*34+70)}px"><canvas id="chNC3"></canvas></div>` : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
+    <div class="card"><h3>Urgência e impacto · ${esc(perTxt)}</h3>${l.length ? `<div class="nc-dn"><div><div class="nc-dn-t">Urgência do tratamento</div><div class="chartbox" style="height:230px"><canvas id="chNC4"></canvas></div></div><div><div class="nc-dn-t">Impacto para a empresa</div><div class="chartbox" style="height:230px"><canvas id="chNC5"></canvas></div></div></div>` : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Lead time médio mês a mês · ${ano}</h3><div class="chartbox"><canvas id="chNC6"></canvas></div><div class="small muted" style="margin-top:6px">Média de dias das não conformidades concluídas em cada mês (pela conclusão do plano de ação).</div></div>
+    <div class="card"><h3>🚨 Prioridades em aberto<span style="margin-left:auto"><button class="btn sec sm" onclick="ncLista('Prioridades em aberto', ${'st.ncdCrit'})">Ver todas (${crit.length})</button></span></h3>
+      <div class="rk">${crit.slice(0,7).map(x => `<div class="rk-it" onclick="ncAbrir(${x.id})">
+        <div class="rk-n ${ncStatus(x)==='Atrasada'||x.urgencia==='Urgente'?'top':''}">#${x.id}</div>
+        <div class="rk-b"><div class="rk-t"><b>${esc(ncTipoNome(x.tipo_id))}</b> · ${esc(x.descricao)}</div><div class="rk-s">${esc(pessoaNome(x.colaborador_id))} · ${ncTag(ncStatus(x), NC_ST_CLS)} ${ncTag(x.urgencia, NC_URG_CLS)}${x.previsao?' · prev. '+fmtD(x.previsao):''}</div></div>
+        <div class="rk-d"><b>${ncLead(x)}</b><span>dias</span></div></div>`).join('') || '<div class="empty">Nenhuma não conformidade urgente ou atrasada. 👏</div>'}</div></div>
+  </div>`;
+  st.ncdCrit = crit;
+  if(typeof Chart === 'undefined') return;
+  if(!Chart.registry.plugins.get('rotulos')) Chart.register(rotulosPlugin);
+  const esc_ = document.body.classList.contains('dark'), grade = esc_ ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+  Chart.defaults.color = esc_ ? '#AEB6C1' : '#4B5563'; Chart.defaults.font.family = "'Segoe UI',system-ui,Arial,sans-serif";
+  const tip = { backgroundColor: esc_ ? '#0A0C0F' : '#1F2328', padding:10, cornerRadius:8, titleFont:{ weight:'700' }, boxPadding:4, usePointStyle:true };
+  const leg = { position:'top', align:'end', labels:{ usePointStyle:true, pointStyle:'rectRounded', boxWidth:10, boxHeight:10, padding:14, font:{ weight:'600' } } };
+  const hov = (e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; };
+  const pick = (e, ch) => { const a = ch.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false); return a.length ? a : ch.getElementsAtEventForMode(e, ch.options.indexAxis === 'y' ? 'y' : 'index', { intersect:false }, false); };
+  /* 1. por mês */
+  const mesN = i => baseC.filter(x => x.data.slice(0,7) === ano + '-' + pad(i+1));
+  const concM = i => baseC.filter(x => (ncFim(x)||'').slice(0,7) === ano + '-' + pad(i+1));
+  st.charts.push(new Chart($('chNC1'), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[
+      { label:'Lançadas', data: MESES.map((_,i) => mesN(i).length), backgroundColor:paGrad('#FDBA74','#EA580C'), borderRadius:6, borderSkipped:false, maxBarThickness:22, categoryPercentage:.7, barPercentage:.9 },
+      { label:'Concluídas', data: MESES.map((_,i) => concM(i).length), backgroundColor:paGrad('#4ADE80','#15803D'), borderRadius:6, borderSkipped:false, maxBarThickness:22, categoryPercentage:.7, barPercentage:.9 } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top:22 } }, plugins:{ rotulos:{ on:false }, rotDash:{ on:true }, legend:leg, tooltip:tip },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'12%', border:{ display:false }, grid:{ color:grade }, ticks:{ precision:0 } } },
+      onHover:hov, onClick:(e, el) => { if(el.length){ const m = pad(el[0].index+1); st.ncd.mes = st.ncd.mes === m ? '' : m; pgNCDash(); } } }, plugins:[rotDash] }));
+  /* 2. Pareto */
+  if(par.length){
+    const lbl = par.map(p => { const n = p.id ? ncTipoNome(p.id) : 'Sem tipo'; return n.length > 24 ? n.slice(0,23) + '…' : n; });
+    st.charts.push(new Chart($('chNC2'), { type:'bar', data:{ labels: lbl, datasets:[
+        { type:'bar', label:'Ocorrências', data: par.map(p => p.n), backgroundColor:paGrad('#4BA6EE','#0A4E83'), borderRadius:6, borderSkipped:false, maxBarThickness:36, yAxisID:'y', order:2 },
+        { type:'line', label:'% acumulado', data: par.map(p => p.ac), borderColor:'#DC2626', backgroundColor:'#DC2626', pointRadius:4, borderWidth:2.5, tension:.25, yAxisID:'y2', order:1 } ] },
+      options:{ maintainAspectRatio:false, layout:{ padding:{ top:30 } }, plugins:{ legend:leg, rotulos:{ on:false }, rotDash:{ on:true }, tooltip:{ ...tip, callbacks:{ label: it => it.dataset.type === 'line' ? ` ${it.raw}% acumulado` : ` ${it.raw} ocorrência(s)` } } },
+        scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' }, maxRotation:35, minRotation:0 } }, y:{ beginAtZero:true, grace:'12%', grid:{ color:grade }, border:{ display:false }, ticks:{ precision:0 } }, y2:{ position:'right', min:0, max:100, grid:{ display:false }, border:{ display:false }, ticks:{ callback:v => v + '%' } } },
+        onHover:hov, onClick:(e, el, ch) => { const r = pick(e, ch); if(r.length){ const p = par[r[0].index]; ncLista((p.id ? ncTipoNome(p.id) : 'Sem tipo') + ' · ' + perTxt, st.ncdL.filter(x => (x.tipo_id||0) === p.id)); } } }, plugins:[rotDash] }));
+  }
+  /* 3. por colaborador */
+  if(cbs.length){
+    const cores = { 'Aberta':['#FCD34D','#D97706'], 'Em tratamento':['#4BA6EE','#0A4E83'], 'Atrasada':['#F87171','#B91C1C'], 'Concluída':['#4ADE80','#15803D'] }, sts = Object.keys(cores);
+    st.charts.push(new Chart($('chNC3'), { type:'bar', data:{ labels: cbs.map(c => { const n = pessoaNome(c.id); return n.length > 22 ? n.slice(0,21) + '…' : n; }), datasets: sts.map(s => ({ label:s, data: cbs.map(c => c[s]), backgroundColor:paGrad(...cores[s], true), borderRadius:5, borderSkipped:false, maxBarThickness:22 })) },
+      options:{ indexAxis:'y', maintainAspectRatio:false, layout:{ padding:{ right:40 } }, plugins:{ legend:leg, rotulos:{ on:false }, rotDash:{ on:true, total:true }, tooltip:{ ...tip, callbacks:{ footer: it => 'Total: ' + cbs[it[0].dataIndex].t } } },
+        scales:{ x:{ stacked:true, beginAtZero:true, grid:{ color:grade }, border:{ display:false }, ticks:{ precision:0 } }, y:{ stacked:true, grid:{ display:false }, ticks:{ font:{ weight:'600' } } } },
+        onHover:hov, onClick:(e, el, ch) => { const a = ch.getElementsAtEventForMode(e, 'nearest', { intersect:true }, false), r = pick(e, ch); if(!r.length) return; const c = cbs[r[0].index], s = a.length ? sts[a[0].datasetIndex] : '';
+          ncLista(pessoaNome(c.id) + (s ? ' · ' + s : '') + ' · ' + perTxt, st.ncdL.filter(x => x.colaborador_id === c.id && (!s || ncStatus(x) === s))); } }, plugins:[rotDash] }));
+  }
+  /* 4 e 5. rosca urgência e impacto */
+  if(l.length){
+    const rosca = (cv, ks, cores, campo, rot) => { const d = ks.map(k => l.filter(x => (x[campo]||'Não informado') === k).length);
+      st.charts.push(new Chart($(cv), { type:'doughnut', data:{ labels: ks.map((k,i) => k + ' (' + d[i] + ')'), datasets:[{ data:d, backgroundColor: ks.map(k => cores[k] || '#9CA3AF'), borderWidth:2, borderColor: esc_ ? '#171B21' : '#fff' }] },
+        options:{ maintainAspectRatio:false, cutout:'58%', plugins:{ rotulos:ROT, legend:{ position:'bottom', labels:{ boxWidth:10, padding:10, usePointStyle:true } }, tooltip:tip },
+          onHover:hov, onClick:(e, el) => { if(el.length){ const k = ks[el[0].index]; ncLista(rot + ': ' + k + ' · ' + perTxt, st.ncdL.filter(x => (x[campo]||'Não informado') === k)); } } } })); };
+    rosca('chNC4', NC_URG, NC_COR_URG, 'urgencia', 'Urgência');
+    rosca('chNC5', [...NC_IMP, 'Não informado'], NC_COR_IMP, 'impacto_nivel', 'Impacto');
+  }
+  /* 6. lead time mês a mês */
+  const ltM = MESES.map((_,i) => { const c = concM(i); return { n:c.length, m: c.length ? Math.round(c.reduce((a,x) => a + ncLead(x), 0) / c.length * 10) / 10 : null }; });
+  st.charts.push(new Chart($('chNC6'), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[
+      { type:'line', label:'Lead time médio (dias)', data: ltM.map(v => v.m), borderColor:'#7C3AED', backgroundColor:'#7C3AED', pointRadius:4, pointHoverRadius:6, borderWidth:3, tension:.3, spanGaps:true, yAxisID:'y' },
+      { type:'bar', label:'Concluídas', data: ltM.map(v => v.n), backgroundColor: esc_ ? 'rgba(255,255,255,.10)' : 'rgba(43,52,64,.14)', borderRadius:5, maxBarThickness:22, yAxisID:'y2' } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top:22 } }, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:leg, rotulos:{ on:false }, tooltip:{ ...tip, callbacks:{ label: it => it.dataset.type === 'line' ? ` Lead time médio: ${it.raw == null ? '—' : fmtDec(it.raw) + ' dia(s)'}` : ` Concluídas: ${it.raw}` } } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'15%', grid:{ color:grade }, border:{ display:false }, title:{ display:true, text:'dias' } },
+        y2:{ position:'right', beginAtZero:true, grid:{ display:false }, border:{ display:false }, ticks:{ precision:0 }, title:{ display:true, text:'concluídas' } } } },
+    plugins:[{ id:'rotNcLt', afterDatasetsDraw(ch){ const m = ch.getDatasetMeta(0), c = ch.ctx; c.save(); c.font = "700 11px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = '#7C3AED'; c.textAlign = 'center'; c.textBaseline = 'bottom';
+      m.data.forEach((el, j) => { const v = ch.data.datasets[0].data[j]; if(v != null) c.fillText(fmtDec(v) + ' d', el.x, el.y - 7); }); c.restore(); } }] }));
+}
+
 /* ============================ RECADOS DA C@P CONSULTORIA ============================ */
 const CAP_VENDAS = [
   'Meta não se bate no último dia: se bate um pouco a cada ligação. Constância vence esforço concentrado.',
@@ -3754,7 +4260,7 @@ function capProx(tipo){ st.capIdx[tipo] = (st.capIdx[tipo] || 0) + 1; const el =
    A pasta fica lembrada neste navegador; os arquivos antigos são apagados conforme a retenção escolhida.
    Navegadores sem acesso a pastas (Firefox/Safari) baixam o arquivo para a pasta Downloads. */
 const BKP_CFG = 'eleve_bkp_cfg', BKP_PREFIXO = 'backup_eleve_ligacoes_';
-const BKP_TABELAS = ['empresas','vendedoras','metas','perfis','usuarios','usuario_vendedoras','clientes','followups','ligacoes','plano_acao'];
+const BKP_TABELAS = ['empresas','vendedoras','metas','perfis','usuarios','usuario_vendedoras','clientes','followups','ligacoes','plano_acao','nc_tipos','nao_conformidades'];
 const bkpSuporta = () => 'showDirectoryPicker' in window;
 function bkpCfg(){ let c = {}; try{ c = JSON.parse(localStorage.getItem(BKP_CFG)) || {}; }catch(e){} return { horas:24, manter:30, ...c }; }
 function bkpSalvarCfg(o){ try{ localStorage.setItem(BKP_CFG, JSON.stringify({ ...bkpCfg(), ...o })); }catch(e){} }
