@@ -275,6 +275,11 @@ tr.hl td{background:var(--t-rec)!important;animation:hl 2.5s ease}
 .pa-tbl th{background:var(--gr);color:#fff;text-align:center}
 .pa-tbl td{text-align:center;font-size:13px}
 .pa-tbl td.pa-txt{min-width:150px;max-width:240px;text-align:left}
+.pa-tbl.compacto .px{display:none}
+.pa-tbl:not(.compacto) .pc{display:none}
+.pa-tbl.compacto table{width:100%}
+.pa-tbl.compacto td.pa-txt{max-width:none;min-width:220px;width:22%}
+.pa-tbl.compacto .pa-clamp{-webkit-line-clamp:6;line-clamp:6}
 .pa-clamp{white-space:pre-wrap;word-break:break-word;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .pa-mais{display:none;margin-top:4px;border:0;background:none;padding:0;color:var(--or2);font-size:12px;font-weight:600;cursor:pointer}
 .pa-mais:hover{text-decoration:underline}
@@ -1138,7 +1143,7 @@ const PAGES = {
   ncdash:{ t:'Dashboard da Qualidade', ic:'📊', fn:()=>pgNCDash(), seg:'nc' },
   nc:{ t:'Não Conformidades', ic:'⚠️', fn:()=>pgNC() },
   nctipos:{ t:'Cadastro de Não Conformidades', ic:'🗂️', fn:()=>pgNCTipos(), seg:'nc' },
-  planodash:{ t:'Dashboard 5W2H', ic:'📈', fn:()=>pgPlanoDash(), seg:'plano' },
+  planodash:{ t:'Dashboard 5W2H', ic:'📈', fn:()=>pgPlanoDash(), extra:true },
   plano:{ t:'Plano de Ação 5W2H', ic:'🎯', fn:()=>pgPlano() },
   planoconc:{ t:'Plano de Ação Concluído 5W2H', ic:'🏁', fn:()=>pgPlano(), seg:'plano' },
   planocal:{ t:'Calendário 5W2H', ic:'🗓️', fn:()=>pgPlanoCal(), seg:'plano' },
@@ -1154,11 +1159,15 @@ const PAGES = {
 /* Permissões de telas: usuarios.telas (null = todas as telas de operação liberadas) */
 const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes','plano','nc'];
 /* Telas extras: só liberadas quando marcadas explicitamente em Permissões (ex.: caixa cadastrar vendedoras) */
-const TELAS_PERM = [...TELAS_OPER, 'vendedoras'];
+const TELAS_PERM = [...TELAS_OPER, 'vendedoras', 'planodash'];
+/* Dashboard 5W2H: liberado sempre para estes logins; para os demais, só se marcado em Permissões / Perfil */
+const PA_DASH_EMAILS = ['diegoeleve@gmail.com','tassiaeleve@gmail.com','boaideiajessica@gmail.com','elevecap2025@gmail.com','lucaseleve@gmail.com'];
+const dashFixo = u => !!(u && PA_DASH_EMAILS.includes(String(u.email||'').toLowerCase()));
 /* Telas que funcionam sem vendedora vinculada (ex.: gerente) */
 const SEM_VINC = ['plano', 'vendedoras', 'nc'];
 function pode(k){
   if(!PAGES[k]) return false;
+  if(k === 'planodash'){ if(dashFixo(db.me)) return true; const t = telasDe(db.me); return Array.isArray(t) && t.includes(k); }
   if(PAGES[k].seg) return pode(PAGES[k].seg);
   if(PAGES[k].livre) return true;
   if(isAdmin()) return true;
@@ -2376,13 +2385,13 @@ function pgPerm(){
   const us = db.usuarios.slice().sort((a,b) => (a.perfil==='admin') - (b.perfil==='admin') || (a.email||'').localeCompare(b.email||''));
   st.perm = {}; us.forEach(u => { if(u.perfil !== 'admin' && !(perfilDe(u) && perfilDe(u).ativo)) st.perm[u.id] = new Set(Array.isArray(u.telas) ? u.telas : TELAS_OPER); });
   const cab = TELAS_PERM.map(k => `<th style="text-align:center">${PAGES[k].ic}<br>${PAGES[k].t.replace(' (Follow-up)','')}</th>`).join('');
-  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Marque as telas que cada usuário pode abrir. <b>Vendedoras</b> pode ser liberada para o login do caixa cadastrar e editar as vendedoras dele (em qualquer empresa); Empresas, Usuários e Permissões são sempre só do administrador. O que cada login enxerga dentro das telas continua sendo definido pelas vendedoras vinculadas.</div>
+  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Marque as telas que cada usuário pode abrir. <b>Vendedoras</b> pode ser liberada para o login do caixa cadastrar e editar as vendedoras dele (em qualquer empresa); <b>Dashboard 5W2H</b> fica liberado fixo para diegoeleve, tassiaeleve, boaideiajessica, elevecap2025 e lucaseleve; para os demais, marque aqui. Empresas, Usuários e Permissões são sempre só do administrador. O que cada login enxerga dentro das telas continua sendo definido pelas vendedoras vinculadas.</div>
     <button class="btn" id="permOk" onclick="salvarPerm()">Salvar permissões</button></div>
   <div class="tbl-wrap"><table><thead><tr><th>Usuário</th><th>Vendedoras</th>${cab}<th></th></tr></thead><tbody>
   ${us.map(u => { const adm = u.perfil === 'admin', vs = vincDe(u.id), pf = !adm && perfilDe(u) && perfilDe(u).ativo ? perfilDe(u) : null;
     return `<tr><td><b>${esc(u.nome||u.email)}</b><div class="small muted">${esc(u.email)}${u.ativo?'':' · inativo'}</div></td>
       <td class="small">${adm ? '<span class="tag or">Administrador</span>' : (vs.length ? vs.map(x=>esc(vendNome(x))).join(', ') : '<span class="tag bad">Não vinculada</span>')}</td>
-      ${TELAS_PERM.map(k => `<td style="text-align:center"><input type="checkbox" class="plCk" ${adm ? 'checked disabled title="Administrador tem acesso total"' : pf ? `disabled ${pf.telas.includes(k)?'checked':''} title="Definido pelo perfil ${esc(pf.nome)}"` : `data-u="${u.id}" data-k="${k}" ${st.perm[u.id].has(k)?'checked':''} onchange="permMarcar('${u.id}','${k}',this.checked)"`}></td>`).join('')}
+      ${TELAS_PERM.map(k => k === 'planodash' && dashFixo(u) ? `<td style="text-align:center"><input type="checkbox" class="plCk" checked disabled title="Liberado fixo para este login"></td>` : `<td style="text-align:center"><input type="checkbox" class="plCk" ${adm && k === 'planodash' ? 'disabled title="Administrador fora da lista fixa do Dashboard 5W2H"' : adm ? 'checked disabled title="Administrador tem acesso total"' : pf ? `disabled ${pf.telas.includes(k)?'checked':''} title="Definido pelo perfil ${esc(pf.nome)}"` : `data-u="${u.id}" data-k="${k}" ${st.perm[u.id].has(k)?'checked':''} onchange="permMarcar('${u.id}','${k}',this.checked)"`}></td>`).join('')}
       <td class="act">${adm ? '' : pf ? `<span class="tag info">Perfil: ${esc(pf.nome)}</span>` : `<button class="btn sec sm" onclick="permTodas('${u.id}',true)">Todas</button> <button class="btn sec sm" onclick="permTodas('${u.id}',false)">Nenhuma</button>`}</td></tr>`; }).join('') || '<tr><td colspan="10" class="empty">Nenhum usuário.</td></tr>'}
   </tbody></table></div>`;
 }
@@ -2395,7 +2404,7 @@ async function salvarPerm(){
   const mud = [];
   for(const u of db.usuarios.filter(x => x.perfil !== 'admin')){
     const sel = st.perm[u.id]; if(!sel) continue;
-    const novo = TELAS_OPER.every(k => sel.has(k)) && !sel.has('vendedoras') ? null : TELAS_PERM.filter(k => sel.has(k));
+    const novo = TELAS_OPER.every(k => sel.has(k)) && !sel.has('vendedoras') && !sel.has('planodash') ? null : TELAS_PERM.filter(k => sel.has(k));
     if(JSON.stringify(novo) !== JSON.stringify(Array.isArray(u.telas) ? TELAS_PERM.filter(k => u.telas.includes(k)) : null)) mud.push({ u, novo });
   }
   const vazio = mud.find(m => m.novo && !m.novo.length && m.u.ativo);
@@ -3173,6 +3182,7 @@ function pgPlano(){
     ${todos ? `<div class="f"><label>Pessoa (quem)</label><select onchange="st.pa.pessoa=this.value;if(this.value)st.pa.ver='equipe';pgPlano()"><option value="">Todas</option>${pessoas.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select></div>` : ''}
     <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${stOps.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="paQ" value="${esc(p.q)}" placeholder="O quê, como, onde, quem…" oninput="st.pa.q=this.value;clearTimeout(window._paq);window._paq=setTimeout(()=>{pgPlano();const i=$('paQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <button class="btn sec" onclick="paAlternarCols()" title="${paCompacto() ? 'Mostrar Data Início, Horário, Lead time, Onde, Quanto, Status, %, Observações…' : 'Mostrar só ID, O quê, Por quê, Como, Quem e Data Prevista'}">${paCompacto() ? '▦ Mostrar todas as colunas' : '▤ Só colunas principais'}</button>
     <button class="btn sec" id="paFullBtn" onclick="paTelaCheia()" title="Expandir para a tela toda">${document.body.classList.contains('pa-full') ? '⤡ Sair da tela cheia' : '⛶ Tela cheia'}</button>
     <button class="btn sec" onclick="ir('planocal')">🗓️ Calendário</button>
     <button class="btn sec" onclick="pdfPA()">📄 Gerar PDF</button>
@@ -3182,23 +3192,26 @@ function pgPlano(){
     ${conc ? '' : `<span style="margin-left:auto"></span>${[['ok','var(--ok)','No prazo'],['warn','var(--warn)','Pouco atrás'],['bad','var(--bad)','Atrasado'],['hoje','var(--gr)','Previsto hoje']].map(([k,c,t]) => `<button class="pa-lg ${p.ritmo===k?'on':''}" title="${p.ritmo===k?'Remover filtro':'Mostrar somente: '+t}" onclick="paLegRitmo('${k}')"><b style="background:${c}${k==='hoje'?';width:2px;height:12px':''}"></b>${t}</button>`).join('')}`}
     ${p.tipo || p.ritmo ? `<button class="pa-lg limpa" onclick="st.pa.tipo='';st.pa.ritmo='';pgPlano()">✕ Limpar filtro da legenda</button>` : ''}</div>
   <div class="pa-title ${conc?'conc':''}">${conc ? 'PLANO DE AÇÃO CONCLUÍDO • 5W2H' : 'PLANO DE AÇÃO • 5W2H'}</div>
-  <div class="tbl-wrap pa-tbl"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th>Data Início</th><th>Horário previsto</th><th>Data Prevista</th><th>Lead time</th><th>Onde?</th><th>Quanto?</th><th>Status</th>${conc?'<th>Concluído em</th>':''}<th>%</th><th>Observações</th><th></th></tr></thead><tbody>
+  <div class="tbl-wrap pa-tbl ${paCompacto()?'compacto':''}"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th class="px">Data Início</th><th class="px">Horário previsto</th><th>Data Prevista</th><th class="px">Lead time</th><th class="px">Onde?</th><th class="px">Quanto?</th><th class="px">Status</th>${conc?'<th class="px">Concluído em</th>':''}<th class="px">%</th><th class="px">Observações</th><th></th></tr></thead><tbody>
   ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
     return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td>${paCel(x,'o_que',true)}${paCel(x,'por_que')}${paCel(x,'como')}
       <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>`}</td>
-      <td>${x.inicio?fmtD(x.inicio):''}</td><td>${x.horario?x.horario.slice(0,5):''}</td><td>${x.fim?fmtD(x.fim):''}${paPrazoMudou(x) ? `<div class="small muted" title="Data prevista alterada${x.prazo_alterado_por?' por '+esc(pessoaNome(x.prazo_alterado_por)):''}">orig. ${fmtD(x.fim_original)}</div>` : ''}</td><td>${paLead(x) ?? ''}${paLead(x) != null && paStatus(x) !== 'Concluído' ? '<div class="small muted">até hoje</div>' : ''}</td>
-      ${paCel(x,'onde')}<td style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
-      ${conc ? `<td>${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
-      <td style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
-      ${paCel(x,'observacoes')}
-      <td class="act">${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
+      <td class="px">${x.inicio?fmtD(x.inicio):''}</td><td class="px">${x.horario?x.horario.slice(0,5):''}</td><td style="white-space:nowrap">${x.fim?fmtD(x.fim):''}${paPrazoMudou(x) ? `<div class="small muted" title="Data prevista alterada${x.prazo_alterado_por?' por '+esc(pessoaNome(x.prazo_alterado_por)):''}">orig. ${fmtD(x.fim_original)}</div>` : ''}</td><td class="px">${paLead(x) ?? ''}${paLead(x) != null && paStatus(x) !== 'Concluído' ? '<div class="small muted">até hoje</div>' : ''}</td>
+      ${paCel(x,'onde',false,'px')}<td class="px" style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td class="px"><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
+      ${conc ? `<td class="px">${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
+      <td class="px" style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
+      ${paCel(x,'observacoes',false,'px')}
+      <td class="act"><button class="btn sec sm pc" title="Ver todos os campos desta ação" onclick="paVer(${x.id})">🔎</button> <button class="btn sec sm pc pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" style="margin-top:0" onclick="paTogEt(${x.id})" title="Etapas · ${paPct(x)}% · ${esc(paStatus(x))}">☰ ${paPct(x)}%</button> ${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
   </tbody></table></div>`;
   requestAnimationFrame(paMarcarCortes);
 }
+/* Colunas do Plano de Ação: só as principais (padrão) ou todas — escolha salva neste navegador */
+function paCompacto(){ try{ return localStorage.getItem('eleve_pa_cols') !== 'todas'; }catch(e){ return true; } }
+function paAlternarCols(){ try{ localStorage.setItem('eleve_pa_cols', paCompacto() ? 'todas' : 'principais'); }catch(e){} pgPlano(); }
 /* Texto longo na tabela: mostra 3 linhas e abre o restante em "Ver mais" */
-function paCel(x, campo, negrito){
-  const t = String(x[campo] || '').trim(); if(!t) return '<td class="pa-txt"></td>';
-  return `<td class="pa-txt"><div class="pa-clamp" onclick="if(this.parentElement.classList.contains('cortado'))paVer(${x.id},'${campo}')">${negrito ? '<b>'+esc(t)+'</b>' : esc(t)}</div><button class="pa-mais" onclick="paVer(${x.id},'${campo}')">Ver mais ›</button></td>`;
+function paCel(x, campo, negrito, cls){
+  const t = String(x[campo] || '').trim(); cls = cls ? ' ' + cls : ''; if(!t) return `<td class="pa-txt${cls}"></td>`;
+  return `<td class="pa-txt${cls}"><div class="pa-clamp" onclick="if(this.parentElement.classList.contains('cortado'))paVer(${x.id},'${campo}')">${negrito ? '<b>'+esc(t)+'</b>' : esc(t)}</div><button class="pa-mais" onclick="paVer(${x.id},'${campo}')">Ver mais ›</button></td>`;
 }
 function paMarcarCortes(){ document.querySelectorAll('.pa-tbl td.pa-txt').forEach(td => { const c = td.querySelector('.pa-clamp'); td.classList.toggle('cortado', !!c && c.scrollHeight > c.clientHeight + 2); }); }
 window.addEventListener('resize', () => { clearTimeout(window._pamc); window._pamc = setTimeout(paMarcarCortes, 150); });
