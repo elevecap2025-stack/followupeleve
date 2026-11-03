@@ -513,8 +513,28 @@ body.dark .nc-ci-box{background:var(--surf2)}
 .ncd-act{display:flex;flex-direction:column;gap:5px}
 .ncd-act .btn{justify-content:center;white-space:nowrap}
 
+/* ---------- Tela de lançamentos (colunas uniformes) ---------- */
+.nc-barra{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-2px 0 10px}
+.nc-tbl table{table-layout:fixed;min-width:980px}
+.nc-tbl th{white-space:normal;line-height:1.25;vertical-align:bottom}
+.nc-tbl td{vertical-align:top;padding-top:11px;padding-bottom:11px;overflow-wrap:anywhere}
+.nc-tbl tbody tr:hover{background:var(--hover)}
+.nc-cel-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.nc-cel-tags .tag{white-space:normal}
+.nc-clamp{font-size:12.5px;line-height:1.45;margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer;white-space:pre-wrap}
+.nc-clamp.open{display:block;-webkit-line-clamp:unset}
+.nc-cols{position:relative}
+.nc-cols-n{background:var(--warnl);color:#92400E;border-radius:10px;padding:0 7px;font-size:11px;margin-left:4px}
+.nc-cols-pop{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:30;background:var(--surf);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.16);padding:10px 12px;min-width:240px}
+.nc-cols.open .nc-cols-pop{display:block}
+.nc-cols-t{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.nc-cols-pop label{display:flex;align-items:center;gap:8px;padding:5px 2px;font-size:13px;cursor:pointer;border-radius:6px}
+.nc-cols-pop label:hover{background:var(--hover)}.nc-cols-pop label.fixo{cursor:default;opacity:.8}
+.nc-cols-pop input{accent-color:var(--or);width:15px;height:15px}
+@media (max-width:900px){ .nc-tbl table{min-width:0;table-layout:auto} .nc-tbl td{text-align:left!important} }
 /* ---------- Pareto ---------- */
 .nc-par-ins{background:linear-gradient(100deg,var(--orl),var(--surf));border:1px solid var(--line);border-left:4px solid var(--or);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:12px}
+.nc-par-g>.chartbox{min-width:0;overflow:hidden}
 .nc-par-g{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px;align-items:start}
 .nc-par-t{max-height:390px;overflow:auto}
 .nc-par-t table{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -2565,7 +2585,7 @@ const pdfTxt = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\s+/g,
 const pdfTxtML = v => String(v ?? '').replace(/[^\u0000-ÿ]/g, '').replace(/\r/g, '').replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 /* Corta no fim de uma palavra */
 const pdfCorta = (s, n) => { if(s.length <= n) return s; const c = s.slice(0, n); const i = c.lastIndexOf(' '); return (i > n * .6 ? c.slice(0, i) : c).replace(/[\s,.;:-]+$/, '') + '...'; };
-async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto, anexo, tabela, multilinha }){
+async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, paisagem, estilos, kpis, graficos, fonte, compacto, anexo, tabela, multilinha, extras }){
   loading(true, 'Gerando PDF…');
   try{
     await carregarPDF();
@@ -2601,14 +2621,27 @@ async function gerarPDF({ titulo, subtitulo, resumo, colunas, linhas, arquivo, p
       didDrawPage: d => { if(d.pageNumber > 1) cab(); },
       ...(tabela||{})
     });
+    /* Tabelas adicionais (ex.: dashboards) */
+    (extras||[]).forEach(t => {
+      if(!t.linhas || !t.linhas.length) return;
+      let ey = doc.lastAutoTable.finalY + 9; if(ey > H - 34){ doc.addPage(); cab(); ey = 38; }
+      doc.setFont('helvetica','bold'); doc.setFontSize(10.5); doc.setTextColor(43,47,54); doc.text(pdfTxt(t.titulo), 12, ey);
+      doc.autoTable({ head:[t.colunas.map(pdfTxt)], body:t.linhas.map(r => r.map(pdfTxt)), startY:ey + 2.5, margin:{ top:33, left:12, right:12, bottom:14 },
+        styles:{ font:'helvetica', fontSize:t.fonte || 8, cellPadding:1.6, textColor:[31,35,40], lineColor:[229,231,235], lineWidth:0.1, overflow:'linebreak', valign:'middle' },
+        headStyles:{ fillColor:t.cor || [58,63,71], textColor:255, fontStyle:'bold' }, alternateRowStyles:{ fillColor:[248,249,251] }, columnStyles:t.estilos || {},
+        didDrawPage: d => { if(d.pageNumber > 1) cab(); } });
+    });
     if(graficos && graficos.length){
       let gy = doc.lastAutoTable.finalY + 8, col = 0, alturaLinha = 0;
       const gap = 6, gw = (W - 24 - gap) / 2;
       for(const g of graficos){
         const cv = $(g.canvas); if(!cv || !cv.width) continue;
-        const gh = gw * cv.height / cv.width;
+        if(g.largo && col === 1){ gy += alturaLinha; col = 0; alturaLinha = 0; }
+        const lw = g.largo ? W - 24 : gw, gh = lw * cv.height / cv.width;
         if(col === 0 && gy + gh + 6 > H - 14){ doc.addPage(); cab(); gy = 34; }
         const x = 12 + col * (gw + gap);
+        if(g.largo){ doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(43,47,54); doc.text(pdfTxt(g.titulo), x, gy);
+          try{ doc.addImage(cv.toDataURL('image/png'), 'PNG', x, gy + 2, lw, gh); }catch(e){} gy += gh + 10; continue; }
         doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(43,47,54); doc.text(pdfTxt(g.titulo), x, gy);
         try{ doc.addImage(cv.toDataURL('image/png'), 'PNG', x, gy + 2, gw, gh); }catch(e){}
         alturaLinha = Math.max(alturaLinha, gh + 8);
@@ -3049,7 +3082,7 @@ function pgPlanoDash(){
   <div class="card" style="margin-top:14px"><h3 style="flex-wrap:wrap">⏱ Tempo médio de resposta (lead time) por colaborador · ${esc(lt.txt)}
       <span class="seg" style="margin-left:auto"><button class="${lt.ehAno?'':'on'}" onclick="st.pad.ltModo='mes';pgPlanoDash()">Mês</button><button class="${lt.ehAno?'on':''}" onclick="st.pad.ltModo='ano';pgPlanoDash()">Acumulado no ano</button></span></h3>
     <div class="lt-kpi" onclick="padLtDrill('')" title="Ver os planos concluídos"><div class="lt-big">${ltConc.length ? fmtDec(ltMed) : '—'}<small> dia(s)</small></div>
-      <div><b>Em média, a Eleve responde em ${ltConc.length ? fmtDec(ltMed) + ' dia(s)' : '— (sem planos concluídos)'}</b><div class="small muted">${ltConc.length} plano(s) concluído(s) em ${esc(lt.txt)} · lead time = do início até a conclusão</div></div></div>
+      <div><b>Em média, a Eleve responde em ${ltConc.length ? fmtDec(ltMed) + ' dia(s)' : '— (sem planos concluídos)'}</b><div class="small muted">${ltConc.length} plano(s) concluído(s) em ${esc(lt.txt)} · lead time = do início até a conclusão${podioCfg().exclNC ? ' · sem planos de não conformidade (erros)' : ''}</div></div></div>
     ${ltUs.length ? `<div class="chartbox" style="height:${Math.max(240, ltUs.length*34+60)}px"><canvas id="chPA4"></canvas></div><div class="small muted" style="margin-top:6px">Clique numa barra para ver os planos do colaborador. Linha tracejada = média da Eleve.</div>` : '<div class="empty">Nenhum plano concluído no período.</div>'}</div>
   <div class="grid g2" style="margin-top:14px">
     <div class="card"><h3>Lead time médio mês a mês · ${ano}<span class="small muted" style="font-weight:400;margin-left:auto">clique no mês para filtrar</span></h3><div class="chartbox"><canvas id="chPA5"></canvas></div>${padPodio(ltUs, lt)}</div>
@@ -3095,7 +3128,7 @@ function pgPlanoDash(){
         scales:{ x:{ beginAtZero:true, grace:'10%', grid:{ color:grade }, border:{ display:false }, ticks:{ callback:v => v + ' d' } }, y:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } } } }, plugins:[rotDash, linhaMedia] }));
   }
   /* Lead time médio mês a mês */
-  const ltM = MESES.map((_,i) => { const c = base.filter(x => paStatus(x) === 'Concluído' && mesD(paDtConc(x), i) && paLead(x) != null); return { n:c.length, m: c.length ? Math.round(c.reduce((a,x) => a + paLead(x), 0) / c.length * 10) / 10 : null }; });
+  const semErro = padSemErro(), ltM = MESES.map((_,i) => { const c = base.filter(x => paStatus(x) === 'Concluído' && mesD(paDtConc(x), i) && paLead(x) != null && semErro(x)); return { n:c.length, m: c.length ? Math.round(c.reduce((a,x) => a + paLead(x), 0) / c.length * 10) / 10 : null }; });
   st.charts.push(new Chart($('chPA5'), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[
       { type:'line', label:'Lead time médio (dias)', data: ltM.map(v => v.m), borderColor:'#127DCB', backgroundColor:'#127DCB', pointRadius:4, pointHoverRadius:6, borderWidth:3, tension:.3, spanGaps:true, yAxisID:'y' },
       { type:'bar', label:'Planos concluídos', data: ltM.map(v => v.n), backgroundColor: esc_ ? 'rgba(255,255,255,.10)' : 'rgba(43,52,64,.14)', borderRadius:5, maxBarThickness:22, yAxisID:'y2' } ] },
@@ -3283,14 +3316,17 @@ function padLtPeriodo(){
   return { ano, mes, ehAno, txt: ehAno ? 'acumulado de ' + (p.mes ? 'jan a ' + MESES[Number(mes)-1].slice(0,3).toLowerCase() + '/' : 'Ano ') + ano : MESES[Number(mes)-1] + '/' + ano,
     ok: d => !!d && d.slice(0,4) === ano && (ehAno ? (!p.mes || d.slice(5,7) <= mes) : d.slice(5,7) === mes) };
 }
-const padConcPer = per => paDashBase().filter(x => paStatus(x) === 'Concluído' && per.ok(paDtConc(x)) && paLead(x) != null);
+/* Planos ligados a não conformidades (erros): ficam fora do tempo de resposta e do pódio quando o critério estiver ligado */
+const padNcPlanos = () => new Set((db.ncs||[]).map(n => n.plano_id).filter(Boolean));
+const padSemErro = () => { const nc = podioCfg().exclNC ? padNcPlanos() : null; return x => !(nc && nc.has(x.id)); };
+const padConcPer = per => { const ok = padSemErro(); return paDashBase().filter(x => paStatus(x) === 'Concluído' && per.ok(paDtConc(x)) && paLead(x) != null && ok(x)); };
 function padLtDrill(uid){
   const per = padLtPeriodo(), l = padConcPer(per).filter(x => !uid || x.responsavel_id === uid).sort((a,b) => paLead(b) - paLead(a));
   st.padVoltar = () => padLtDrill(uid);
   const md = l.length ? l.reduce((a,x) => a + paLead(x), 0) / l.length : 0, nm = uid ? pessoaNome(uid) : 'Eleve (todos)';
   const ini = nm.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase();
   abrirModal('⏱ Lead time · planos concluídos', `
-    <div class="dd-head"><div class="dd-av">${esc(ini||'?')}</div><div><div class="nm">${esc(nm)}</div><div class="sb">Concluídos em ${esc(per.txt)} · do início até a conclusão</div></div></div>
+    <div class="dd-head"><div class="dd-av">${esc(ini||'?')}</div><div><div class="nm">${esc(nm)}</div><div class="sb">Concluídos em ${esc(per.txt)} · do início até a conclusão${podioCfg().exclNC ? ' · sem planos de não conformidade (erros)' : ''}</div></div></div>
     <div class="dd-kpis">
       <div class="dd-k"><span>Concluídos</span><b>${l.length}</b></div>
       <div class="dd-k ok"><span>Lead time médio</span><b>${fmtDec(md)} d</b></div>
@@ -4229,6 +4265,46 @@ function ncFiltradas(){
 const ncPessoasOpts = sel => (db.pessoas||[]).slice().sort((a,b) => (a.nome||a.email||'').localeCompare(b.nome||b.email||'')).map(p => `<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.nome||p.email)}</option>`).join('');
 
 /* ---------- Lançamento de Não Conformidades ---------- */
+/* Colunas da tela de lançamentos: o usuário escolhe quais aparecem (fica salvo neste navegador) */
+const NC_COLS = [
+  { k:'id',     t:'ID',                      w:'58px',  td: x => `<b>#${x.id}</b>`, pdf: x => '#' + x.id, pw:11 },
+  { k:'data',   t:'Data abertura',           w:'104px', td: x => fmtD(x.data), pdf: x => fmtD(x.data), pw:18 },
+  { k:'colab',  t:'Colaborador',             w:'150px', td: x => `<b>${esc(pessoaNome(x.colaborador_id))}</b>`, pdf: x => pessoaNome(x.colaborador_id), pw:28 },
+  { k:'nc',     t:'Não conformidade',        w:'',      fixo:true, td: x => `<div class="nc-cel-tags">${db.ncSgOk ? ncSgTag(ncSgIdDe(x)) : ''}<span class="tag or">${esc(ncTipoNome(x.tipo_id))}</span></div><div class="nc-clamp" onclick="this.classList.toggle('open')" title="Clique para ver o texto completo">${esc(x.descricao||'')}</div>`,
+    pdf: x => (db.ncSgOk ? '[' + ncSgNome(ncSgIdDe(x)) + '] ' : '') + ncTipoNome(x.tipo_id) + ' - ' + (x.descricao||''), pw:70 },
+  { k:'imp',    t:'Impacto para a empresa',  w:'26%',      fixo:true, td: x => `${ncTag(x.impacto_nivel, NC_IMP_CLS)}${x.impacto ? `<div class="nc-clamp muted" onclick="this.classList.toggle('open')" title="Clique para ver o texto completo">${esc(x.impacto)}</div>` : ''}`,
+    pdf: x => [x.impacto_nivel, x.impacto].filter(Boolean).join(' - '), pw:55 },
+  { k:'urg',    t:'Urgência',                w:'100px', td: x => ncTag(x.urgencia, NC_URG_CLS), pdf: x => x.urgencia || '', pw:16 },
+  { k:'plano',  t:'Plano de ação',           w:'150px', td: x => ncPlanoHtml(x), pdf: x => { const p = ncPlano(x); return p ? '#' + p.id + ' ' + paStatus(p) + ' (' + paPct(p) + '%)' : x.plano_id ? '#' + x.plano_id : 'Sem plano'; }, pw:26 },
+  { k:'prev',   t:'Previsão término',        w:'112px', td: x => x.previsao ? fmtD(x.previsao) : '<span class="muted">—</span>', pdf: x => x.previsao ? fmtD(x.previsao) : '-', pw:19 },
+  { k:'lead',   t:'Lead time',               w:'86px',  num:true, td: x => `<b>${ncLead(x)}</b> d${ncFim(x) ? '' : '<div class="small muted">até hoje</div>'}`, pdf: x => ncLead(x) + ' d' + (ncFim(x) ? '' : ' (até hoje)'), pw:16 },
+  { k:'status', t:'Status',                  w:'132px', td: x => `${ncTag(ncStatus(x), NC_ST_CLS)}${ncCiTag(x) ? '<div style="margin-top:4px">' + ncCiTag(x) + '</div>' : ''}`,
+    pdf: x => ncStatus(x) + (ncCiTag(x) ? (x.ciente_em ? (x.ciente_contesta ? ' / Contestada' : ' / Ciente') : ' / Aguardando ciência') : ''), pw:26 }
+];
+const NC_COLS_OCULTAS_PADRAO = ['data','urg'];
+function ncColsOcultas(){ try{ const v = JSON.parse(localStorage.getItem('eleve_nc_cols_ocultas')); if(Array.isArray(v)) return v; }catch(e){} return NC_COLS_OCULTAS_PADRAO; }
+const ncColsVis = () => { const o = ncColsOcultas(); return NC_COLS.filter(c => c.fixo || !o.includes(c.k)); };
+function ncColTog(k, on){
+  let o = ncColsOcultas().filter(x => x !== k); if(!on) o.push(k);
+  try{ localStorage.setItem('eleve_nc_cols_ocultas', JSON.stringify(o)); }catch(e){}
+  st.ncColsAberto = true; pgNC();
+}
+function ncColsPadrao(){ try{ localStorage.removeItem('eleve_nc_cols_ocultas'); }catch(e){} st.ncColsAberto = true; pgNC(); }
+function ncColsMenu(){
+  const o = ncColsOcultas(), oc = NC_COLS.filter(c => !c.fixo && o.includes(c.k)).length;
+  return `<div class="nc-cols ${st.ncColsAberto ? 'open' : ''}"><button class="btn sec" onclick="this.parentElement.classList.toggle('open');st.ncColsAberto=this.parentElement.classList.contains('open')">👁 Colunas${oc ? ` <span class="nc-cols-n">${oc} oculta(s)</span>` : ''}</button>
+    <div class="nc-cols-pop"><div class="nc-cols-t">Mostrar colunas</div>${NC_COLS.map(c => `<label class="${c.fixo ? 'fixo' : ''}"><input type="checkbox" ${c.fixo || !o.includes(c.k) ? 'checked' : ''} ${c.fixo ? 'disabled' : ''} onchange="ncColTog('${c.k}', this.checked)"> ${esc(c.t)}${c.fixo ? ' <span class="muted">(sempre)</span>' : ''}</label>`).join('')}
+      <button class="btn sec sm" style="width:100%;justify-content:center;margin-top:6px" onclick="ncColsPadrao()">Restaurar padrão</button></div></div>`;
+}
+function ncTabela(l){
+  const cols = ncColsVis();
+  return `<div class="tbl-wrap nc-tbl"><table><colgroup>${cols.map(c => `<col${c.w ? ` style="width:${c.w}"` : ''}>`).join('')}<col style="width:118px"></colgroup>
+  <thead><tr>${cols.map(c => `<th class="${c.num ? 'num' : ''}">${c.t}</th>`).join('')}<th></th></tr></thead><tbody>
+  ${l.map(x => `<tr>${cols.map(c => `<td class="${c.num ? 'num' : ''}">${c.td(x)}</td>`).join('')}
+    <td class="act"><button class="btn sec sm" title="${ncPodeEditar(x)?'Editar':'Ver'}" onclick="ncAbrir(${x.id})">${ncPodeEditar(x)?'✎':'👁'}</button>${!x.plano_id && ncPodeEditar(x) ? ` <button class="btn sec sm" title="Abrir plano de ação" onclick="ncNovoPlano(${x.id})">🎯</button>` : ''}${ncPodeEditar(x) ? ` <button class="btn danger sm" title="Excluir" onclick="ncExcluir(${x.id})">🗑</button>` : ''}</td></tr>`).join('')
+    || `<tr><td colspan="${cols.length + 1}" class="empty">Nenhuma não conformidade lançada neste filtro.</td></tr>`}
+  </tbody></table></div>`;
+}
 function pgNC(){
   if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
   const f = st.nc, l = ncFiltradas(), n = s => l.filter(x => ncStatus(x) === s).length;
@@ -4250,16 +4326,10 @@ function pgNC(){
     <div class="f"><label>Status</label><select onchange="st.nc.status=this.value;pgNC()"><option value="">Todos</option>${Object.keys(NC_ST_CLS).map(s => `<option ${f.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f"><label>Urgência</label><select onchange="st.nc.urg=this.value;pgNC()"><option value="">Todas</option>${NC_URG.map(s => `<option ${f.urg===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="ncQ" value="${esc(f.q)}" placeholder="Descrição, impacto, colaborador…" oninput="st.nc.q=this.value;clearTimeout(window._ncq);window._ncq=setTimeout(()=>{pgNC();const i=$('ncQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
-    <button class="btn" onclick="ncAbrir()">+ Lançar não conformidade</button>
   </div>
-  <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Data</th><th>Colaborador</th><th>Não conformidade</th><th>Impacto para a empresa</th><th>Urgência</th><th>Plano de ação</th><th>Previsão término</th><th class="num">Lead time</th><th>Status</th><th></th></tr></thead><tbody>
-  ${l.map(x => `<tr><td><b>${x.id}</b></td><td style="white-space:nowrap">${fmtD(x.data)}</td><td><b>${esc(pessoaNome(x.colaborador_id))}</b></td>
-    <td style="min-width:220px">${db.ncSgOk ? ncSgTag(ncSgIdDe(x)) + ' ' : ''}<span class="tag or">${esc(ncTipoNome(x.tipo_id))}</span><div class="small" style="margin-top:3px;white-space:pre-wrap">${esc(x.descricao)}</div></td>
-    <td style="min-width:170px">${ncTag(x.impacto_nivel, NC_IMP_CLS)}${x.impacto?`<div class="small muted" style="margin-top:3px;white-space:pre-wrap">${esc(x.impacto)}</div>`:''}</td>
-    <td>${ncTag(x.urgencia, NC_URG_CLS)}</td><td>${ncPlanoHtml(x)}</td><td>${x.previsao?fmtD(x.previsao):'<span class="muted">—</span>'}</td>
-    <td class="num"><b>${ncLead(x)}</b> d${ncFim(x)?'':'<div class="small muted">até hoje</div>'}</td><td>${ncTag(ncStatus(x), NC_ST_CLS)}${ncCiTag(x) ? '<div style="margin-top:4px">' + ncCiTag(x) + '</div>' : ''}</td>
-    <td class="act"><button class="btn sec sm" title="${ncPodeEditar(x)?'Editar':'Ver'}" onclick="ncAbrir(${x.id})">${ncPodeEditar(x)?'✎':'👁'}</button>${!x.plano_id && ncPodeEditar(x) ? ` <button class="btn sec sm" title="Abrir plano de ação" onclick="ncNovoPlano(${x.id})">🎯</button>` : ''}${ncPodeEditar(x) ? ` <button class="btn danger sm" title="Excluir" onclick="ncExcluir(${x.id})">🗑</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="11" class="empty">Nenhuma não conformidade lançada neste filtro.</td></tr>'}
-  </tbody></table></div>`;
+  <div class="nc-barra"><span class="small muted">${fmtN(l.length)} lançamento(s) · clique no texto para ver completo</span>
+    <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap">${ncColsMenu()}<button class="btn sec" onclick="pdfNC()">📄 Relatório PDF</button><button class="btn" onclick="ncAbrir()">+ Lançar não conformidade</button></div></div>
+  ${ncTabela(l)}`;
 }
 function ncAbrir(id, vol){
   const x = id ? (db.ncs||[]).find(n => n.id === id) : null, ed = ncPodeEditar(x), dis = ed ? '' : 'disabled';
@@ -4509,6 +4579,49 @@ async function ncChecar(){
   if(ncPend().some(x => !st.ncVisto.has(x.id))) ncAbrirCiencia(null);
 }
 setInterval(ncChecar, 45000);
+document.addEventListener('mousedown', e => { const m = document.querySelector('.nc-cols.open'); if(m && !m.contains(e.target)){ m.classList.remove('open'); st.ncColsAberto = false; } });
+
+/* ---------- Relatórios PDF (cabeçalho padrão do sistema) ---------- */
+function ncCiResumo(l){ const c = l.filter(x => ncCiTag(x)); return { pend:c.filter(x => !x.ciente_em).length, ok:c.filter(x => x.ciente_em && !x.ciente_contesta).length, cont:c.filter(x => x.ciente_contesta).length }; }
+function pdfNC(){
+  const l = ncFiltradas(), f = st.nc; if(!l.length) return toast('Nenhuma não conformidade neste filtro.', 'err');
+  const cols = ncColsVis(), W = 297 - 24, soma = cols.reduce((a,c) => a + c.pw, 0), estilos = {};
+  cols.forEach((c,i) => { estilos[i] = { cellWidth: c.pw / soma * W, halign: c.num ? 'right' : 'left' }; });
+  const n = s => l.filter(x => ncStatus(x) === s).length, conc = l.filter(x => ncFim(x)), ltm = conc.length ? conc.reduce((a,x) => a + ncLead(x), 0) / conc.length : 0, ci = ncCiResumo(l);
+  const filtros = [f.de || f.ate ? 'Período: ' + (f.de ? fmtD(f.de) : 'início') + ' a ' + (f.ate ? fmtD(f.ate) : 'hoje') : 'Todo o período',
+    f.colab ? 'Colaborador: ' + pessoaNome(f.colab) : '', f.sg ? 'Subgrupo: ' + ncSgNome(Number(f.sg)) : '', f.tipo ? 'NC: ' + ncTipoNome(Number(f.tipo)) : '',
+    f.status ? 'Status: ' + f.status : '', f.urg ? 'Urgência: ' + f.urg : '', f.q ? 'Busca: ' + f.q : ''].filter(Boolean).join('  -  ');
+  gerarPDF({ titulo:'Não Conformidades', subtitulo:filtros, arquivo:`nao_conformidades_${hoje()}.pdf`, paisagem:true, fonte:7.5,
+    kpis:[ ['Não conformidades', fmtN(l.length), 'no filtro atual'], ['Abertas (sem plano)', fmtN(n('Aberta'))], ['Em tratamento', fmtN(n('Em tratamento'))],
+      ['Atrasadas', fmtN(n('Atrasada'))], ['Concluídas', fmtN(n('Concluída')), 'Lead time médio ' + fmtDec(ltm) + ' dia(s)'],
+      ...(db.ncCiOk ? [['Ciência', fmtN(ci.ok), ci.pend + ' aguardando · ' + ci.cont + ' contestada(s)']] : []) ],
+    resumo: `${l.length} lançamento(s) · colunas: ${cols.map(c => c.t).join(', ')}`,
+    colunas: cols.map(c => c.t), linhas: l.map(x => cols.map(c => c.pdf(x))), estilos });
+}
+function pdfNCDash(){
+  const l = st.ncdL || [], f = st.ncd; if(!l.length) return toast('Nenhuma não conformidade no período.', 'err');
+  const perTxt = (f.mes ? MESES[Number(f.mes)-1] + '/' : 'Ano ') + f.ano, cnt = s => l.filter(x => ncStatus(x) === s).length;
+  const conc = l.filter(x => ncFim(x)), ltm = conc.length ? conc.reduce((a,x) => a + ncLead(x), 0) / conc.length : 0, comPlano = l.filter(x => x.plano_id).length, ci = ncCiResumo(l);
+  const par = st.ncdPar || [], modo = st.ncdParModo === 'sg' ? 'Subgrupo' : 'Tipo', crit = st.ncdCrit || [], cbs = st.ncdCbs || [];
+  gerarPDF({ titulo:'Dashboard da Qualidade', arquivo:`dashboard_qualidade_${f.ano}${f.mes ? '_' + f.mes : ''}.pdf`, paisagem:true,
+    subtitulo:'Período: ' + perTxt + (f.colab ? '  -  Colaborador: ' + pessoaNome(f.colab) : '') + '  -  Lead time = da data da NC até a conclusão do plano de ação',
+    kpis:[ ['Não conformidades', fmtN(l.length), pct(comPlano, l.length) + '% com plano de ação'], ['Abertas', fmtN(cnt('Aberta')), 'sem plano'], ['Em tratamento', fmtN(cnt('Em tratamento'))],
+      ['Atrasadas', fmtN(cnt('Atrasada')), 'passou da previsão'], ['Concluídas', fmtN(cnt('Concluída')), pct(cnt('Concluída'), l.length) + '% resolvidas · lead time ' + (conc.length ? fmtDec(ltm) + ' d' : '-')], ...(db.ncCiOk ? [['Aguardando ciência', fmtN(ci.pend), ci.cont + ' contestada(s)']] : []) ],
+    resumo:'Pareto por ' + modo.toLowerCase() + ' - ' + perTxt,
+    colunas:['#', modo, 'Ocorrências', '% do total', '% acumulado', 'Classe'],
+    linhas: par.map((p,i) => [i+1, p.nm, p.n, pct(p.n, l.length) + '%', p.ac + '%', p.cls + (p.cls === 'A' ? ' (prioridade)' : '')]),
+    estilos:{ 0:{cellWidth:10}, 2:{halign:'right', cellWidth:26}, 3:{halign:'right', cellWidth:24}, 4:{halign:'right', cellWidth:26}, 5:{cellWidth:30} },
+    extras:[
+      { titulo:'Por colaborador - ' + perTxt, colunas:['Colaborador','Total','Abertas','Em tratamento','Atrasadas','Concluídas'],
+        linhas: cbs.map(c => [pessoaNome(c.id), c.t, c['Aberta'], c['Em tratamento'], c['Atrasada'], c['Concluída']]),
+        estilos:{ 1:{halign:'right'}, 2:{halign:'right'}, 3:{halign:'right'}, 4:{halign:'right'}, 5:{halign:'right'} } },
+      { titulo:'Prioridades em aberto (urgentes, altas ou atrasadas)', cor:[185,28,28], fonte:7.5, colunas:['ID','Data','Colaborador','Não conformidade','Descrição','Urgência','Status','Previsão','Lead time'],
+        linhas: crit.map(x => ['#' + x.id, fmtD(x.data), pessoaNome(x.colaborador_id), (db.ncSgOk && ncSgIdDe(x) ? ncSgNome(ncSgIdDe(x)) + ' / ' : '') + ncTipoNome(x.tipo_id), pdfCorta(pdfTxt(x.descricao||''), 160), x.urgencia||'', ncStatus(x), x.previsao ? fmtD(x.previsao) : '-', ncLead(x) + ' d']),
+        estilos:{ 0:{cellWidth:12}, 1:{cellWidth:18}, 2:{cellWidth:32}, 3:{cellWidth:48}, 5:{cellWidth:17}, 6:{cellWidth:22}, 7:{cellWidth:18}, 8:{cellWidth:16, halign:'right'} } } ],
+    graficos:[ { titulo:'Pareto por ' + modo.toLowerCase() + ' - ' + perTxt, canvas:'chNC2', largo:true }, { titulo:'Não conformidades por mês - ' + f.ano, canvas:'chNC1' },
+      { titulo:'Por colaborador - ' + perTxt, canvas:'chNC3' }, { titulo:'Urgência do tratamento', canvas:'chNC4' }, { titulo:'Impacto para a empresa', canvas:'chNC5' },
+      { titulo:'Lead time médio mês a mês - ' + f.ano, canvas:'chNC6' } ] });
+}
 
 /* ---------- Dashboard de Qualidade ---------- */
 /* Lista clicável (cards, KPIs e gráficos) → abre a tela de detalhe com editar / excluir */
@@ -4601,6 +4714,7 @@ function ncParetoChart(par, tot, o){
         y:{ beginAtZero:true, grace:'18%', grid:{ color:o.grade }, border:{ display:false }, ticks:{ precision:0 }, title:{ display:true, text:'ocorrências' } },
         y2:{ position:'right', min:0, max:110, grid:{ display:false }, border:{ display:false }, ticks:{ stepSize:20, callback:v => v <= 100 ? v + '%' : '' } } },
       onHover:o.hov, onClick:(e, el, ch) => { const r = o.pick(e, ch); if(r.length) ncParClick(r[0].index); } }, plugins:[parRot] }));
+  const chP = st.charts[st.charts.length-1]; [80, 450].forEach(t => setTimeout(() => { try{ if(chP.canvas) chP.resize(); }catch(e){} }, t));
 }
 function pgNCDash(){
   if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
@@ -4620,7 +4734,7 @@ function pgNCDash(){
   const vit = par.filter(p => p.cls === 'A'), vitN = vit.reduce((a,p) => a + p.n, 0);
   /* Por colaborador (status) */
   const cb = {}; l.forEach(x => { const c = cb[x.colaborador_id] = cb[x.colaborador_id] || { id:x.colaborador_id, t:0, 'Aberta':0, 'Em tratamento':0, 'Atrasada':0, 'Concluída':0 }; c.t++; c[ncStatus(x)]++; });
-  const cbs = Object.values(cb).sort((a,b) => b.t - a.t);
+  const cbs = Object.values(cb).sort((a,b) => b.t - a.t); st.ncdCbs = cbs;
   $('content').innerHTML = `
   <div class="filters">
     <div class="f"><label>Mês</label><select onchange="st.ncd.mes=this.value;pgNCDash()"><option value="">Todos</option>${MESES.map((m,i)=>`<option value="${pad(i+1)}" ${f.mes===pad(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
@@ -4628,6 +4742,7 @@ function pgNCDash(){
     <div class="f"><label>Colaborador</label><select onchange="st.ncd.colab=this.value;pgNCDash()"><option value="">Todos</option>${ncPessoasOpts(f.colab)}</select></div>
     <div class="f grow small muted" style="padding-bottom:9px">Não conformidades de vendas lançadas em ${perTxt}. Lead time = da data da não conformidade até a conclusão do plano de ação.</div>
     <button class="btn sec" onclick="ir('nc')">⚠️ Lançamentos</button>
+    <button class="btn sec" onclick="pdfNCDash()">📄 Relatório PDF</button>
     <button class="btn" onclick="ncAbrir()">+ Lançar não conformidade</button>
   </div>
   <div class="nc-hero">
