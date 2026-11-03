@@ -410,6 +410,49 @@ body.dark .pd-bronze .pd-base{background:linear-gradient(180deg,#43200F,#2E160A)
 .pd-filtros select{padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--tx);font-size:12.5px;font-weight:600}
 .pd-filtros .seg button{padding:5px 10px;font-size:12px}
 .atr-res{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;margin:-4px 0 6px}
+.ent-it{border:1px solid var(--line);border-left:5px solid var(--ok);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:var(--surf)}
+.ent-it.late{border-left-color:var(--bad)}
+.ent-top{display:flex;gap:12px;align-items:flex-start}
+.ent-ic{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4ADE80,#15803D);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(22,163,74,.3)}
+.ent-it.late .ent-ic{background:linear-gradient(135deg,#FBBF24,#C2620A)}
+.ent-tt{font-weight:800;color:var(--tx);line-height:1.3}.ent-sb{font-size:12.5px;color:var(--mut);margin-top:2px}
+.ent-kp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.ent-kp>div{background:var(--surf2);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
+.ent-kp span{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}.ent-kp b{font-size:13.5px;color:var(--tx)}
+.ent-et{margin-top:8px;font-size:12.5px;display:grid;gap:3px}.ent-et .ok{color:#166534}body.dark .ent-et .ok{color:#86EFAC}
+.ent-obs{margin-top:8px;font-size:12.5px;background:var(--surf2);border-radius:8px;padding:6px 9px;white-space:pre-wrap}
+@media (max-width:600px){ .ent-kp{grid-template-columns:repeat(2,1fr)} }
+.pa-quem-g{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:220px;margin:0 auto}
+.pa-qc{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;border-radius:12px;padding:2px 8px;white-space:nowrap;background:var(--chip);color:var(--gr2)}
+.pa-qc.ok{background:var(--okl);color:#166534}.pa-qc.pend{background:var(--warnl);color:#92400E}
+body.dark .pa-qc.ok{color:#86EFAC}body.dark .pa-qc.pend{color:#FCD34D}
+.cob-lb{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:12px 0 5px}
+.cob-dest{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surf2)}
+.cob-dest label{display:flex;align-items:center;gap:8px;cursor:pointer}.cob-dest input{accent-color:var(--or);width:16px;height:16px}
+.cob-rapidas{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.cob-rapidas .btn{font-size:11.5px}
+.cob-hist{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto}
+.cob-h{border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--surf);margin-bottom:8px}
+.cob-m{margin-top:3px;white-space:pre-wrap}
+.cob-r{margin-top:6px;padding:6px 9px;border-left:3px solid var(--ok);background:var(--okl);border-radius:6px;white-space:pre-wrap}
+body.dark .cob-r{background:var(--surf2)}
+.cob-perg{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.cob-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#4BA6EE,#0A4E83);color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cob-q{font-size:17px;font-weight:700;color:var(--tx);line-height:1.35}
+.cob-tag{font-size:10.5px;font-weight:700;margin-top:3px;white-space:nowrap}.cob-tag.ab{color:#B45309}.cob-tag.ok{color:#15803D}
+.ml-hd{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.ml-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#4BA6EE,#0A4E83);color:#fff;font-weight:800;font-size:19px;display:flex;align-items:center;justify-content:center}
+.ml-nm{font-size:18px;font-weight:800;color:var(--tx)}
+.ml-pad{margin-left:auto}.ml-pad label{display:block;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.ml-pad input,.ml-m input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--tx);font-weight:700;font-size:15px}
+.ml-pad input{width:150px}
+.ml-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.ml-m{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surf2)}
+.ml-m.atual{border-color:var(--or);box-shadow:0 0 0 2px var(--orl)}
+.ml-mt{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-bottom:5px}
+.ml-dia{margin:3px 0 6px;font-size:11px}.ml-real{font-size:12.5px}
+.ml-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.ml-foot span{margin-right:auto}
+@media (max-width:1100px){ .ml-grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
+@media (max-width:640px){ .ml-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .ml-pad{margin-left:0} }
 .pd-regras{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 10px}
 .pd-regras span{font-size:11px;font-weight:600;background:var(--chip);color:var(--gr2);border-radius:12px;padding:2px 9px}
 .pd-desc{margin-top:10px;padding:8px 10px;border:1px dashed #FCA5A5;border-radius:10px;background:var(--badl);font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:#991B1B}
@@ -1255,7 +1298,8 @@ async function boot(){
     if(isAdmin()) setTimeout(bkpAuto, 6000);
     const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
     const dia = () => avisoEntrega(() => avisoDia(aniv));
-    const ncCi = () => ncPend().length ? ncAbrirCiencia(dia) : dia();
+    const cob = () => cobPend().length || cobRespostas().length ? cobAviso(dia) : dia();
+    const ncCi = () => ncPend().length ? ncAbrirCiencia(cob) : cob();
     if(paPend().length) abrirCiente(ncCi); else ncCi();
   }catch(e){ toast(e.message, 'err'); if(!S) mostrarLogin(e.message); }
   finally{ loading(false); }
@@ -1292,6 +1336,7 @@ function setEmp(v){ st.emp = v; st.painel.vend = ''; st.plan.vend = ''; st.lig.v
 /* ============================ NAVEGAÇÃO ============================ */
 const PAGES = {
   painel:{ t:'Painel de Metas', ic:'📊', fn:()=>pgPainel() },
+  metaslig:{ t:'Metas de Ligação', ic:'🎯', fn:()=>pgMetasLig(), seg:'painel' },
   aniversariantes:{ t:'Aniversariantes', ic:'🎂', fn:()=>pgAniv() },
   planejamento:{ t:'Planejamento (Follow-up)', ic:'📅', fn:()=>pgPlan() },
   planejar:{ t:'Planejar Ligações', ic:'📋', fn:()=>pgPlanejar() },
@@ -1340,7 +1385,7 @@ function montarNav(){
   const nAtras = fuVisiveis().filter(f => f.status==='pendente' && f.data_prevista <= hoje()).length;
   const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" title="${PAGES[k].t}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span><span class="lb">${PAGES[k].t}</span>${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
   const sec = (t, itens, cls) => itens ? `<div class="sec ${cls||''}">${t}</div>` + itens : '';
-  const h = sec('Indicadores', item('painel'))
+  const h = sec('Indicadores', item('painel') + item('metaslig'))
     + sec('Ligações & Follow-up', item('planejamento', nAtras||'') + item('planejar') + item('ligacoes'))
     + sec('Clientes', item('clientes') + item('clientesatend') + item('aniversariantes', nAniv||''))
     + sec('Plano de Ação', item('planodash') + item('plano', paPend().length||'') + item('planocal') + item('planoconc') + item('guia5w2h'))
@@ -1549,6 +1594,7 @@ const rotulosPlugin = { id:'rotulos', afterDatasetsDraw(ch, args, opt){
 } };
 const ROT = { on:true };
 function pgPainel(){
+  if(!st.painel.vendIni){ st.painel.vendIni = true; if(verVendFiltro()) st.painel.vend = vendPadraoPainel(); }
   const p = st.painel, comp = p.comp || mesAtual(), h = hoje(), anoAt = new Date().getFullYear();
   const nd = new Date(Number(comp.slice(0,4)), Number(comp.slice(5)), 0).getDate();
   if(Number(p.dia) > nd) p.dia = '';
@@ -1585,7 +1631,7 @@ function pgPainel(){
     <div class="f"><label>Dia</label><select onchange="st.painel.dia=this.value;pgPainel()"><option value="">Todos</option>${Array.from({length:nd},(_,i)=>i+1).map(d=>`<option value="${d}" ${String(p.dia)===String(d)?'selected':''}>${pad(d)}</option>`).join('')}</select></div>
     <div class="f"><label>Mês</label><select onchange="st.painel.comp=(st.painel.comp||mesAtual()).slice(0,4)+'-'+this.value;pgPainel()">${MESES.map((m,i)=>`<option value="${pad(i+1)}" ${comp.slice(5)===pad(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="f"><label>Ano</label><select onchange="st.painel.comp=this.value+'-'+(st.painel.comp||mesAtual()).slice(5);pgPainel()">${anos.map(y=>`<option ${Number(comp.slice(0,4))===y?'selected':''}>${y}</option>`).join('')}</select></div>
-    ${verVendFiltro()?`<div class="f"><label>Vendedora</label><select onchange="st.painel.vend=this.value;pgPainel()">${vendOptions(p.vend,'Todas')}</select></div>`:''}
+    ${verVendFiltro()?`<div class="f"><label>Vendedora</label><div style="display:flex;gap:6px"><select onchange="st.painel.vend=this.value;pgPainel()">${vendOptions(p.vend,'Todas')}</select><button class="btn sec" title="${(p.vend||'') === vendPadraoPainel() ? 'Esta é a seleção padrão ao abrir o painel' : 'Abrir o painel sempre com esta seleção'}" onclick="painelFixarPadrao()">${(p.vend||'') === vendPadraoPainel() ? '★' : '☆'}</button></div></div>`:''}
     ${clsFiltro(p.cls, "st.painel.cls=this.value;pgPainel()")}
     <div class="f small muted" style="padding-bottom:9px">${dia ? (diaUtil ? 'Dia útil · meta do dia = meta do mês ÷ '+duTot : 'Domingo: sem meta') : 'Dias úteis (seg a sáb): '+duAte+' de '+duTot}</div>
     <button class="btn sec" onclick="pdfPainel()">📄 Gerar PDF</button>
@@ -1607,6 +1653,10 @@ function pgPainel(){
     <div class="card"><h3>Resultado das ligações · ${perTxt}</h3><div class="chartbox"><canvas id="ch3"></canvas></div></div>
     <div class="card"><h3>Follow-ups por vendedora</h3><div class="chartbox"><canvas id="ch4"></canvas></div></div>
   </div>
+  <div class="card" style="margin-top:14px"><h3 style="flex-wrap:wrap">📈 Ligações realizadas x Meta · mês a mês · ${comp.slice(0,4)}${p.vend ? ' · ' + esc(vendNome(Number(p.vend))) : ' · todas as vendedoras'}
+      <span style="margin-left:auto"><button class="btn sec sm" onclick="${p.vend ? `st.ml=null;st.ml={vend:'${p.vend}',ano:${comp.slice(0,4)},todas:false};` : ''}ir('metaslig')">🎯 Metas de ligação</button></span></h3>
+    <div class="chartbox" style="height:290px"><canvas id="chLM"></canvas></div>
+    <div class="small muted" style="margin-top:4px">Barra verde = meta batida · amarela = 80% a 99% · vermelha = abaixo de 80% · azul = mês atual (em andamento). Linha tracejada = meta do mês.</div></div>
   <div class="card" style="margin-top:14px"><h3 style="flex-wrap:wrap">Clientes novos por mês · ${anoN}
       <select style="margin-left:auto;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-weight:600" onchange="st.painel.anoNovos=Number(this.value);pgPainel()">${[anoAt-2,anoAt-1,anoAt,anoAt+1].map(y=>`<option ${anoN===y?'selected':''}>${y}</option>`).join('')}</select></h3>
     <div class="chartbox"><canvas id="ch5"></canvas></div><div class="small muted" style="margin-top:6px">Conta os clientes pela data do cadastro, por loja. O ano deste gráfico é independente dos filtros do painel.</div></div>
@@ -1647,12 +1697,106 @@ function pgPainel(){
       { label:'Atrasados', data: linhas.map(x=>x.fuAtr), backgroundColor:'#DC2626', borderRadius:4 } ] },
     options:{ maintainAspectRatio:false, plugins:{ rotulos:ROT }, scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true } } } }));
 
+  /* Ligações x meta mês a mês (ano do painel, vendedora do filtro) */
+  { let vm = vendsVisiveis(); if(p.vend) vm = vm.filter(v => String(v.id) === String(p.vend)); st.charts.push(chartLigMeta('chLM', ligMesAMes(vm, Number(comp.slice(0,4))), Number(comp.slice(0,4)))); }
   /* Clientes novos por mês: ano próprio, jan a dez, lojas lado a lado */
   const empsN = db.empresas.filter(e => e.ativo && (isAdmin() || minhasEmps().includes(e.id)));
   const baseN = db.clientes.filter(c => c.data_cadastro && c.data_cadastro.slice(0,4) === String(anoN) && clsOk(c.id, p.cls));
   st.charts.push(new Chart($('ch5'), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)+'/'+String(anoN).slice(2)), datasets: empsN.map(e => ({ label:e.nome, backgroundColor:e.cor||'#127DCB', borderRadius:4, maxBarThickness:34,
       data: MESES.map((_,i) => baseN.filter(c => c.empresa_id === e.id && c.data_cadastro.slice(5,7) === pad(i+1)).length) })) },
     options:{ maintainAspectRatio:false, layout:pad20, plugins:{ rotulos:{ on:true, fmt:fmtN } }, scales:{ y:{ beginAtZero:true, grace:'10%', ticks:{ precision:0 } } } } }));
+}
+
+/* ============================ METAS DE LIGAÇÃO (por vendedora) ============================ */
+/* Vendedora padrão do Painel: a escolhida com ★ neste navegador; se não houver, a Joyce (Vendas) */
+function vendPadraoPainel(){
+  const vis = vendsVisiveis(); let id = null; try{ id = localStorage.getItem('eleve_painel_vend'); }catch(e){}
+  if(id === 'todas') return '';
+  if(id && vis.some(v => String(v.id) === id)) return id;
+  const j = vis.find(v => /joyce/i.test(v.nome)); return j ? String(j.id) : '';
+}
+function painelFixarPadrao(){
+  const v = st.painel.vend || 'todas'; try{ localStorage.setItem('eleve_painel_vend', v); }catch(e){}
+  toast(v === 'todas' ? 'Padrão do painel: todas as vendedoras.' : 'Padrão do painel: ' + vendNome(Number(v)) + '.', 'ok'); pgPainel();
+}
+/* Realizado x meta de jan a dez para um conjunto de vendedoras */
+function ligMesAMes(vends, ano){
+  const ids = new Set(vends.map(v => v.id)), ligs = ligVisiveis().filter(l => ids.has(l.vendedora_id) && dataDeTs(l.inicio).slice(0,4) === String(ano));
+  return MESES.map((_, i) => { const comp = ano + '-' + pad(i+1), lm = ligs.filter(l => dataDeTs(l.inicio).slice(5,7) === pad(i+1));
+    const meta = vends.filter(v => v.ativa || lm.some(l => l.vendedora_id === v.id)).reduce((a,v) => a + (metaDe(v.id, comp) || 0), 0);
+    return { comp, real: lm.length, meta, efet: lm.filter(l => efetivo(l.resultado)).length }; });
+}
+function chartLigMeta(canvas, dados, ano){
+  const h = hoje().slice(0,7), pc = dados.map(d => d.meta ? Math.round(d.real / d.meta * 100) : null);
+  const rot = { id:'rotLM', afterDatasetsDraw(ch){ const c = ch.ctx, m = ch.getDatasetMeta(1); c.save(); c.textAlign = 'center';
+    m.data.forEach((el, j) => { const d = dados[j]; if(!d.real && !d.meta) return;
+      c.font = "800 11px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = getComputedStyle(document.body).getPropertyValue('--tx').trim() || '#1F2328'; c.textBaseline = 'bottom';
+      if(d.real) c.fillText(fmtN(d.real), el.x, el.y - 4);
+      if(pc[j] != null && d.comp <= h){ const t = pc[j] + '%', w = c.measureText(t).width + 8, cor = pc[j] >= 100 ? '#15803D' : pc[j] >= 80 ? '#B45309' : '#B91C1C';
+        c.font = "700 10px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = cor; c.textBaseline = 'bottom'; c.fillText(t, el.x, el.y - (d.real ? 18 : 4)); } }); c.restore(); } };
+  return new Chart($(canvas), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[
+      { type:'line', label:'Meta', data: dados.map(d => d.meta || null), borderColor:'#3B4A5A', backgroundColor:'#3B4A5A', borderDash:[6,4], borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#fff', pointBorderWidth:2, tension:0, spanGaps:true, order:0 },
+      { type:'bar', label:'Ligações realizadas', data: dados.map(d => d.real), backgroundColor: dados.map((d,j) => !d.meta ? '#127DCB' : pc[j] >= 100 ? '#16A34A' : d.comp === h ? '#127DCB' : pc[j] >= 80 ? '#F59E0B' : '#DC2626'),
+        borderRadius:6, borderSkipped:false, maxBarThickness:38, order:1 } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top:34 } }, interaction:{ mode:'index', intersect:false },
+      plugins:{ rotulos:{ on:false }, rotDash:{ on:false }, legend:{ position:'top', align:'end', labels:{ usePointStyle:true, boxWidth:10 } },
+        tooltip:{ callbacks:{ label: it => it.dataset.type === 'line' ? ` Meta: ${fmtN(it.raw || 0)}` : ` Realizado: ${fmtN(it.raw)}`, footer: it => { const d = dados[it[0].dataIndex]; return d.meta ? `Atingimento: ${pct(d.real, d.meta)}% · faltam ${fmtN(Math.max(0, d.meta - d.real))}` : 'Sem meta'; } } } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'18%', ticks:{ precision:0 } } } }, plugins:[rot] });
+}
+function pgMetasLig(){
+  const s = st.ml || (st.ml = { vend: vendPadraoPainel(), ano: new Date().getFullYear(), todas:false });
+  const vis = vendsVisiveis(), adm = isAdmin(), anoAt = new Date().getFullYear();
+  if(s.vend && !vis.some(v => String(v.id) === String(s.vend))) s.vend = '';
+  const v = s.vend ? M.vend[Number(s.vend)] : null, ano = Number(s.ano), dados = v ? ligMesAMes([v], ano) : [];
+  const tReal = dados.reduce((a,d) => a + d.real, 0), tMeta = dados.reduce((a,d) => a + d.meta, 0);
+  const lista = s.todas ? vis : vis.filter(x => /joyce/i.test(x.nome) || String(x.id) === String(s.vend));
+  $('content').innerHTML = `
+  <div class="filters">
+    <div class="f"><label>Vendedora</label><select onchange="st.ml.vend=this.value;pgMetasLig()"><option value="">Selecione…</option>${vis.map(x => `<option value="${x.id}" ${String(x.id)===String(s.vend)?'selected':''}>${esc(x.nome)}${x.ativa?'':' (inativa)'}</option>`).join('')}</select></div>
+    <div class="f"><label>Ano</label><select onchange="st.ml.ano=Number(this.value);pgMetasLig()">${[anoAt-1, anoAt, anoAt+1].map(y => `<option ${y===ano?'selected':''}>${y}</option>`).join('')}</select></div>
+    <div class="f grow small muted" style="padding-bottom:9px">Meta de ligações por mês. Mês em branco usa a meta padrão da vendedora. ${adm ? '' : 'Somente o administrador pode alterar as metas.'}</div>
+    <button class="btn sec" onclick="ir('painel')">📊 Painel de Metas</button>
+  </div>
+  ${v ? `<div class="card ml-card">
+    <div class="ml-hd"><div class="ml-av">${esc((v.nome[0]||'?').toUpperCase())}</div><div><div class="ml-nm">${esc(v.nome)}</div><div class="small muted">${esc(empNome(v.empresa_id))} · ${ano}</div></div>
+      <div class="ml-pad"><label>Meta padrão / mês</label><input type="number" min="0" id="mlPad" value="${v.meta_mensal_padrao||0}" ${adm?'':'disabled'} oninput="mlAtualiza()"></div></div>
+    <div class="ml-grid">${dados.map((d,i) => { const r = db.metas.find(x => x.vendedora_id === v.id && x.competencia === d.comp), p = d.meta ? pct(d.real, d.meta) : 0, fut = d.comp > hoje().slice(0,7);
+      return `<div class="ml-m ${d.comp === hoje().slice(0,7) ? 'atual' : ''}"><div class="ml-mt">${MESES[i]}</div>
+        <input type="number" min="0" class="mlIn" data-comp="${d.comp}" value="${r ? r.meta_ligacoes : ''}" placeholder="${v.meta_mensal_padrao||0}" ${adm?'':'disabled'} oninput="mlAtualiza()">
+        <div class="ml-dia small muted" data-comp="${d.comp}">${metaDiaTxt(r ? r.meta_ligacoes : (v.meta_mensal_padrao||0), d.comp)}</div>
+        <div class="ml-real">${fut ? '<span class="muted">—</span>' : `<b>${fmtN(d.real)}</b> realizadas`}</div>
+        ${fut || !d.meta ? '' : `<div class="prog ${p>=100?'ok':''}" style="margin-top:4px"><div style="width:${Math.min(p,100)}%"></div></div><div class="small" style="text-align:right;font-weight:700;color:${p>=100?'var(--ok)':p>=80?'var(--warn)':'var(--bad)'}">${p}%</div>`}</div>`; }).join('')}</div>
+    <div class="ml-foot"><span>Total ${ano}: <b>${fmtN(tReal)}</b> realizadas de <b>${fmtN(tMeta)}</b> (${pct(tReal, tMeta)}%)</span>
+      ${adm ? `<button class="btn sec" onclick="document.querySelectorAll('.mlIn').forEach(i=>i.value='');mlAtualiza()">Limpar meses (usar padrão)</button><button class="btn" id="mlOk" onclick="mlSalvar(${v.id})">💾 Salvar metas</button>` : ''}</div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>📈 Ligações realizadas x Meta · mês a mês · ${esc(v.nome)} · ${ano}</h3><div class="chartbox" style="height:300px"><canvas id="chML"></canvas></div></div>`
+  : '<div class="card empty">Selecione a vendedora para definir as metas.</div>'}
+  <div class="card" style="margin-top:14px"><h3>Vendedoras<label class="small" style="margin-left:auto;font-weight:600;display:flex;gap:6px;align-items:center"><input type="checkbox" ${s.todas?'checked':''} onchange="st.ml.todas=this.checked;pgMetasLig()"> Mostrar todas</label></h3>
+    <div class="tbl-wrap" style="border:0"><table><thead><tr><th>Vendedora</th><th>Empresa</th><th class="num">Meta padrão</th><th class="num">Meta ${MESES[new Date().getMonth()]}</th><th class="num">Realizado no mês</th><th>Atingimento</th><th></th></tr></thead><tbody>
+    ${lista.map(x => { const comp = mesAtual(), m = metaDe(x.id, comp), r = ligVisiveis().filter(l => l.vendedora_id === x.id && dataDeTs(l.inicio).slice(0,7) === comp).length, p = pct(r, m);
+      return `<tr><td><b>${esc(x.nome)}</b></td><td>${empTag(x.empresa_id)}</td><td class="num">${fmtN(x.meta_mensal_padrao||0)}</td><td class="num">${fmtN(m)}</td><td class="num"><b>${fmtN(r)}</b></td>
+        <td><div style="display:flex;gap:8px;align-items:center"><div class="prog ${p>=100?'ok':''}" style="flex:1"><div style="width:${Math.min(p,100)}%"></div></div><b>${m ? p + '%' : '—'}</b></div></td>
+        <td class="act"><button class="btn sec sm" onclick="st.ml.vend='${x.id}';pgMetasLig();window.scrollTo(0,0)">🎯 Metas</button></td></tr>`; }).join('') || '<tr><td colspan="7" class="empty">Nenhuma vendedora.</td></tr>'}
+    </tbody></table></div></div>`;
+  if(v && typeof Chart !== 'undefined') st.charts.push(chartLigMeta('chML', dados, ano));
+}
+function mlAtualiza(){
+  const pd = Number($('mlPad').value) || 0;
+  document.querySelectorAll('.mlIn').forEach(i => { i.placeholder = pd; const d = document.querySelector(`.ml-dia[data-comp="${i.dataset.comp}"]`); if(d) d.textContent = metaDiaTxt(i.value === '' ? pd : Number(i.value), i.dataset.comp); });
+}
+async function mlSalvar(vid){
+  const b = $('mlOk'); b.disabled = true;
+  try{
+    const v = M.vend[vid], pd = Number($('mlPad').value) || 0;
+    if(pd !== (v.meta_mensal_padrao || 0)) Object.assign(v, await api.upd('vendedoras', vid, { meta_mensal_padrao:pd }));
+    const ups = [], dels = [];
+    document.querySelectorAll('.mlIn').forEach(i => { const comp = i.dataset.comp, r = db.metas.find(x => x.vendedora_id === vid && x.competencia === comp);
+      if(i.value === ''){ if(r) dels.push(r); } else ups.push({ vendedora_id:vid, competencia:comp, meta_ligacoes:Number(i.value) || 0 }); });
+    if(ups.length){ const r = await sbFetch('/rest/v1/metas?on_conflict=vendedora_id,competencia', { method:'POST', body:ups, headers:{ Prefer:'resolution=merge-duplicates,return=representation' } });
+      (r||[]).forEach(n => { const k = db.metas.findIndex(x => x.vendedora_id === n.vendedora_id && x.competencia === n.competencia); if(k >= 0) db.metas[k] = n; else db.metas.push(n); }); }
+    for(const d of dels){ await api.del('metas', d.id); db.metas = db.metas.filter(x => x.id !== d.id); }
+    toast('Metas de ' + v.nome + ' salvas.', 'ok'); pgMetasLig();
+  }catch(e){ toast(e.message, 'err'); b.disabled = false; }
 }
 
 /* ============================ PLANEJAMENTO (FOLLOW-UP) ============================ */
@@ -2993,7 +3137,7 @@ function paRes(l){
 }
 async function carregarPessoas(){ db.pessoas = (await sbFetch('/rest/v1/rpc/listar_usuarios', { method:'POST', body:{} })) || []; }
 async function carregarPlanos(){
-  try{ db.planos = await sbAll('plano_acao','select=*&order=id'); await carregarPessoas(); db.planos = paRes(db.planos); db.paOk = true; }
+  try{ db.planos = await sbAll('plano_acao','select=*&order=id'); await carregarPessoas(); db.planos = paRes(db.planos); db.paOk = true; await cobSync(); }
   catch(e){ db.planos = []; db.pessoas = db.pessoas || []; db.paOk = false; }
 }
 function paCiente(x){
@@ -3480,9 +3624,22 @@ function paRitmo(x){
 }
 function paLegTipo(k){ st.pa.tipo = st.pa.tipo === k ? '' : k; if(st.pa.tipo === 'eq' && st.pa.ver !== 'equipe') st.pa.ver = 'equipe'; pgPlano(); }
 function paLegRitmo(k){ st.pa.ritmo = st.pa.ritmo === k ? '' : k; pgPlano(); }
+/* Plano enviado para várias pessoas: mostra uma linha só por grupo (cada pessoa continua com a sua cópia para dar ciente e acompanhar).
+   A linha usa a cópia de quem está logado, se houver; a coluna Quem? lista todos os responsáveis. */
+function paAgrupar(l){
+  const me = db.me.id, grp = {}, out = [];
+  l.forEach(x => { if(!x.grupo){ out.push(x); return; } const k = x.grupo + '|' + x.criado_por; if(!grp[k]){ grp[k] = []; out.push(k); } grp[k].push(x); });
+  return out.map(o => { if(typeof o !== 'string') return o; const c = grp[o]; if(c.length === 1) return c[0];
+    const rep = c.find(x => x.responsavel_id === me) || c.slice().sort((a,b) => a.id - b.id)[0];
+    return Object.assign(Object.create(rep), { _grp: c.slice().sort((a,b) => pessoaNome(a.responsavel_id).localeCompare(pessoaNome(b.responsavel_id))) }); });
+}
+function paQuemGrupo(x){
+  return `<div class="pa-quem-g">${x._grp.map(c => { const ci = c.responsavel_id === c.criado_por ? 'meu' : c.ciente_em ? 'ok' : 'pend';
+    return `<span class="pa-qc ${ci}" title="${esc(pessoaNome(c.responsavel_id))} · ${ci === 'ok' ? 'Ciente ' + fmtDH(c.ciente_em) : ci === 'pend' ? 'Aguardando ciente' : 'Própria'} · ${paPct(c)}%">${ci === 'ok' ? '✔' : ci === 'pend' ? '⏳' : '•'} ${esc(pessoaNome(c.responsavel_id))}</span>`; }).join('')}</div>`;
+}
 function pgPlano(){
   if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
-  const p = st.pa, me = db.me.id, conc = paConc(), todos = veTodosPlanos(), l = paFiltradas(), base = paFiltradas(true), pend = paPend().length;
+  const p = st.pa, me = db.me.id, conc = paConc(), todos = veTodosPlanos(), l = paAgrupar(paFiltradas()), base = paAgrupar(paFiltradas(true)), pend = paPend().length;
   if(!todos && (p.ver === 'equipe' || p.pessoa)){ p.ver = 'todos'; p.pessoa = ''; }
   const n = s => base.filter(x => paStatus(x) === s).length, mes = mesAtual();
   const nConc = (db.planos||[]).filter(x => paEncerrada(x) && (x.criado_por === me || x.responsavel_id === me)).length;
@@ -3517,15 +3674,15 @@ function pgPlano(){
     ${p.tipo || p.ritmo ? `<button class="pa-lg limpa" onclick="st.pa.tipo='';st.pa.ritmo='';pgPlano()">✕ Limpar filtro da legenda</button>` : ''}</div>
   <div class="pa-title ${conc?'conc':''}">${conc ? 'PLANO DE AÇÃO CONCLUÍDO • 5W2H' : 'PLANO DE AÇÃO • 5W2H'}</div>
   <div class="tbl-wrap pa-tbl ${paCompacto()?'compacto':''}"><table><thead><tr><th>ID</th><th>O quê?</th><th>Por quê?</th><th>Como?</th><th>Quem?</th><th class="px">Data Início</th><th class="px">Horário previsto</th><th>Data Prevista</th><th class="px">Lead time</th><th class="px">Onde?</th><th class="px">Quanto?</th><th class="px">Status</th>${conc?'<th class="px">Concluído em</th>':''}<th class="px">%</th><th class="px">Observações</th><th></th></tr></thead><tbody>
-  ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = paCopias(x);
+  ${l.map(x => { const dono = x.criado_por === me, resp = x.responsavel_id === me, tp = paTipo(x), nc = x._grp ? x._grp.length : paCopias(x);
     return `<tr class="pa-${tp}"><td><b>${x.id}</b>${nc > 1 ? `<div class="small muted" title="Plano enviado para ${nc} pessoas">👥 ${nc}</div>` : ''}</td>${paCel(x,'o_que',true)}${paCel(x,'por_que')}${paCel(x,'como')}
-      <td><b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>${dono?'':`<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>`}</td>
+      <td>${x._grp ? paQuemGrupo(x) : `<b>${esc(pessoaNome(x.responsavel_id))}</b><div>${paCiente(x)}</div>`}${cobTagLinha(x)}${dono?'':`<div class="small muted">Enviada por <b style="color:var(--bad)">${esc(pessoaNome(x.criado_por))}</b></div>`}</td>
       <td class="px">${x.inicio?fmtD(x.inicio):''}</td><td class="px">${x.horario?x.horario.slice(0,5):''}</td><td style="white-space:nowrap">${x.fim?fmtD(x.fim):''}${paPrazoMudou(x) ? `<div class="small muted" title="Data prevista alterada${x.prazo_alterado_por?' por '+esc(pessoaNome(x.prazo_alterado_por)):''}">orig. ${fmtD(x.fim_original)}</div>` : ''}</td><td class="px">${paLead(x) ?? ''}${paLead(x) != null && paStatus(x) !== 'Concluído' ? '<div class="small muted">até hoje</div>' : ''}</td>
       ${paCel(x,'onde',false,'px')}<td class="px" style="white-space:nowrap">${fmtBRL(x.quanto)}</td><td class="px"><span class="tag ${PA_TAG[paStatus(x)]||''}">${esc(paStatus(x))}</span></td>
       ${conc ? `<td class="px">${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
       <td class="px" style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
       ${paCel(x,'observacoes',false,'px')}
-      <td class="act"><button class="btn sec sm pc" title="Ver todos os campos desta ação" onclick="paVer(${x.id})">🔎</button> <button class="btn sec sm pc pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" style="margin-top:0" onclick="paTogEt(${x.id})" title="Etapas · ${paPct(x)}% · ${esc(paStatus(x))}">☰ ${paPct(x)}%</button> ${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
+      <td class="act">${!conc && dono && (x._grp ? x._grp.some(c => c.responsavel_id !== me) : x.responsavel_id !== me) ? `<button class="btn sec sm cob-btn" title="Alguma novidade? Enviar mensagem para quem recebeu a ação" onclick="cobAbrir(${x.id})">🔔</button> ` : ''}<button class="btn sec sm pc" title="Ver todos os campos desta ação" onclick="paVer(${x.id})">🔎</button> <button class="btn sec sm pc pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" style="margin-top:0" onclick="paTogEt(${x.id})" title="Etapas · ${paPct(x)}% · ${esc(paStatus(x))}">☰ ${paPct(x)}%</button> ${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
   </tbody></table></div>`;
   requestAnimationFrame(paMarcarCortes);
 }
@@ -4078,36 +4235,143 @@ async function checarCiente(){
     if(mudou){ montarNav(); if(st.page === 'planodash' && !aberto) pgPlanoDash(); if(st.page === 'planocal' && !aberto && !$('rtModal').classList.contains('show')) pgPlanoCal(); if((st.page === 'plano' || st.page === 'planoconc') && !aberto && document.activeElement && document.activeElement.id !== 'paQ' && !String(document.activeElement.id).startsWith('paNova')) pgPlano(); }
     if(aberto) return;
     if(paPend().some(x => !st.cienteVisto.has(x.id))) return abrirCiente(null);
+    await cobSync(); if(cobPend().length || cobRespostas().length) return cobAviso(null);
     if(paEntregas().length) return avisoEntrega(null);
     avisoDia();
   }catch(e){}
 }
-/* Aviso para quem criou: a ação enviada foi concluída (entregue) */
-const paEntregas = () => db.me ? (db.planos||[]).filter(x => x.criado_por === db.me.id && x.responsavel_id !== db.me.id && x.status === 'Concluído' && !x.entrega_vista_em) : [];
+/* Aviso para quem criou: a ação enviada foi concluída (entregue).
+   Usa o status calculado (100% das etapas), não só o campo gravado, e só avisa entregas recentes (últimos 7 dias). */
+const paEntregas = () => { if(!db.me) return []; const lim = addDias(hoje(), -7), vis = st.entregaVisto || (st.entregaVisto = new Set());
+  return (db.planos||[]).filter(x => x.criado_por === db.me.id && x.responsavel_id !== db.me.id && paStatus(x) === 'Concluído'
+    && !x.entrega_vista_em && !vis.has(x.id) && (paDtConc(x) || '') >= lim).sort((a,b) => String(b.concluido_em||b.updated_at||'').localeCompare(String(a.concluido_em||a.updated_at||''))); };
 function avisoEntrega(depois){
   const l = db.paOk ? paEntregas() : [];
   if(!l.length){ if(depois) depois(); return; }
   const ids = l.map(x => x.id);
-  const marcar = async () => { try{ const r = await sbFetch(`/rest/v1/plano_acao?id=in.(${ids.join(',')})`, { method:'PATCH', body:{ entrega_vista_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } });
-    (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; }); }catch(e){ l.forEach(x => x.entrega_vista_em = 'local'); } };
+  const marcar = async () => { ids.forEach(i => st.entregaVisto.add(i));
+    try{ const r = await sbFetch(`/rest/v1/plano_acao?id=in.(${ids.join(',')})`, { method:'PATCH', body:{ entrega_vista_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } });
+      (r||[]).forEach(n => { const k = db.planos.findIndex(p => p.id === n.id); if(k >= 0) db.planos[k] = n; }); }catch(e){} };
   st.entregaDepois = depois || null;
-  abrirModal(`✅ ${l.length > 1 ? l.length + ' tarefas entregues' : 'Tarefa entregue'}`,
-    `<p style="margin-top:0">${l.length > 1 ? 'Estas ações que você enviou foram concluídas e já estão' : 'A ação que você enviou foi concluída e já está'} em <b>Plano de Ação Concluído 5W2H</b>:</p>` +
-    l.map(x => `<div class="box-info" style="border-left:4px solid var(--ok)"><b>#${x.id} · ${esc(x.o_que)}</b>
-      <div class="small">Entregue por <b>${esc(pessoaNome(x.responsavel_id))}</b>${x.concluido_em ? ' em '+fmtDH(x.concluido_em) : ''}${x.fim ? ' · prazo '+fmtD(x.fim)+(x.concluido_em && dataDeTs(x.concluido_em) > x.fim ? ' <span class="tag bad">após o prazo</span>' : ' <span class="tag ok">no prazo</span>') : ''}</div>
-      ${paEtapas(x).length ? `<div class="small muted">${paEtapas(x).length} etapa(s) concluída(s)</div>` : ''}${x.observacoes ? `<div class="small"><b>Obs.:</b> ${esc(x.observacoes)}</div>` : ''}</div>`).join(''),
-    `<button class="btn sec" onclick="fecharModal()">OK</button>${pode('plano') ? `<button class="btn ok" onclick="st.entregaIr=true;fecharModal()">Ver Plano de Ação Concluído 5W2H</button>` : ''}`,
-    true, () => { marcar().then(() => montarNav()); const ir_ = st.entregaIr; st.entregaIr = false; const f = st.entregaDepois; st.entregaDepois = null;
-      setTimeout(() => { if(ir_) ir('planoconc'); else if(f) f(); }, 50); });
+  const card = x => { const dc = paDtConc(x), noPrazo = !x.fim || !dc || dc <= x.fim, et = paEtapas(x), lead = paLead(x);
+    return `<div class="ent-it ${noPrazo ? 'ok' : 'late'}">
+      <div class="ent-top"><div class="ent-ic">✓</div><div style="min-width:0;flex:1"><div class="ent-tt">#${x.id} · ${esc(x.o_que)}</div>
+        <div class="ent-sb">Entregue por <b>${esc(pessoaNome(x.responsavel_id))}</b>${x.concluido_em ? ' em ' + fmtDH(x.concluido_em) : dc ? ' em ' + fmtD(dc) : ''}</div></div>
+        <span class="tag ${noPrazo ? 'ok' : 'bad'}">${x.fim ? (noPrazo ? 'No prazo' : 'Após o prazo · ' + diasEntre(x.fim, dc) + ' d') : 'Sem prazo'}</span></div>
+      <div class="ent-kp"><div><span>Prazo</span><b>${x.fim ? fmtD(x.fim) : '—'}</b></div><div><span>Concluído</span><b>${dc ? fmtD(dc) : '—'}</b></div><div><span>Lead time</span><b>${lead != null ? lead + ' dia(s)' : '—'}</b></div><div><span>Etapas</span><b>${et.length ? et.filter(e => e.ok).length + '/' + et.length : '—'}</b></div></div>
+      ${et.length ? `<div class="ent-et">${et.map(e => `<div class="${e.ok ? 'ok' : ''}">${e.ok ? '✔' : '○'} ${esc(pdfCorta(String(e.t || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(), 150))}${e.em ? ` <span class="muted">· ${fmtDH(e.em).slice(0,10)}</span>` : ''}</div>`).join('')}</div>` : ''}
+      ${x.observacoes ? `<div class="ent-obs"><b>Observações:</b> ${esc(x.observacoes)}</div>` : ''}
+      <div style="text-align:right;margin-top:8px"><button class="btn sec sm" onclick="st.entregaVer=${x.id};fecharModal()">🔎 Ver a ação completa</button></div></div>`; };
+  abrirModal(`🎉 ${l.length > 1 ? l.length + ' ações entregues para você conferir' : 'Ação entregue — confira o resultado'}`,
+    `<p style="margin-top:0">${l.length > 1 ? 'Estas ações que você enviou foram <b>concluídas</b>' : 'A ação que você enviou foi <b>concluída</b>'} e já ${l.length > 1 ? 'estão' : 'está'} em <b>Plano de Ação Concluído 5W2H</b>.</p>` + l.map(card).join(''),
+    `${pode('plano') ? `<button class="btn sec" onclick="st.entregaIr=true;fecharModal()">Ver Plano de Ação Concluído</button>` : ''}<button class="btn ok" onclick="fecharModal()">✔ OK, visualizei</button>`,
+    true, () => { marcar().then(() => montarNav()); const ir_ = st.entregaIr, ver = st.entregaVer; st.entregaIr = false; st.entregaVer = null; const f = st.entregaDepois; st.entregaDepois = null;
+      setTimeout(() => { if(ver) pcalAbrir(ver); else if(ir_) ir('planoconc'); else if(f) f(); }, 50); });
 }
 setInterval(checarCiente, 30000);
+/* ---------- "Alguma novidade?" — cobrança do plano para quem recebeu a ação ---------- */
+async function cobSync(){
+  if(!db.me) return;
+  try{ db.cobs = await sbAll('plano_cobrancas', 'select=*&order=id'); db.cobOk = true; }catch(e){ db.cobs = db.cobs || []; db.cobOk = false; }
+}
+const cobDoPlano = id => { const x = (db.planos||[]).find(p => p.id === id), ids = new Set([id]);
+  if(x && x.grupo) (db.planos||[]).forEach(p => { if(p.grupo === x.grupo && p.criado_por === x.criado_por) ids.add(p.id); });
+  return (db.cobs||[]).filter(c => ids.has(c.plano_id)).sort((a,b) => b.id - a.id); };
+const cobPend = () => db.me && db.cobOk ? (db.cobs||[]).filter(c => c.para === db.me.id && !c.respondido_em && !(st.cobVisto||new Set()).has(c.id)) : [];
+const cobRespostas = () => db.me && db.cobOk ? (db.cobs||[]).filter(c => c.de === db.me.id && c.respondido_em && !c.resposta_vista_em) : [];
+/* Ícone na linha: última cobrança e se já respondeu */
+function cobTagLinha(x){
+  if(!db.cobOk) return '';
+  const l = cobDoPlano(x.id); if(!l.length) return '';
+  const ab = l.filter(c => !c.respondido_em).length;
+  return `<div class="cob-tag ${ab ? 'ab' : 'ok'}" title="Última: ${fmtDH(l[0].created_at)}">🔔 ${ab ? ab + ' sem resposta' : 'respondida'}</div>`;
+}
+function cobAbrir(id){
+  if(!db.cobOk) return toast('Execute o 20_plano_cobrancas.sql no Supabase para ativar o "Alguma novidade?".', 'err');
+  const x = (db.planos||[]).find(p => p.id === id); if(!x) return;
+  const me = db.me.id, copias = x.grupo ? (db.planos||[]).filter(p => p.grupo === x.grupo && p.criado_por === x.criado_por) : [x];
+  const dest = [...new Set(copias.map(p => p.responsavel_id).filter(u => u && u !== me))];
+  if(!dest.length) return toast('Esta ação não foi direcionada para outra pessoa.', 'err');
+  const hist = cobDoPlano(id);
+  abrirModal(`🔔 Alguma novidade? · Plano #${x.id}`, `
+    <div class="box-info"><b>#${x.id} · ${esc(x.o_que)}</b><div class="small">${x.fim ? 'Prevista ' + fmtD(x.fim) + ' · ' : ''}${esc(paStatus(x))} · ${paPct(x)}%</div></div>
+    <label class="cob-lb">Enviar para</label>
+    <div class="cob-dest">${dest.map(u => { const c = copias.find(p => p.responsavel_id === u);
+      return `<label><input type="checkbox" class="cobPara" value="${u}" checked> <b>${esc(pessoaNome(u))}</b> <span class="muted small">${c ? paPct(c) + '% · ' + esc(paStatus(c)) : ''}</span></label>`; }).join('')}</div>
+    <label class="cob-lb">Mensagem</label>
+    <textarea id="cobMsg" rows="3" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:var(--tx)">Alguma novidade para o plano de ação nº ${x.id}?</textarea>
+    <div class="cob-rapidas">${['Alguma novidade para o plano de ação nº ' + x.id + '?', 'Consegue atualizar as etapas do plano nº ' + x.id + '?', 'O prazo do plano nº ' + x.id + ' será cumprido?']
+      .map(t => `<button class="btn sec sm" onclick="$('cobMsg').value=${jsAttr(t)}">${esc(t)}</button>`).join('')}</div>
+    <div class="small muted" style="margin-top:6px">A mensagem aparece automaticamente na tela do destinatário (ao entrar ou em até 30 segundos, se já estiver usando o sistema). A resposta volta para você do mesmo jeito.</div>
+    ${hist.length ? `<label class="cob-lb">Histórico</label><div class="cob-hist">${hist.map(cobHistItem).join('')}</div>` : ''}`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="cobOk" onclick="cobEnviar(${x.id})">🔔 Enviar</button>`, true);
+}
+function cobHistItem(c){
+  return `<div class="cob-h"><div><b>${esc(pessoaNome(c.de))}</b> → <b>${esc(pessoaNome(c.para))}</b> <span class="muted small">${fmtDH(c.created_at)}${c.visto_em ? ' · visto' : ''}</span></div>
+    <div class="cob-m">${esc(c.mensagem)}</div>
+    ${c.respondido_em ? `<div class="cob-r">↳ <b>${esc(pessoaNome(c.para))}</b> <span class="muted small">${fmtDH(c.respondido_em)}</span><div>${esc(c.resposta)}</div></div>` : '<div class="small" style="color:#B45309">⏳ Aguardando resposta</div>'}</div>`;
+}
+async function cobEnviar(id){
+  const x = (db.planos||[]).find(p => p.id === id), para = [...document.querySelectorAll('.cobPara:checked')].map(i => i.value), msg = $('cobMsg').value.trim();
+  if(!para.length) return toast('Marque pelo menos um destinatário.', 'err');
+  if(!msg) return toast('Escreva a mensagem.', 'err');
+  const copias = x.grupo ? (db.planos||[]).filter(p => p.grupo === x.grupo && p.criado_por === x.criado_por) : [x];
+  $('cobOk').disabled = true;
+  try{
+    const rows = para.map(u => ({ plano_id:(copias.find(p => p.responsavel_id === u) || x).id, de:db.me.id, para:u, mensagem:msg }));
+    const r = await sbFetch('/rest/v1/plano_cobrancas', { method:'POST', body:rows, headers:{ Prefer:'return=representation' } });
+    db.cobs = (db.cobs||[]).concat(r||[]); fecharModal(true); paRefresh();
+    toast(`Mensagem enviada para ${para.map(pessoaNome).join(', ')}.`, 'ok');
+  }catch(e){ toast(e.message, 'err'); $('cobOk').disabled = false; }
+}
+/* Caixa para quem recebeu a pergunta */
+function cobAviso(depois){
+  if(depois !== undefined) st.cobDepois = depois;
+  const seguir = () => { const f = st.cobDepois; st.cobDepois = null; if(f) setTimeout(f, 50); };
+  const l = cobPend(); if(!l.length){ const r = cobRespostas(); if(r.length) return cobAvisoResp(); fecharModal(true); seguir(); return; }
+  const c = l[0], x = (db.planos||[]).find(p => p.id === c.plano_id);
+  if(!c.visto_em) sbFetch(`/rest/v1/plano_cobrancas?id=eq.${c.id}`, { method:'PATCH', body:{ visto_em:new Date().toISOString() } }).then(() => { c.visto_em = new Date().toISOString(); }).catch(() => {});
+  abrirModal(`🔔 ${esc(pessoaNome(c.de))} quer saber do plano #${c.plano_id}${l.length > 1 ? ` · 1 de ${l.length}` : ''}`, `
+    <div class="cob-perg"><div class="cob-av">${esc((pessoaNome(c.de)[0]||'?').toUpperCase())}</div><div><div class="cob-q">“${esc(c.mensagem)}”</div><div class="small muted">${esc(pessoaNome(c.de))} · ${fmtDH(c.created_at)}</div></div></div>
+    ${x ? `<div class="box-info" style="cursor:pointer" onclick="st.cobVer=${x.id};fecharModal()"><b>#${x.id} · ${esc(x.o_que)}</b><div class="small">${x.fim ? 'Prevista ' + fmtD(x.fim) + ' · ' : ''}${esc(paStatus(x))}</div>${paBar(x)}</div>` : ''}
+    <label class="cob-lb">Sua resposta *</label>
+    <textarea id="cobResp" rows="3" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:var(--tx)" placeholder="Ex.: já conferi os pedidos, falta treinar a equipe; termino até sexta"></textarea>
+    <div class="small muted" style="margin-top:4px">Dica: atualize também as etapas do plano para o andamento aparecer sozinho.</div>`,
+    `<button class="btn sec" onclick="fecharModal()">Responder depois</button>${x ? `<button class="btn sec" onclick="st.cobVer=${x.id};fecharModal()">☰ Abrir o plano</button>` : ''}<button class="btn ok" id="cobRespOk" onclick="cobResponder(${c.id})">✔ Enviar resposta</button>`, true,
+    () => { (st.cobVisto = st.cobVisto || new Set()).add(c.id); const v = st.cobVer; st.cobVer = null;
+      if(v){ const f = st.cobDepois; st.cobDepois = null; setTimeout(() => { pcalAbrir(v); }, 50); return; }
+      setTimeout(() => cobAviso(), 50); });
+}
+async function cobResponder(id){
+  const t = $('cobResp').value.trim(); if(!t) return toast('Escreva a resposta.', 'err');
+  $('cobRespOk').disabled = true;
+  try{ const r = ((await sbFetch(`/rest/v1/plano_cobrancas?id=eq.${id}`, { method:'PATCH', body:{ resposta:t, respondido_em:new Date().toISOString() }, headers:{ Prefer:'return=representation' } })) || [])[0];
+    const k = db.cobs.findIndex(c => c.id === id); if(r && k >= 0) db.cobs[k] = r;
+    toast('Resposta enviada.', 'ok'); fecharModal(); paRefresh(); }
+  catch(e){ toast(e.message, 'err'); $('cobRespOk').disabled = false; }
+}
+/* Caixa para quem perguntou: chegou a resposta */
+function cobAvisoResp(){
+  const l = cobRespostas(); if(!l.length){ const f = st.cobDepois; st.cobDepois = null; if(f) setTimeout(f, 50); return; }
+  abrirModal(`💬 ${l.length > 1 ? l.length + ' respostas sobre seus planos' : 'Resposta sobre o plano #' + l[0].plano_id}`,
+    l.map(c => { const x = (db.planos||[]).find(p => p.id === c.plano_id);
+      return `<div class="cob-h"><div><b>#${c.plano_id}</b> ${x ? esc(pdfCorta(String(x.o_que||''), 90)) : ''}</div>
+        <div class="cob-m">Você: ${esc(c.mensagem)}</div>
+        <div class="cob-r">↳ <b>${esc(pessoaNome(c.para))}</b> <span class="muted small">${fmtDH(c.respondido_em)}</span><div>${esc(c.resposta)}</div></div>
+        ${x ? `<div style="text-align:right;margin-top:6px"><button class="btn sec sm" onclick="st.cobVer=${x.id};fecharModal()">Abrir o plano</button></div>` : ''}</div>`; }).join(''),
+    `<button class="btn ok" onclick="fecharModal()">✔ OK</button>`, true, () => {
+      const ids = l.map(c => c.id), agora = new Date().toISOString(); l.forEach(c => c.resposta_vista_em = agora);
+      sbFetch(`/rest/v1/plano_cobrancas?id=in.(${ids.join(',')})`, { method:'PATCH', body:{ resposta_vista_em:agora } }).catch(() => {});
+      paRefresh(); const v = st.cobVer; st.cobVer = null; const f = st.cobDepois; st.cobDepois = null;
+      setTimeout(() => { if(v) pcalAbrir(v); else if(f) f(); }, 50); });
+}
 /* ---------- PDF do Plano de Ação: escolha de colunas, layout compacto ---------- */
 const PA_PDF_COLS = [
   { k:'id',     t:'ID',          w:5,  al:'center', v:x => x.id },
   { k:'oque',   t:'O quê?',      w:24, v:x => x.o_que },
   { k:'porque', t:'Por quê?',    w:20, v:x => x.por_que||'' },
   { k:'como',   t:'Como?',       w:22, v:x => x.como||'' },
-  { k:'quem',   t:'Quem?',       w:14, v:x => pessoaNome(x.responsavel_id) },
+  { k:'quem',   t:'Quem?',       w:14, v:x => x._grp ? x._grp.map(c => pessoaNome(c.responsavel_id)).join(', ') : pessoaNome(x.responsavel_id) },
   { k:'criou',  t:'Criado por',  w:14, v:x => pessoaNome(x.criado_por) },
   { k:'inicio', t:'Data Início', w:10, al:'center', v:x => x.inicio?fmtD(x.inicio):'' },
   { k:'hora',   t:'Horário',     w:7,  al:'center', v:x => x.horario?x.horario.slice(0,5):'' },
@@ -4123,7 +4387,7 @@ const PA_PDF_COLS = [
 ];
 const PA_PDF_PADRAO = ['id','oque','porque','como','quem','inicio','fim','status','pct','obs'];
 function pdfPA(){
-  const l = paFiltradas(); if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
+  const l = paAgrupar(paFiltradas()); if(!l.length) return toast('Nenhuma ação neste filtro.', 'err');
   let sel = PA_PDF_PADRAO; try{ const v = JSON.parse(localStorage.getItem('eleve_pa_pdfcols')); if(Array.isArray(v) && v.length) sel = v; }catch(e){}
   const cols = PA_PDF_COLS.filter(c => c.k !== 'conc' || paConc());
   abrirModal('📄 Gerar PDF · ' + (paConc() ? 'Plano de Ação Concluído 5W2H' : 'Plano de Ação'), `
@@ -4146,7 +4410,7 @@ function gerarPdfPA(){
   st.pa.pdfTexto = $('ppTexto').value;
   try{ localStorage.setItem('eleve_pa_pdfcols', JSON.stringify(ks)); }catch(e){}
   fecharModal(true);
-  const l = paFiltradas(), ret = st.pa.orient === 'retrato', cols = PA_PDF_COLS.filter(c => ks.includes(c.k));
+  const l = paAgrupar(paFiltradas()), ret = st.pa.orient === 'retrato', cols = PA_PDF_COLS.filter(c => ks.includes(c.k));
   const W = (ret ? 210 : 297) - 24, soma = cols.reduce((a,c) => a + c.w, 0), estilos = {};
   cols.forEach((c,i) => { estilos[i] = { cellWidth: c.w / soma * W, halign: c.al || 'left' }; });
   const ver = { todos:'Todas as minhas', equipe:'Todas as pessoas', criados:'Criadas por mim', meus:'Enviadas para mim', ciente:'Aguardando meu ciente' }[st.pa.ver] + (st.pa.pessoa ? '  -  Pessoa: '+pessoaNome(st.pa.pessoa) : '');
