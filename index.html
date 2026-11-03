@@ -403,6 +403,137 @@ body.dark .pd-bronze .pd-base{background:linear-gradient(180deg,#43200F,#2E160A)
 .pd-resto{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .pd-resto span{background:var(--chip);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--gr2)}
 .pd-resto span:hover{background:var(--orl);color:var(--or2)}
+/* ---------- Pódio: critérios ---------- */
+.pd-regras{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 10px}
+.pd-regras span{font-size:11px;font-weight:600;background:var(--chip);color:var(--gr2);border-radius:12px;padding:2px 9px}
+.pd-desc{margin-top:10px;padding:8px 10px;border:1px dashed #FCA5A5;border-radius:10px;background:var(--badl);font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:#991B1B}
+body.dark .pd-desc{background:#2A1215;border-color:#7F1D1D;color:#FCA5A5}
+.pd-desc span{background:var(--surf);border:1px solid #FCA5A5;border-radius:12px;padding:2px 9px;cursor:pointer;color:#991B1B}
+body.dark .pd-desc span{color:#FCA5A5;border-color:#7F1D1D}
+.pc-sec{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:14px 0 8px}
+.pc-sec:first-child{margin-top:0}
+.pc-ck{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:var(--surf2)}
+.pc-ck input{margin-top:3px;width:17px;height:17px;accent-color:var(--or)}
+.pc-peso{display:grid;grid-template-columns:1fr 230px;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.pc-in{display:flex;align-items:center;gap:8px}
+.pc-in input[type=range]{flex:1;accent-color:var(--or)}
+.pc-in input[type=number]{width:62px;padding:6px;border:1px solid var(--line);border-radius:8px;text-align:right;background:var(--surf);color:var(--tx)}
+.pc-soma{margin-top:6px;padding:9px 12px;border-radius:10px;font-size:13px}
+.pc-soma.ok{background:var(--okl);color:#166534}.pc-soma.warn{background:var(--warnl);color:#92400E}
+body.dark .pc-soma.ok{color:#86EFAC}body.dark .pc-soma.warn{color:#FCD34D}
+
+/* ---------- Não conformidades: subgrupos ---------- */
+.mbox.xl{max-width:980px}
+.tag.nc-sgtag{background:color-mix(in srgb,var(--sg) 14%,transparent);color:var(--sg);border:1px solid color-mix(in srgb,var(--sg) 35%,transparent)}
+.nc-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
+.nc-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surf);border-radius:18px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--gr2);cursor:pointer}
+.nc-chip i{width:9px;height:9px;border-radius:50%}
+.nc-chip b{background:var(--chip);border-radius:10px;padding:0 7px;font-size:11px}
+.nc-chip:hover{border-color:var(--or)}
+.nc-chip.on{background:var(--gr);border-color:var(--gr);color:#fff}.nc-chip.on b{background:rgba(255,255,255,.18)}
+.nc-busca{margin-left:auto;padding:7px 12px;border:1px solid var(--line);border-radius:18px;min-width:200px;background:var(--surf);color:var(--tx)}
+.nc-sgsel{position:relative}
+.nc-sgsel:before{content:'';position:absolute;left:10px;top:50%;width:9px;height:9px;border-radius:50%;background:var(--sg);transform:translateY(-50%);pointer-events:none}
+.nc-sgsel select{width:100%;padding:6px 8px 6px 26px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--tx);font-size:12.5px;cursor:pointer}
+.nc-sgsel select:hover{border-color:var(--or)}
+#ncPop{position:fixed;inset:0;z-index:140;background:rgba(17,19,23,.5);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:20px}
+#ncPop.show{display:flex;animation:ncpFade .18s ease}
+@keyframes ncpFade{from{opacity:0}to{opacity:1}}
+@keyframes ncpUp{from{transform:translateY(18px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.ncp-box{background:var(--surf);border-radius:16px;width:100%;max-width:880px;max-height:calc(100vh - 40px);display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:ncpUp .22s ease;overflow:hidden;border-top:4px solid var(--or)}
+.ncp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.ncp-tt{font-size:17px;font-weight:800;color:var(--tx)}.ncp-sb{font-size:12px;color:var(--mut);margin-top:2px}
+.ncp-head .x{border:0;background:var(--chip);width:32px;height:32px;border-radius:8px;font-size:20px;cursor:pointer;color:var(--gr2)}
+.ncp-body{display:grid;grid-template-columns:1.25fr 1fr;min-height:0;flex:1}
+.ncp-list{padding:14px;overflow:auto;border-right:1px solid var(--line);background:var(--surf2)}
+.ncp-it{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--surf);border:1px solid var(--line);border-left:4px solid var(--sg);border-radius:12px;padding:10px 12px;margin-bottom:8px;transition:box-shadow .15s,transform .15s}
+.ncp-it:hover{box-shadow:0 6px 16px rgba(0,0,0,.08);transform:translateY(-1px)}
+.ncp-it.on{outline:2px solid var(--or)}.ncp-it.off{opacity:.6}
+.ncp-dot{width:12px;height:12px;border-radius:50%;background:var(--sg);box-shadow:0 0 0 4px color-mix(in srgb,var(--sg) 18%,transparent)}
+.ncp-it-b{cursor:pointer;min-width:0}.ncp-it-b b{color:var(--tx)}
+.ncp-mt{display:flex;gap:10px;font-size:11px;color:var(--mut);margin-top:3px}
+.ncp-act{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.ncp-form{padding:16px 20px;overflow:auto}
+.ncp-ft{font-weight:800;color:var(--tx);margin-bottom:4px}
+.ncp-form label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin:12px 0 4px}
+.ncp-form input:not([type=checkbox]):not([type=color]),.ncp-form textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--tx)}
+.ncp-cores{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.ncp-cores button{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6)}
+.ncp-cores button.on{border-color:var(--tx);transform:scale(1.1)}
+.ncp-cores input[type=color]{width:32px;height:28px;border:1px solid var(--line);border-radius:8px;padding:1px;background:var(--surf);cursor:pointer}
+.ncp-form label.ncp-ck{display:flex;align-items:center;gap:8px;color:var(--tx);font-weight:600;margin-top:14px}
+.ncp-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+
+/* ---------- Ciência ---------- */
+.nc-ci-top{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.nc-ci-ic{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#F59E0B,#DC2626);color:#fff;font-size:26px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 16px rgba(220,38,38,.3)}
+.nc-ci-tt{font-size:18px;font-weight:800;color:var(--tx)}.nc-ci-sb{font-size:12.5px;color:var(--mut);margin-top:3px}
+.nc-ci-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.nc-ci-grid>div{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--surf2)}
+.nc-ci-grid span,.nc-ci-sec>span{display:block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-bottom:4px}
+.nc-ci-sec{margin-bottom:12px}.nc-ci-sec>div{white-space:pre-wrap;line-height:1.45}
+.nc-ci-sec em{text-transform:none;font-weight:400;letter-spacing:0}
+.nc-ci-sec textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:var(--tx)}
+.nc-ci-ck{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:10px;cursor:pointer}
+.nc-ci-ck input{accent-color:var(--bad);width:16px;height:16px}
+.nc-ci-box{border-radius:10px;padding:10px 12px;border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--warnl)}
+.nc-ci-box.ok{border-left-color:var(--ok);background:var(--okl)}.nc-ci-box.bad{border-left-color:var(--bad);background:var(--badl)}
+body.dark .nc-ci-box{background:var(--surf2)}
+
+/* ---------- Detalhe (clique no gráfico) ---------- */
+.ncd-h{font-size:17px}
+.ncd-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:14px}
+.ncd-k{border:1px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--surf);text-align:left;cursor:pointer;border-top:3px solid var(--gr3);transition:box-shadow .15s}
+.ncd-k span{display:block;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
+.ncd-k b{font-size:22px;color:var(--tx);line-height:1.2}
+.ncd-k:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.ncd-k.on{background:var(--orl);border-color:var(--or)}
+.ncd-k.warn{border-top-color:#F59E0B}.ncd-k.info{border-top-color:var(--info)}.ncd-k.bad{border-top-color:var(--bad)}.ncd-k.ok{border-top-color:var(--ok)}
+.ncd-k.lt{cursor:default;border-top-color:#7C3AED}
+.ncd-comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:12px}
+.ncd-comp{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surf2)}
+.ncd-ct{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);margin-bottom:6px}
+.ncd-cr{display:grid;grid-template-columns:minmax(0,1.3fr) 1fr 28px;gap:8px;align-items:center;font-size:12px;margin:4px 0}
+.ncd-cr span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ncd-cr i{height:8px;background:var(--track);border-radius:6px;overflow:hidden}
+.ncd-cr em{display:block;height:100%;background:linear-gradient(90deg,#4BA6EE,#0A4E83);border-radius:6px}
+.ncd-cr b{text-align:right}
+.ncd-tool{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.ncd-tool input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:var(--tx)}
+.ncd-it{display:grid;grid-template-columns:62px 1fr auto;gap:14px;align-items:center;border:1px solid var(--line);border-left:4px solid var(--info);border-radius:12px;padding:12px 14px;margin-bottom:8px;background:var(--surf);transition:box-shadow .15s,transform .15s}
+.ncd-it:hover{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-1px)}
+.ncd-it.ok{border-left-color:var(--ok)}.ncd-it.bad{border-left-color:var(--bad)}.ncd-it.warn{border-left-color:#F59E0B}
+.ncd-id{font-weight:800;color:var(--or2);font-size:15px;cursor:pointer;text-align:center}
+.ncd-id small{display:block;font-size:11px;font-weight:600;color:var(--mut)}
+.ncd-b{min-width:0;cursor:pointer}
+.ncd-tt b{color:var(--tx)}
+.ncd-ds{font-size:12.5px;color:var(--gr2);margin:3px 0 5px}
+.ncd-mt{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:11.5px;color:var(--mut)}
+.ncd-semp{color:#B45309;font-weight:600}
+.ncd-act{display:flex;flex-direction:column;gap:5px}
+.ncd-act .btn{justify-content:center;white-space:nowrap}
+
+/* ---------- Pareto ---------- */
+.nc-par-ins{background:linear-gradient(100deg,var(--orl),var(--surf));border:1px solid var(--line);border-left:4px solid var(--or);border-radius:10px;padding:8px 12px;font-size:13px;margin-bottom:12px}
+.nc-par-g{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(300px,1fr);gap:16px;align-items:start}
+.nc-par-t{max-height:390px;overflow:auto}
+.nc-par-t table{width:100%;border-collapse:collapse;font-size:12.5px}
+.nc-par-t th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);text-align:left;padding:6px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--surf)}
+.nc-par-t td{padding:7px 6px;border-bottom:1px solid var(--line)}
+.nc-par-t th.num,.nc-par-t td.num{text-align:right}
+.nc-par-t tbody tr{cursor:pointer}.nc-par-t tbody tr:hover{background:var(--hover)}
+.nc-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.nc-acc{position:relative;min-width:64px;height:16px;background:var(--track);border-radius:8px;overflow:hidden}
+.nc-acc em{position:absolute;inset:0 auto 0 0;background:rgba(220,38,38,.22)}
+.nc-acc span{position:relative;font-size:10.5px;font-weight:700;padding:0 6px;line-height:16px;color:var(--tx)}
+.nc-abc{display:inline-block;min-width:20px;text-align:center;border-radius:6px;font-size:11px;font-weight:800;padding:1px 5px}
+.nc-abc.A{background:var(--badl);color:#991B1B}.nc-abc.B{background:var(--warnl);color:#92400E}.nc-abc.C{background:var(--chip);color:var(--gr2)}
+@media (max-width:900px){
+  .nc-par-g,.ncp-body{grid-template-columns:1fr}
+  .ncp-list{border-right:0;border-bottom:1px solid var(--line);max-height:40vh}
+  .ncd-it{grid-template-columns:48px 1fr}.ncd-act{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
+  .pc-peso{grid-template-columns:1fr}.nc-ci-grid{grid-template-columns:1fr}.nc-busca{margin-left:0;flex:1 1 100%}
+}
 .lt-kpi{display:flex;align-items:center;gap:16px;background:linear-gradient(100deg,var(--orl),var(--surf));border:1px solid var(--line);border-left:4px solid var(--or);border-radius:12px;padding:12px 16px;margin-bottom:12px;cursor:pointer}
 .lt-kpi:hover{box-shadow:0 4px 14px rgba(0,0,0,.08)}
 .lt-big{font-size:34px;font-weight:800;color:var(--or2);line-height:1;white-space:nowrap}
@@ -958,8 +1089,8 @@ const st = { page:'painel', emp:'', charts:[], call:null, hlLig:null, avisoAniv:
   pl:{ vend:'', data:hoje(), hora:'', motivo:'Retorno', desc:'', q:'', cls:'', cart:'', ped:'', entDe:'', entAte:'', sel:new Set() },
   aniv:{ tab:'hoje', emp:'', cls:'', dia:'', mes:mesAtual().slice(5), ano:new Date().getFullYear() },
   pcal:{ mes:mesAtual(), pessoa:'', modo:'ambos' },
-  nc:{ de:'', ate:'', colab:'', tipo:'', status:'', urg:'', q:'' },
-  ncd:{ ano:new Date().getFullYear(), mes:'', colab:'' }
+  nc:{ de:'', ate:'', colab:'', tipo:'', sg:'', status:'', urg:'', q:'' },
+  ncd:{ ano:new Date().getFullYear(), mes:'', colab:'', par:'sg' }, nct:{ sg:'', q:'' }, ncVisto:new Set()
 };
 const isAdmin = () => db.me && db.me.perfil === 'admin';
 /* Um login pode estar vinculado a várias vendedoras (de uma ou mais empresas) — tabela usuario_vendedoras */
@@ -1098,7 +1229,8 @@ async function boot(){
     if(isAdmin()) setTimeout(bkpAuto, 6000);
     const aniv = () => { if(!st.avisoAniv && pode('aniversariantes')){ st.avisoAniv = true; avisoAniversariantes(); } };
     const dia = () => avisoEntrega(() => avisoDia(aniv));
-    if(paPend().length) abrirCiente(dia); else dia();
+    const ncCi = () => ncPend().length ? ncAbrirCiencia(dia) : dia();
+    if(paPend().length) abrirCiente(ncCi); else ncCi();
   }catch(e){ toast(e.message, 'err'); if(!S) mostrarLogin(e.message); }
   finally{ loading(false); }
 }
@@ -3034,15 +3166,51 @@ function paUltMov(x){
   return d.length ? d[d.length-1] : (x.inicio || hoje());
 }
 const paParado = x => Math.max(0, diasEntre(paUltMov(x), hoje()));
-/* Pódio de eficiência: média ponderada entre volume de planos concluídos (50%) e rapidez do lead time (50%) */
-function padPodio(ltUs, lt){
-  if(!ltUs.length) return `<div class="pd-box"><div class="pd-tit">🏆 Pódio de eficiência · ${esc(lt.txt)}</div><div class="empty">Nenhum plano concluído no período.</div></div>`;
-  const maxN = Math.max(...ltUs.map(u => u.n)), minM = Math.min(...ltUs.map(u => u.m));
-  const r = ltUs.map(u => { const vol = u.n / maxN * 100, vel = (minM + 1) / (u.m + 1) * 100; return { ...u, vol, vel, sc: Math.round(vol * .5 + vel * .5) }; })
+/* Pódio de eficiência: critérios configuráveis (⚙ Critérios). Padrão: ignora planos de não conformidade (erros),
+   20% volume de planos concluídos + 60% rapidez (lead time) + 20% taxa de conclusão, e desclassifica no período quem tiver atraso. */
+const PODIO_PADRAO = { exclNC:true, desclAtraso:true, pVol:20, pVel:60, pTaxa:20 };
+const podioCfg = () => ({ ...PODIO_PADRAO, ...(db.podioCfg || {}) });
+function padPerIntervalo(lt){
+  const ult = m => pad(new Date(Number(lt.ano), Number(m), 0).getDate());
+  return lt.ehAno ? { ini: lt.ano + '-01-01', fim: lt.ano + '-' + lt.mes + '-' + ult(lt.mes) } : { ini: lt.ano + '-' + lt.mes + '-01', fim: lt.ano + '-' + lt.mes + '-' + ult(lt.mes) };
+}
+/* Atraso no período: o plano ficou atrasado em algum dia do período (passou da data prevista sem concluir) */
+function padAtrasouNoPer(x, iv){
+  if(!x.fim || paStatus(x) === 'Cancelado') return false;
+  const s = paStatus(x), fimAt = s === 'Concluído' ? (x.concluido_em ? dataDeTs(x.concluido_em) : null) : hoje();
+  if(!fimAt || fimAt <= x.fim) return false;
+  return x.fim < iv.fim && fimAt >= iv.ini;
+}
+function padPodioCalc(lt){
+  const cfg = podioCfg(), iv = padPerIntervalo(lt), ncPl = new Set((db.ncs||[]).map(n => n.plano_id).filter(Boolean));
+  const base = paDashBase().filter(x => paStatus(x) !== 'Cancelado' && !(cfg.exclNC && ncPl.has(x.id)));
+  const U = {}, u = id => U[id] = U[id] || { id, n:0, s:0, base:0, atr:[] };
+  base.forEach(x => {
+    const cc = paStatus(x) === 'Concluído' && lt.ok(paDtConc(x));
+    if(cc && paLead(x) != null){ const r = u(x.responsavel_id); r.n++; r.s += paLead(x); }
+    if(cc || lt.ok(paDtCri(x))) u(x.responsavel_id).base++;
+    if(cfg.desclAtraso && padAtrasouNoPer(x, iv)) u(x.responsavel_id).atr.push(x);
+  });
+  const all = Object.values(U).map(r => ({ ...r, m: r.n ? r.s / r.n : 0 }));
+  const desc = all.filter(r => r.atr.length).sort((a,b) => b.atr.length - a.atr.length);
+  const cand = all.filter(r => r.n && !r.atr.length);
+  const tw = (Number(cfg.pVol)||0) + (Number(cfg.pVel)||0) + (Number(cfg.pTaxa)||0) || 1;
+  const maxN = cand.length ? Math.max(...cand.map(r => r.n)) : 1, minM = cand.length ? Math.min(...cand.map(r => r.m)) : 0;
+  const r = cand.map(x => { const vol = x.n / maxN * 100, vel = (minM + 1) / (x.m + 1) * 100, taxa = Math.min(100, x.n / Math.max(1, x.base) * 100);
+      return { ...x, vol, vel, taxa, sc: Math.round((vol * cfg.pVol + vel * cfg.pVel + taxa * cfg.pTaxa) / tw) }; })
     .sort((a,b) => b.sc - a.sc || b.n - a.n || a.m - b.m);
+  return { r, desc, cfg, tw, iv, excl: cfg.exclNC ? paDashBase().filter(x => ncPl.has(x.id) && paStatus(x) === 'Concluído' && lt.ok(paDtConc(x))).length : 0 };
+}
+function padPodio(_ltUs, lt){
+  const { r, desc, cfg, tw, excl } = padPodioCalc(lt); st.padPodioLt = lt;
+  const pc = v => Math.round((Number(v)||0) / tw * 100);
+  const btn = `<button class="btn sec sm" style="margin-left:auto" onclick="padPodioCfg()">⚙ Critérios</button>`;
+  const regras = `<div class="pd-regras">${cfg.exclNC ? '<span>🚫 Sem planos de não conformidade' + (excl ? ` (${excl} ignorado(s))` : '') + '</span>' : ''}<span>📈 Volume ${pc(cfg.pVol)}%</span><span>⚡ Rapidez ${pc(cfg.pVel)}%</span>${Number(cfg.pTaxa) ? `<span>✅ Taxa de conclusão ${pc(cfg.pTaxa)}%</span>` : ''}${cfg.desclAtraso ? '<span>⛔ Atraso = desclassificado</span>' : ''}</div>`;
+  const descH = desc.length ? `<div class="pd-desc"><b>⛔ Desclassificados no período (atraso):</b> ${desc.map(d => `<span onclick="padPodioAtrasos('${d.id}')" title="Ver os planos atrasados">${esc(pessoaNome(d.id))} · ${d.atr.length} atraso(s)</span>`).join('')}</div>` : '';
+  if(!r.length) return `<div class="pd-box"><div class="pd-tit" style="display:flex;align-items:center">🏆 Pódio de eficiência · ${esc(lt.txt)}${btn}</div>${regras}<div class="empty">Nenhum colaborador classificado no período.</div>${descH}</div>`;
   const tit = ['Campeão de Eficiência','Vice-campeão','3º lugar'], cls = ['ouro','prata','bronze'];
   const card = i => { const u = r[i]; if(!u) return `<div class="pd-col pd-${cls[i]} vazio"><div class="pd-base">${i+1}º</div></div>`;
-    return `<div class="pd-col pd-${cls[i]}" onclick="padLtDrill('${u.id}')" title="Ver os planos concluídos">
+    return `<div class="pd-col pd-${cls[i]}" onclick="padLtDrill('${u.id}')" title="Volume ${Math.round(u.vol)} · Rapidez ${Math.round(u.vel)} · Taxa ${Math.round(u.taxa)} — clique para ver os planos">
       ${i === 0 ? '<div class="pd-trofeu">🏆</div>' : ''}
       <div class="pd-med"><span>${i+1}</span><i></i><i></i></div>
       <div class="pd-nm">${esc(pessoaNome(u.id))}</div><div class="pd-tt">${tit[i]}</div>
@@ -3050,11 +3218,53 @@ function padPodio(ltUs, lt){
       <div class="pd-dt">${u.n} plano(s) · ${fmtDec(u.m)} d em média</div>
       <div class="pd-base">${i+1}º</div></div>`; };
   const resto = r.slice(3);
-  return `<div class="pd-box"><div class="pd-tit">🏆 Pódio de eficiência · ${esc(lt.txt)}</div>
-    ${r[0] ? `<div class="pd-lider">🥇 <b>${esc(pessoaNome(r[0].id))}</b> está em <b>1º lugar</b> como <b>Campeão de Eficiência</b>: ${r[0].n} plano(s) concluído(s) com lead time médio de ${fmtDec(r[0].m)} dia(s).</div>` : ''}
+  return `<div class="pd-box"><div class="pd-tit" style="display:flex;align-items:center">🏆 Pódio de eficiência · ${esc(lt.txt)}${btn}</div>${regras}
+    <div class="pd-lider">🥇 <b>${esc(pessoaNome(r[0].id))}</b> está em <b>1º lugar</b> como <b>Campeão de Eficiência</b>: ${r[0].n} plano(s) concluído(s) com lead time médio de ${fmtDec(r[0].m)} dia(s)${cfg.desclAtraso ? ', sem nenhum atraso' : ''}.</div>
     <div class="pd-podio">${card(1)}${card(0)}${card(2)}</div>
     ${resto.length ? `<div class="pd-resto">${resto.map((u,i) => `<span onclick="padLtDrill('${u.id}')"><b>${i+4}º</b> ${esc(pessoaNome(u.id))} · ${u.sc} pts</span>`).join('')}</div>` : ''}
-    <div class="small muted" style="margin-top:8px">Pontuação = 50% volume (planos concluídos ÷ o maior volume) + 50% rapidez (menor lead time do período ÷ lead time da pessoa). Mais planos concluídos e menor tempo de resposta = mais pontos. Usa o período do seletor Mês / Acumulado no ano.</div></div>`;
+    ${descH}
+    <div class="small muted" style="margin-top:8px">Pontuação = ${pc(cfg.pVol)}% volume (concluídos ÷ maior volume) + ${pc(cfg.pVel)}% rapidez (menor lead time ÷ lead time da pessoa)${Number(cfg.pTaxa) ? ` + ${pc(cfg.pTaxa)}% taxa de conclusão (concluídos ÷ planos do período)` : ''}. Usa o período do seletor Mês / Acumulado no ano.</div></div>`;
+}
+function padPodioAtrasos(uid){
+  const lt = st.padPodioLt || padLtPeriodo(), { desc } = padPodioCalc(lt), d = desc.find(x => x.id === uid); if(!d) return;
+  st.padVoltar = () => padPodioAtrasos(uid);
+  abrirModal(`⛔ ${esc(pessoaNome(uid))} · desclassificado em ${esc(lt.txt)}`, `<p class="small muted" style="margin-top:0">Planos que ficaram atrasados (passaram da data prevista sem concluir) dentro do período. Com atraso, o colaborador não entra no pódio, mesmo respondendo vários planos ao mesmo tempo.</p>
+    ${d.atr.map(x => { const fa = paStatus(x) === 'Concluído' && x.concluido_em ? dataDeTs(x.concluido_em) : hoje();
+      return padItem(x, `<span class="dd-late">⚠ ${diasEntre(x.fim, fa)} dia(s) além do previsto</span>`); }).join('')}`, `<button class="btn sec" onclick="fecharModal()">Fechar</button>`, true);
+}
+function padPodioCfg(){
+  const c = podioCfg(), adm = isAdmin(), dis = adm ? '' : 'disabled';
+  const peso = (k, ic, nm, ds) => `<div class="pc-peso"><div><b>${ic} ${nm}</b><div class="small muted">${ds}</div></div>
+    <div class="pc-in"><input type="range" min="0" max="100" step="5" value="${c[k]}" ${dis} oninput="$('${k}N').value=this.value;padCfgSoma()" id="${k}"><input type="number" min="0" max="100" id="${k}N" value="${c[k]}" ${dis} oninput="$('${k}').value=this.value;padCfgSoma()"><span>%</span></div></div>`;
+  abrirModal('⚙ Critérios do Pódio de eficiência', `
+    ${adm ? '' : '<div class="box-info">Somente o administrador pode alterar os critérios.</div>'}
+    <div class="pc-sec">Regras</div>
+    <label class="pc-ck"><input type="checkbox" id="pcExcl" ${c.exclNC ? 'checked' : ''} ${dis}><div><b>1 · Não contabilizar planos de ação relacionados a erros</b><div class="small muted">Planos vinculados a uma não conformidade ficam fora do pódio.</div></div></label>
+    <label class="pc-ck"><input type="checkbox" id="pcAtr" ${c.desclAtraso ? 'checked' : ''} ${dis}><div><b>4 · Atraso desclassifica no mês</b><div class="small muted">Se algum plano do colaborador ficar atrasado no período, ele sai do pódio — mesmo que responda vários ao mesmo tempo.</div></div></label>
+    <div class="pc-sec">Pesos da pontuação</div>
+    ${peso('pVol', '📈', '2 · Número de planos concluídos', 'Quem conclui mais planos no período.')}
+    ${peso('pVel', '⚡', '3 · Tempo de resposta rápido', 'Menor lead time médio (do início até a conclusão).')}
+    ${peso('pTaxa', '✅', 'Taxa de conclusão', 'Concluídos ÷ planos do período. Coloque 0% para não usar.')}
+    <div class="pc-soma" id="pcSoma"></div>`,
+    `<button class="btn sec" onclick="fecharModal()">${adm ? 'Cancelar' : 'Fechar'}</button>${adm ? `<button class="btn sec" onclick="padCfgPadrao()">Restaurar padrão</button><button class="btn" id="pcOk" onclick="padCfgSalvar()">Salvar critérios</button>` : ''}`);
+  padCfgSoma();
+}
+function padCfgSoma(){
+  const v = ['pVol','pVel','pTaxa'].map(k => Number($(k + 'N').value) || 0), t = v.reduce((a,b) => a + b, 0), e = $('pcSoma');
+  e.className = 'pc-soma ' + (t === 100 ? 'ok' : 'warn');
+  e.innerHTML = t === 100 ? `✔ Total: <b>100%</b>` : `Total: <b>${t}%</b> — ${t ? 'os pesos serão proporcionais (o ideal é somar 100%)' : 'informe ao menos um peso'}`;
+}
+function padCfgPadrao(){ [['pVol',20],['pVel',60],['pTaxa',20]].forEach(([k,v]) => { $(k).value = v; $(k + 'N').value = v; }); $('pcExcl').checked = true; $('pcAtr').checked = true; padCfgSoma(); }
+async function padCfgSalvar(){
+  const o = { exclNC:$('pcExcl').checked, desclAtraso:$('pcAtr').checked, pVol:Number($('pVolN').value)||0, pVel:Number($('pVelN').value)||0, pTaxa:Number($('pTaxaN').value)||0 };
+  if(o.pVol + o.pVel + o.pTaxa <= 0) return toast('Informe ao menos um peso.', 'err');
+  $('pcOk').disabled = true;
+  try{
+    if(db.cfgOk) await sbFetch('/rest/v1/app_config?on_conflict=chave', { method:'POST', body:{ chave:'podio', valor:o, updated_at:new Date().toISOString() }, headers:{ Prefer:'resolution=merge-duplicates,return=minimal' } });
+    else { try{ localStorage.setItem('cap_podio_cfg', JSON.stringify(o)); }catch(_){} }
+    db.podioCfg = o; fecharModal(true); toast(db.cfgOk ? 'Critérios do pódio salvos para todos.' : 'Critérios salvos só neste navegador. Execute o 19_nc_subgrupos_ciencia.sql para valer para todos.', db.cfgOk ? 'ok' : 'err');
+    if(st.page === 'planodash') pgPlanoDash();
+  }catch(e){ toast(e.message, 'err'); $('pcOk').disabled = false; }
 }
 function padRankParado(){ return paDashBase().filter(paEhAberto).sort((a,b) => paParado(b) - paParado(a) || a.id - b.id); }
 function padRankModal(){
@@ -3968,9 +4178,34 @@ const NC_COR_IMP = { 'Baixo':'#2563EB', 'Médio':'#F59E0B', 'Alto':'#EA580C', 'C
 async function carregarNC(){
   try{ const [t, n] = await Promise.all([sbAll('nc_tipos','select=*&order=nome'), sbAll('nao_conformidades','select=*&order=id')]); db.ncTipos = t; db.ncs = n; db.ncOk = true; }
   catch(e){ db.ncTipos = []; db.ncs = []; db.ncOk = false; }
+  try{ db.ncSgs = await sbAll('nc_subgrupos','select=*&order=nome'); db.ncSgOk = true; }catch(e){ db.ncSgs = []; db.ncSgOk = false; }
+  db.ncCiOk = db.ncOk && db.ncSgOk;
+  await ncSyncPend();
+  try{ const c = await sbAll('app_config','select=*&chave=eq.podio'); if(c[0] && c[0].valor) db.podioCfg = c[0].valor; db.cfgOk = true; }
+  catch(e){ db.cfgOk = false; try{ const l = JSON.parse(localStorage.getItem('cap_podio_cfg')); if(l) db.podioCfg = l; }catch(_){} }
+}
+/* Ciência: busca as não conformidades que aguardam a ciência de quem está logado (mesmo que a pessoa não enxergue a lista toda) */
+async function ncSyncPend(){
+  if(!db.ncOk || !db.me) return;
+  try{ const r = (await sbFetch('/rest/v1/rpc/nc_minhas_pendentes', { method:'POST', body:{} })) || [];
+    r.forEach(n => { const k = db.ncs.findIndex(y => y.id === n.id); if(k >= 0) db.ncs[k] = n; else db.ncs.push(n); }); }
+  catch(e){}
 }
 const ncSemBanco = () => '<div class="card empty">O Controle de Qualidade ainda não foi ativado no banco. Execute o <b>18_nao_conformidades.sql</b> no Supabase e clique em ↻ Atualizar.</div>';
+const ncAvisoSg = () => db.ncSgOk ? '' : '<div class="box-info" style="margin-bottom:12px">Para usar <b>subgrupos</b>, a <b>ciência do colaborador</b> e os <b>critérios do pódio</b>, execute o <b>19_nc_subgrupos_ciencia.sql</b> no Supabase e clique em ↻ Atualizar.</div>';
 const ncTipoNome = id => ((db.ncTipos||[]).find(t => t.id === id) || {}).nome || 'Sem tipo';
+const ncSg = id => (db.ncSgs||[]).find(s => s.id === id) || null;
+const ncSgIdDe = n => ((db.ncTipos||[]).find(t => t.id === n.tipo_id) || {}).subgrupo_id || 0;
+const ncSgNome = id => (ncSg(id) || {}).nome || 'Sem subgrupo';
+const ncSgCor = id => (ncSg(id) || {}).cor || '#9CA3AF';
+const ncSgTag = id => id && ncSg(id) ? `<span class="tag nc-sgtag" style="--sg:${esc(ncSgCor(id))}">${esc(ncSgNome(id))}</span>` : '<span class="tag">Sem subgrupo</span>';
+const ncSgOpts = (sel, vazio) => `<option value="">${vazio || 'Sem subgrupo'}</option>` + (db.ncSgs||[]).filter(s => s.ativo || s.id === sel).map(s => `<option value="${s.id}" ${s.id === sel ? 'selected' : ''}>${esc(s.nome)}${s.ativo ? '' : ' (inativo)'}</option>`).join('');
+const ncPend = () => db.me && db.ncCiOk ? (db.ncs||[]).filter(n => n.colaborador_id === db.me.id && n.exige_ciencia && !n.ciente_em && n.criado_por !== db.me.id) : [];
+function ncCiTag(n){
+  if(!db.ncCiOk || !n.exige_ciencia || n.criado_por === n.colaborador_id) return '';
+  if(!n.ciente_em) return '<span class="tag warn">Aguardando ciência</span>';
+  return `<span class="tag ${n.ciente_contesta ? 'bad' : 'ok'}" title="${esc(n.ciente_obs || '')}">${n.ciente_contesta ? 'Contestada' : 'Ciente'} ${fmtDH(n.ciente_em).slice(0,10)}</span>`;
+}
 const ncPlano = n => n.plano_id ? (db.planos||[]).find(p => p.id === n.plano_id) : null;
 function ncFim(n){ const p = ncPlano(n); return p && paStatus(p) === 'Concluído' && p.concluido_em ? dataDeTs(p.concluido_em) : null; }
 function ncStatus(n){ if(ncFim(n)) return 'Concluída'; if(n.previsao && n.previsao < hoje()) return 'Atrasada'; return n.plano_id ? 'Em tratamento' : 'Aberta'; }
@@ -3987,8 +4222,8 @@ function ncPlanoHtml(n){
 function ncFiltradas(){
   const f = st.nc, q = (f.q||'').trim().toLowerCase();
   return (db.ncs||[]).filter(n => (!f.de || n.data >= f.de) && (!f.ate || n.data <= f.ate) && (!f.colab || n.colaborador_id === f.colab)
-    && (!f.tipo || String(n.tipo_id) === f.tipo) && (!f.status || ncStatus(n) === f.status) && (!f.urg || n.urgencia === f.urg)
-    && (!q || [n.descricao, n.impacto, ncTipoNome(n.tipo_id), pessoaNome(n.colaborador_id)].join(' ').toLowerCase().includes(q)))
+    && (!f.tipo || String(n.tipo_id) === f.tipo) && (!f.sg || String(ncSgIdDe(n)) === f.sg) && (!f.status || ncStatus(n) === f.status) && (!f.urg || n.urgencia === f.urg)
+    && (!q || [n.descricao, n.impacto, ncTipoNome(n.tipo_id), ncSgNome(ncSgIdDe(n)), pessoaNome(n.colaborador_id)].join(' ').toLowerCase().includes(q)))
     .sort((a,b) => b.data.localeCompare(a.data) || b.id - a.id);
 }
 const ncPessoasOpts = sel => (db.pessoas||[]).slice().sort((a,b) => (a.nome||a.email||'').localeCompare(b.nome||b.email||'')).map(p => `<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.nome||p.email)}</option>`).join('');
@@ -3998,7 +4233,7 @@ function pgNC(){
   if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
   const f = st.nc, l = ncFiltradas(), n = s => l.filter(x => ncStatus(x) === s).length;
   const conc = l.filter(x => ncFim(x)), ltm = conc.length ? conc.reduce((a,x) => a + ncLead(x), 0) / conc.length : 0;
-  $('content').innerHTML = `
+  $('content').innerHTML = ncAvisoSg() + `
   <div class="kpis">
     <div class="kpi dk"><div class="l">Não conformidades</div><div class="v">${fmtN(l.length)}</div><div class="s">no filtro atual</div></div>
     <div class="kpi warn click ${f.status==='Aberta'?'sel':''}" onclick="st.nc.status=st.nc.status==='Aberta'?'':'Aberta';pgNC()"><div class="l">Abertas (sem plano)</div><div class="v">${n('Aberta')}</div></div>
@@ -4010,6 +4245,7 @@ function pgNC(){
     <div class="f"><label>De</label><input type="date" value="${f.de}" onchange="st.nc.de=this.value;pgNC()"></div>
     <div class="f"><label>Até</label><input type="date" value="${f.ate}" onchange="st.nc.ate=this.value;pgNC()"></div>
     <div class="f"><label>Colaborador</label><select onchange="st.nc.colab=this.value;pgNC()"><option value="">Todos</option>${ncPessoasOpts(f.colab)}</select></div>
+    ${db.ncSgOk ? `<div class="f"><label>Subgrupo</label><select onchange="st.nc.sg=this.value;pgNC()"><option value="">Todos</option>${(db.ncSgs||[]).map(g => `<option value="${g.id}" ${String(g.id)===f.sg?'selected':''}>${esc(g.nome)}</option>`).join('')}<option value="0" ${f.sg==='0'?'selected':''}>Sem subgrupo</option></select></div>` : ''}
     <div class="f"><label>Não conformidade</label><select onchange="st.nc.tipo=this.value;pgNC()"><option value="">Todas</option>${(db.ncTipos||[]).map(t => `<option value="${t.id}" ${String(t.id)===f.tipo?'selected':''}>${esc(t.nome)}</option>`).join('')}</select></div>
     <div class="f"><label>Status</label><select onchange="st.nc.status=this.value;pgNC()"><option value="">Todos</option>${Object.keys(NC_ST_CLS).map(s => `<option ${f.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f"><label>Urgência</label><select onchange="st.nc.urg=this.value;pgNC()"><option value="">Todas</option>${NC_URG.map(s => `<option ${f.urg===s?'selected':''}>${s}</option>`).join('')}</select></div>
@@ -4018,22 +4254,31 @@ function pgNC(){
   </div>
   <div class="tbl-wrap"><table><thead><tr><th>ID</th><th>Data</th><th>Colaborador</th><th>Não conformidade</th><th>Impacto para a empresa</th><th>Urgência</th><th>Plano de ação</th><th>Previsão término</th><th class="num">Lead time</th><th>Status</th><th></th></tr></thead><tbody>
   ${l.map(x => `<tr><td><b>${x.id}</b></td><td style="white-space:nowrap">${fmtD(x.data)}</td><td><b>${esc(pessoaNome(x.colaborador_id))}</b></td>
-    <td style="min-width:220px"><span class="tag or">${esc(ncTipoNome(x.tipo_id))}</span><div class="small" style="margin-top:3px;white-space:pre-wrap">${esc(x.descricao)}</div></td>
+    <td style="min-width:220px">${db.ncSgOk ? ncSgTag(ncSgIdDe(x)) + ' ' : ''}<span class="tag or">${esc(ncTipoNome(x.tipo_id))}</span><div class="small" style="margin-top:3px;white-space:pre-wrap">${esc(x.descricao)}</div></td>
     <td style="min-width:170px">${ncTag(x.impacto_nivel, NC_IMP_CLS)}${x.impacto?`<div class="small muted" style="margin-top:3px;white-space:pre-wrap">${esc(x.impacto)}</div>`:''}</td>
     <td>${ncTag(x.urgencia, NC_URG_CLS)}</td><td>${ncPlanoHtml(x)}</td><td>${x.previsao?fmtD(x.previsao):'<span class="muted">—</span>'}</td>
-    <td class="num"><b>${ncLead(x)}</b> d${ncFim(x)?'':'<div class="small muted">até hoje</div>'}</td><td>${ncTag(ncStatus(x), NC_ST_CLS)}</td>
+    <td class="num"><b>${ncLead(x)}</b> d${ncFim(x)?'':'<div class="small muted">até hoje</div>'}</td><td>${ncTag(ncStatus(x), NC_ST_CLS)}${ncCiTag(x) ? '<div style="margin-top:4px">' + ncCiTag(x) + '</div>' : ''}</td>
     <td class="act"><button class="btn sec sm" title="${ncPodeEditar(x)?'Editar':'Ver'}" onclick="ncAbrir(${x.id})">${ncPodeEditar(x)?'✎':'👁'}</button>${!x.plano_id && ncPodeEditar(x) ? ` <button class="btn sec sm" title="Abrir plano de ação" onclick="ncNovoPlano(${x.id})">🎯</button>` : ''}${ncPodeEditar(x) ? ` <button class="btn danger sm" title="Excluir" onclick="ncExcluir(${x.id})">🗑</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="11" class="empty">Nenhuma não conformidade lançada neste filtro.</td></tr>'}
   </tbody></table></div>`;
 }
-function ncAbrir(id){
+function ncAbrir(id, vol){
   const x = id ? (db.ncs||[]).find(n => n.id === id) : null, ed = ncPodeEditar(x), dis = ed ? '' : 'disabled';
+  st.ncVol = vol ? st.ncDrillAtual : null;
   const planos = (db.planos||[]).filter(p => paStatus(p) !== 'Cancelado' && (!(db.ncs||[]).some(n => n.plano_id === p.id && (!x || n.id !== x.id)) || (x && x.plano_id === p.id))).sort((a,b) => b.id - a.id);
+  const sgAt = x ? ncSgIdDe(x) : 0, me = db.me.id;
+  const ciBox = x && db.ncCiOk && x.exige_ciencia && x.criado_por !== x.colaborador_id ? `<div class="full nc-ci-box ${x.ciente_em ? (x.ciente_contesta ? 'bad' : 'ok') : 'warn'}">
+      <b>${x.ciente_em ? (x.ciente_contesta ? '⚠ Contestada por ' : '✔ Ciência de ') + esc(pessoaNome(x.colaborador_id)) + ' em ' + fmtDH(x.ciente_em) : '⏳ Aguardando a ciência de ' + esc(pessoaNome(x.colaborador_id))}</b>
+      ${x.ciente_obs ? `<div class="small" style="margin-top:4px;white-space:pre-wrap">“${esc(x.ciente_obs)}”</div>` : ''}
+      ${!x.ciente_em && x.colaborador_id === me ? `<div style="margin-top:8px"><button class="btn ok sm" onclick="ncAbrirCiencia(null, ${x.id})">✔ Dar ciência agora</button></div>` : ''}</div>` : '';
   abrirModal(x ? `Não conformidade #${x.id}` : 'Lançar não conformidade · Vendas', `<div class="form">
+    ${ciBox}
     <div><label>Data *</label><input type="date" id="ncData" value="${x ? x.data : hoje()}" ${dis} onchange="ncLeadLive()"></div>
-    <div><label>Colaborador *</label><select id="ncColab" ${dis}><option value="">Selecione…</option>${ncPessoasOpts(x ? x.colaborador_id : '')}</select></div>
+    <div><label>Colaborador * <span style="font-weight:400">— quem foi evidenciado</span></label><select id="ncColab" ${dis}><option value="">Selecione…</option>${ncPessoasOpts(x ? x.colaborador_id : '')}</select></div>
     <div class="full"><label>Não conformidade * <span style="font-weight:400">— escolha da lista ou digite uma nova (ela é cadastrada ao salvar)</span></label>
-      <input id="ncTipo" list="ncTiposDL" value="${x ? esc(x.tipo_id ? ncTipoNome(x.tipo_id) : '') : ''}" placeholder="Ex.: Erro no pedido" ${dis} autocomplete="off">
-      <datalist id="ncTiposDL">${(db.ncTipos||[]).filter(t => t.ativo).map(t => `<option value="${esc(t.nome)}">`).join('')}</datalist></div>
+      <input id="ncTipo" list="ncTiposDL" value="${x ? esc(x.tipo_id ? ncTipoNome(x.tipo_id) : '') : ''}" placeholder="Ex.: Erro no pedido" ${dis} autocomplete="off" oninput="ncTipoChange()">
+      <datalist id="ncTiposDL">${(db.ncTipos||[]).filter(t => t.ativo).map(t => `<option value="${esc(t.nome)}">${t.subgrupo_id && ncSg(t.subgrupo_id) ? esc(ncSgNome(t.subgrupo_id)) : ''}</option>`).join('')}</datalist></div>
+    ${db.ncSgOk ? `<div class="full"><label>Subgrupo <span style="font-weight:400" id="ncSgObs">${x && sgAt ? '— definido no cadastro desta não conformidade' : '— agrupa as não conformidades no Pareto'}</span></label>
+      <div style="display:flex;gap:8px"><select id="ncSg" style="flex:1" ${dis || (x && sgAt ? 'disabled' : '')}>${ncSgOpts(sgAt)}</select>${ed ? `<button class="btn sec" type="button" title="Cadastrar subgrupo" onclick="ncSgPainel('ncSg')">＋ Subgrupo</button>` : ''}</div></div>` : ''}
     <div class="full"><label>Descrição da não conformidade *</label><textarea id="ncDesc" ${dis} placeholder="O que aconteceu, onde e como foi identificado">${x ? esc(x.descricao) : ''}</textarea></div>
     <div><label>Nível de impacto para a empresa</label><select id="ncImpN" ${dis}><option value="">Selecione…</option>${NC_IMP.map(v => `<option ${x && x.impacto_nivel===v?'selected':''}>${v}</option>`).join('')}</select></div>
     <div><label>Urgência do tratamento *</label><select id="ncUrg" ${dis}>${NC_URG.map(v => `<option ${(x ? x.urgencia : 'Média')===v?'selected':''}>${v}</option>`).join('')}</select></div>
@@ -4045,21 +4290,34 @@ function ncAbrir(id){
       ${ed ? `<button class="btn sec" onclick="ncSalvar(${id||'null'}, true)">🎯 Abrir novo plano de ação</button>` : ''}</div>
       ${x && ncPlano(x) ? `<div class="box-info" style="cursor:pointer" onclick="pcalAbrir(${x.plano_id})"><b>#${x.plano_id} · ${esc(ncPlano(x).o_que)}</b><div class="small">${esc(pessoaNome(ncPlano(x).responsavel_id))} · prevista ${ncPlano(x).fim?fmtD(ncPlano(x).fim):'—'}</div>${paBar(ncPlano(x))}</div>` : ''}
       <div class="small muted">O lead time termina no dia em que o plano de ação vinculado for concluído.</div></div>
+    ${!x && db.ncCiOk ? '<div class="full small muted">📌 Ao salvar, o colaborador recebe uma tela para dar ciência desta não conformidade (se for outra pessoa).</div>' : ''}
   </div>`,
-    `<button class="btn sec" onclick="fecharModal()">${ed?'Cancelar':'Fechar'}</button>${ed ? `<button class="btn" id="ncOk" onclick="ncSalvar(${id||'null'})">Salvar</button>` : ''}`, true);
+    `${st.ncVol ? `<button class="btn sec" onclick="ncVoltarDrill()">‹ Voltar à lista</button>` : ''}<button class="btn sec" onclick="fecharModal()">${ed?'Cancelar':'Fechar'}</button>${ed ? `<button class="btn" id="ncOk" onclick="ncSalvar(${id||'null'})">Salvar</button>` : ''}`, true);
 }
+/* Ao escolher uma não conformidade já cadastrada, puxa o subgrupo dela */
+function ncTipoChange(){
+  const s = $('ncSg'); if(!s) return;
+  const nome = $('ncTipo').value.trim().replace(/\s+/g, ' ').toLowerCase(), t = (db.ncTipos||[]).find(y => y.nome.trim().toLowerCase() === nome);
+  if(t && t.subgrupo_id){ s.value = String(t.subgrupo_id); s.disabled = true; $('ncSgObs').textContent = '— definido no cadastro desta não conformidade'; }
+  else { s.disabled = false; $('ncSgObs').textContent = t ? '— esta não conformidade ainda não tem subgrupo: escolha um para gravar no cadastro' : nome ? '— nova não conformidade: escolha o subgrupo' : '— agrupa as não conformidades no Pareto'; }
+}
+function ncVoltarDrill(){ const d = st.ncVol; st.ncVol = null; if(d) ncDrill(d.titulo, d.ids); else fecharModal(); }
 function ncLeadLive(){
   const d = $('ncData').value, p = (db.planos||[]).find(y => y.id === Number($('ncPlano').value)), fim = p && paStatus(p) === 'Concluído' && p.concluido_em ? dataDeTs(p.concluido_em) : null;
   $('ncLead').value = d ? Math.max(0, diasEntre(d, fim || hoje())) + ' dia(s)' : ''; $('ncLeadObs').textContent = fim ? 'até a conclusão do plano de ação' : 'contando até hoje (até concluir o plano de ação)';
 }
-async function ncTipoId(nome){
+async function ncTipoId(nome, sgId){
   const t = (db.ncTipos||[]).find(y => y.nome.trim().toLowerCase() === nome.toLowerCase());
-  if(t) return t.id;
-  const r = await api.ins('nc_tipos', { nome }); db.ncTipos.push(r); db.ncTipos.sort((a,b) => a.nome.localeCompare(b.nome));
+  if(t){
+    if(sgId && !t.subgrupo_id && db.ncSgOk){ Object.assign(t, await api.upd('nc_tipos', t.id, { subgrupo_id:sgId })); }
+    return t.id;
+  }
+  const o = { nome }; if(sgId && db.ncSgOk) o.subgrupo_id = sgId;
+  const r = await api.ins('nc_tipos', o); db.ncTipos.push(r); db.ncTipos.sort((a,b) => a.nome.localeCompare(b.nome));
   toast('Nova não conformidade cadastrada: ' + nome, 'ok'); return r.id;
 }
 async function ncSalvar(id, abrirPlano){
-  const nomeT = $('ncTipo').value.trim().replace(/\s+/g, ' ');
+  const nomeT = $('ncTipo').value.trim().replace(/\s+/g, ' '), sgId = $('ncSg') ? Number($('ncSg').value) || null : null;
   const o = { data:$('ncData').value, colaborador_id:$('ncColab').value || null, descricao:$('ncDesc').value.trim(), impacto_nivel:$('ncImpN').value || null,
     impacto:$('ncImp').value.trim() || null, urgencia:$('ncUrg').value, previsao:$('ncPrev').value || null, plano_id:Number($('ncPlano').value) || null };
   if(!o.data) return toast('Informe a data.', 'err');
@@ -4068,14 +4326,18 @@ async function ncSalvar(id, abrirPlano){
   if(!o.descricao) return toast('Descreva a não conformidade.', 'err');
   if(o.previsao && o.previsao < o.data) return toast('A previsão de término não pode ser antes da data da não conformidade.', 'err');
   if(abrirPlano && o.plano_id && !confirm('Esta não conformidade já tem um plano vinculado. Abrir um novo plano e trocar o vínculo?')) return;
+  const ant = id ? db.ncs.find(n => n.id === id) : null;
+  /* Ciência: novo lançamento (ou troca de colaborador) pede ciência de novo */
+  if(db.ncCiOk && (!ant || ant.colaborador_id !== o.colaborador_id)){ o.exige_ciencia = true; o.ciente_em = null; o.ciente_obs = null; o.ciente_contesta = false; }
   const b = $('ncOk'); if(b) b.disabled = true;
   try{
-    o.tipo_id = await ncTipoId(nomeT);
+    o.tipo_id = await ncTipoId(nomeT, sgId);
     let r;
-    if(id){ r = await api.upd('nao_conformidades', id, o); Object.assign(db.ncs.find(n => n.id === id), r); }
+    if(id){ r = await api.upd('nao_conformidades', id, o); Object.assign(ant, r); }
     else { r = await api.ins('nao_conformidades', o); db.ncs.push(r); }
-    fecharModal(true); ncRefresh();
-    if(abrirPlano) ncNovoPlano(r.id); else toast('Não conformidade salva.', 'ok');
+    const vol = st.ncVol; fecharModal(true); ncRefresh();
+    const avisa = db.ncCiOk && o.exige_ciencia && o.colaborador_id !== db.me.id ? ` ${pessoaNome(o.colaborador_id)} vai receber a tela para dar ciência.` : '';
+    if(abrirPlano) ncNovoPlano(r.id); else { toast('Não conformidade salva.' + avisa, 'ok'); if(vol){ st.ncVol = vol; ncVoltarDrill(); } }
   }catch(e){ toast(e.message, 'err'); if(b) b.disabled = false; }
 }
 function ncNovoPlano(id){
@@ -4088,9 +4350,10 @@ async function ncVincularPlano(ncId, planoId){
   catch(e){ toast('Plano criado, mas não foi possível vincular à não conformidade: ' + e.message, 'err'); }
   ncRefresh();
 }
-async function ncExcluir(id){
-  const n = db.ncs.find(y => y.id === id); if(!n || !confirm(`Excluir a não conformidade #${id}?\nO plano de ação vinculado (se houver) não é excluído.`)) return;
-  try{ await api.del('nao_conformidades', id); db.ncs = db.ncs.filter(y => y.id !== id); ncRefresh(); toast('Não conformidade excluída.', 'ok'); }
+async function ncExcluir(id, drill){
+  const n = db.ncs.find(y => y.id === id); if(!n || !confirm(`Excluir a não conformidade #${id}?\n${ncTipoNome(n.tipo_id)} · ${pessoaNome(n.colaborador_id)}\n\nO plano de ação vinculado (se houver) não é excluído.`)) return;
+  try{ await api.del('nao_conformidades', id); db.ncs = db.ncs.filter(y => y.id !== id); ncRefresh(); toast('Não conformidade excluída.', 'ok');
+    if(drill && st.ncDrillAtual) ncDrill(st.ncDrillAtual.titulo, st.ncDrillAtual.ids); }
   catch(e){ toast(e.message, 'err'); }
 }
 function ncRefresh(){ if(st.page === 'nc') pgNC(); else if(st.page === 'ncdash') pgNCDash(); else if(st.page === 'nctipos') pgNCTipos(); }
@@ -4098,29 +4361,45 @@ function ncRefresh(){ if(st.page === 'nc') pgNC(); else if(st.page === 'ncdash')
 /* ---------- Cadastro de Não Conformidades (tipos) ---------- */
 function pgNCTipos(){
   if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
-  const qt = id => (db.ncs||[]).filter(n => n.tipo_id === id).length;
-  $('content').innerHTML = `<div class="filters"><div class="f grow small muted">Lista de não conformidades usadas no lançamento. Também é possível cadastrar uma nova digitando direto na tela de lançamento.</div><button class="btn" onclick="ncTipoAbrir()">+ Nova não conformidade</button></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Não conformidade</th><th>Descrição</th><th class="num">Lançamentos</th><th>Situação</th><th></th></tr></thead><tbody>
-  ${(db.ncTipos||[]).map(t => `<tr><td><b>${esc(t.nome)}</b></td><td class="small">${esc(t.descricao||'')}</td><td class="num">${qt(t.id)}</td><td>${t.ativo?'<span class="tag ok">Ativa</span>':'<span class="tag">Inativa</span>'}</td>
-    <td class="act"><button class="btn sec sm" onclick="ncTipoAbrir(${t.id})">✎</button>${isAdmin() ? ` <button class="btn danger sm" title="Excluir" onclick="ncTipoExcluir(${t.id})">🗑</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="5" class="empty">Nenhuma não conformidade cadastrada.</td></tr>'}
+  const f = st.nct, q = (f.q||'').trim().toLowerCase(), qt = id => (db.ncs||[]).filter(n => n.tipo_id === id).length;
+  const todos = db.ncTipos||[], sgs = db.ncSgs||[], nSg = id => todos.filter(t => (t.subgrupo_id||0) === id).length;
+  const l = todos.filter(t => (f.sg === '' || String(t.subgrupo_id||0) === f.sg) && (!q || [t.nome, t.descricao, ncSgNome(t.subgrupo_id)].join(' ').toLowerCase().includes(q)));
+  const chip = (v, nm, n, cor) => `<button class="nc-chip ${f.sg===v?'on':''}" onclick="st.nct.sg='${v}';pgNCTipos()">${cor ? `<i style="background:${esc(cor)}"></i>` : ''}${esc(nm)} <b>${n}</b></button>`;
+  $('content').innerHTML = ncAvisoSg() + `<div class="filters"><div class="f grow small muted">Lista de não conformidades usadas no lançamento, organizadas por subgrupo. Também é possível cadastrar uma nova digitando direto na tela de lançamento.</div>
+    ${db.ncSgOk ? `<button class="btn sec" onclick="ncSgPainel()">🗂 Subgrupos (${sgs.length})</button>` : ''}<button class="btn" onclick="ncTipoAbrir()">+ Nova não conformidade</button></div>
+  ${db.ncSgOk ? `<div class="nc-chips">${chip('', 'Todos', todos.length)}${sgs.map(g => chip(String(g.id), g.nome, nSg(g.id), g.cor)).join('')}${chip('0', 'Sem subgrupo', nSg(0), '#9CA3AF')}
+    <input class="nc-busca" value="${esc(f.q)}" id="nctQ" placeholder="🔎 Buscar…" oninput="st.nct.q=this.value;clearTimeout(window._nctq);window._nctq=setTimeout(()=>{pgNCTipos();const i=$('nctQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>` : ''}
+  <div class="tbl-wrap"><table><thead><tr><th>Não conformidade</th>${db.ncSgOk ? '<th style="min-width:200px">Subgrupo</th>' : ''}<th>Descrição</th><th class="num">Lançamentos</th><th>Situação</th><th></th></tr></thead><tbody>
+  ${l.map(t => `<tr><td><b>${esc(t.nome)}</b></td>
+    ${db.ncSgOk ? `<td><div class="nc-sgsel" style="--sg:${esc(ncSgCor(t.subgrupo_id))}"><select title="Trocar o subgrupo" onchange="ncTipoSg(${t.id}, this.value)">${ncSgOpts(t.subgrupo_id||0, '— Sem subgrupo —')}</select></div></td>` : ''}
+    <td class="small">${esc(t.descricao||'')}</td><td class="num">${qt(t.id)}</td><td>${t.ativo?'<span class="tag ok">Ativa</span>':'<span class="tag">Inativa</span>'}</td>
+    <td class="act"><button class="btn sec sm" onclick="ncTipoAbrir(${t.id})">✎</button>${isAdmin() ? ` <button class="btn danger sm" title="Excluir" onclick="ncTipoExcluir(${t.id})">🗑</button>` : ''}</td></tr>`).join('') || `<tr><td colspan="${db.ncSgOk?6:5}" class="empty">Nenhuma não conformidade neste filtro.</td></tr>`}
   </tbody></table></div>`;
+}
+async function ncTipoSg(id, v){
+  const t = db.ncTipos.find(y => y.id === id); if(!t) return;
+  try{ Object.assign(t, await api.upd('nc_tipos', id, { subgrupo_id:Number(v) || null })); toast(`"${t.nome}" → ${ncSgNome(t.subgrupo_id)}`, 'ok'); pgNCTipos(); }
+  catch(e){ toast(e.message, 'err'); pgNCTipos(); }
 }
 function ncTipoAbrir(id){
   const t = id ? db.ncTipos.find(y => y.id === id) : null;
   abrirModal(t ? 'Editar não conformidade' : 'Nova não conformidade', `<div class="form">
     <div class="full"><label>Nome *</label><input id="ntNome" value="${esc(t?t.nome:'')}" placeholder="Ex.: Erro no pedido"></div>
+    ${db.ncSgOk ? `<div class="full"><label>Subgrupo</label><div style="display:flex;gap:8px"><select id="ntSg" style="flex:1">${ncSgOpts(t ? t.subgrupo_id : (Number(st.nct.sg) || 0))}</select><button class="btn sec" type="button" onclick="ncSgPainel('ntSg')">＋ Subgrupo</button></div>
+      <div class="small muted">Ex.: Cadastro Sistema Bling, Implantação de Pedido. O Pareto do dashboard agrupa por subgrupo.</div></div>` : ''}
     <div class="full"><label>Descrição</label><textarea id="ntDesc">${esc(t?t.descricao||'':'')}</textarea></div>
     <div><label>Situação</label><select id="ntAtivo"><option value="1">Ativa</option><option value="0" ${t&&!t.ativo?'selected':''}>Inativa</option></select></div></div>`,
     `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="ntOk" onclick="ncTipoSalvar(${id||'null'})">Salvar</button>`);
 }
 async function ncTipoSalvar(id){
   const o = { nome:$('ntNome').value.trim().replace(/\s+/g,' '), descricao:$('ntDesc').value.trim() || null, ativo:$('ntAtivo').value === '1' };
+  if($('ntSg')) o.subgrupo_id = Number($('ntSg').value) || null;
   if(!o.nome) return toast('Informe o nome.', 'err');
   if(db.ncTipos.some(t => t.id !== id && t.nome.toLowerCase() === o.nome.toLowerCase())) return toast('Já existe uma não conformidade com esse nome.', 'err');
   $('ntOk').disabled = true;
   try{
     if(id) Object.assign(db.ncTipos.find(t => t.id === id), await api.upd('nc_tipos', id, o)); else db.ncTipos.push(await api.ins('nc_tipos', o));
-    db.ncTipos.sort((a,b) => a.nome.localeCompare(b.nome)); fecharModal(true); toast('Salvo.', 'ok'); pgNCTipos();
+    db.ncTipos.sort((a,b) => a.nome.localeCompare(b.nome)); fecharModal(true); toast('Salvo.', 'ok'); ncRefresh();
   }catch(e){ toast(e.message, 'err'); $('ntOk').disabled = false; }
 }
 async function ncTipoExcluir(id){
@@ -4130,18 +4409,198 @@ async function ncTipoExcluir(id){
   try{ await api.del('nc_tipos', id); db.ncTipos = db.ncTipos.filter(y => y.id !== id); pgNCTipos(); toast('Excluído.', 'ok'); }catch(e){ toast(e.message, 'err'); }
 }
 
+/* ---------- Subgrupos: painel suspenso (abre por cima de qualquer tela, inclusive dos formulários) ---------- */
+const NC_SG_CORES = ['#127DCB','#EA580C','#7C3AED','#16A34A','#DC2626','#0891B2','#CA8A04','#DB2777','#475569'];
+function ncSgPainel(alvo, editId){
+  if(alvo !== undefined) st.ncSgAlvo = alvo || null;
+  let el = $('ncPop');
+  if(!el){ el = document.createElement('div'); el.id = 'ncPop'; document.body.appendChild(el);
+    el.addEventListener('mousedown', e => { if(e.target.id === 'ncPop') ncSgFechar(); });
+    document.addEventListener('keydown', e => { if(e.key === 'Escape' && $('ncPop') && $('ncPop').classList.contains('show')) ncSgFechar(); }); }
+  const sgs = db.ncSgs||[], g = editId ? sgs.find(s => s.id === editId) : null, cor = g ? g.cor || NC_SG_CORES[0] : NC_SG_CORES[sgs.length % NC_SG_CORES.length];
+  const nT = id => (db.ncTipos||[]).filter(t => t.subgrupo_id === id).length, nL = id => (db.ncs||[]).filter(n => ncSgIdDe(n) === id).length;
+  st.ncSgEd = editId || null;
+  el.innerHTML = `<div class="ncp-box">
+    <div class="ncp-head"><div><div class="ncp-tt">🗂 Subgrupos de não conformidade</div><div class="ncp-sb">Agrupe as não conformidades por área ou processo · ${sgs.length} cadastrado(s)</div></div><button class="x" onclick="ncSgFechar()" title="Fechar (Esc)">×</button></div>
+    <div class="ncp-body">
+      <div class="ncp-list">${sgs.map(s => `<div class="ncp-it ${st.ncSgEd===s.id?'on':''} ${s.ativo?'':'off'}" style="--sg:${esc(s.cor||'#9CA3AF')}">
+          <i class="ncp-dot"></i>
+          <div class="ncp-it-b" onclick="ncSgPainel(undefined, ${s.id})"><b>${esc(s.nome)}</b>${s.ativo ? '' : ' <span class="tag">Inativo</span>'}<div class="small muted">${esc(s.descricao||'')}</div>
+            <div class="ncp-mt"><span>${nT(s.id)} tipo(s)</span><span>${nL(s.id)} lançamento(s)</span></div></div>
+          <div class="ncp-act"><button class="btn sec sm" title="Editar" onclick="ncSgPainel(undefined, ${s.id})">✎</button>${isAdmin() ? `<button class="btn danger sm" title="Excluir" onclick="ncSgExcluir(${s.id})">🗑</button>` : ''}${st.ncSgAlvo && s.ativo ? `<button class="btn ok sm" title="Usar este subgrupo" onclick="ncSgUsar(${s.id})">Usar</button>` : ''}</div></div>`).join('')
+        || '<div class="empty" style="padding:30px 10px">Nenhum subgrupo ainda.<br>Cadastre o primeiro ao lado →</div>'}</div>
+      <div class="ncp-form">
+        <div class="ncp-ft">${g ? '✎ Editar subgrupo' : '＋ Novo subgrupo'}</div>
+        <label>Nome *</label><input id="sgNome" value="${esc(g ? g.nome : '')}" placeholder="Ex.: Cadastro Sistema Bling" onkeydown="if(event.key==='Enter')ncSgSalvar()">
+        <label>Descrição</label><textarea id="sgDesc" rows="3" placeholder="Ex.: cadastro de cliente, produto ou pedido no Bling">${esc(g ? g.descricao || '' : '')}</textarea>
+        <label>Cor no gráfico</label><div class="ncp-cores">${NC_SG_CORES.map(c => `<button type="button" class="${c===cor?'on':''}" style="background:${c}" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');$('sgCor').value='${c}'"></button>`).join('')}<input type="color" id="sgCor" value="${esc(cor)}" title="Outra cor"></div>
+        <label class="ncp-ck"><input type="checkbox" id="sgAtivo" ${!g || g.ativo ? 'checked' : ''}> Ativo (aparece no lançamento)</label>
+        <div class="ncp-btns">${g ? `<button class="btn sec" onclick="ncSgPainel(undefined, null)">Cancelar edição</button>` : ''}<button class="btn" id="sgOk" onclick="ncSgSalvar()">${g ? 'Salvar alterações' : (st.ncSgAlvo ? 'Cadastrar e usar' : 'Cadastrar subgrupo')}</button></div>
+      </div>
+    </div></div>`;
+  el.classList.add('show'); setTimeout(() => { const i = $('sgNome'); if(i) i.focus(); }, 30);
+}
+function ncSgFechar(){ const el = $('ncPop'); if(el) el.classList.remove('show'); st.ncSgAlvo = null; st.ncSgEd = null; }
+function ncSgAtualizarAlvo(sel){
+  ['ncSg','ntSg'].forEach(k => { const s = $(k); if(!s) return; const v = sel !== undefined && k === st.ncSgAlvo ? sel : Number(s.value) || 0; s.innerHTML = ncSgOpts(v); s.value = v ? String(v) : ''; });
+}
+function ncSgUsar(id){ ncSgAtualizarAlvo(id); ncSgFechar(); toast('Subgrupo selecionado: ' + ncSgNome(id), 'ok'); }
+async function ncSgSalvar(){
+  const id = st.ncSgEd, o = { nome:$('sgNome').value.trim().replace(/\s+/g,' '), descricao:$('sgDesc').value.trim() || null, cor:$('sgCor').value, ativo:$('sgAtivo').checked };
+  if(!o.nome) return toast('Informe o nome do subgrupo.', 'err');
+  if((db.ncSgs||[]).some(s => s.id !== id && s.nome.toLowerCase() === o.nome.toLowerCase())) return toast('Já existe um subgrupo com esse nome.', 'err');
+  $('sgOk').disabled = true;
+  try{
+    let r;
+    if(id){ r = await api.upd('nc_subgrupos', id, o); Object.assign(db.ncSgs.find(s => s.id === id), r); }
+    else { r = await api.ins('nc_subgrupos', o); db.ncSgs.push(r); }
+    db.ncSgs.sort((a,b) => a.nome.localeCompare(b.nome));
+    toast(id ? 'Subgrupo atualizado.' : 'Subgrupo cadastrado: ' + r.nome, 'ok');
+    if(!id && st.ncSgAlvo){ ncSgUsar(r.id); } else { ncSgAtualizarAlvo(); ncSgPainel(undefined, null); }
+    if(!$('modal').classList.contains('show')) ncRefresh();
+  }catch(e){ toast(e.message, 'err'); const b = $('sgOk'); if(b) b.disabled = false; }
+}
+async function ncSgExcluir(id){
+  const g = (db.ncSgs||[]).find(s => s.id === id); if(!g) return;
+  const n = (db.ncTipos||[]).filter(t => t.subgrupo_id === id).length;
+  if(!confirm(`Excluir o subgrupo "${g.nome}"?${n ? `\n${n} não conformidade(s) ficarão "Sem subgrupo".` : ''}`)) return;
+  try{ await api.del('nc_subgrupos', id); db.ncSgs = db.ncSgs.filter(s => s.id !== id); (db.ncTipos||[]).forEach(t => { if(t.subgrupo_id === id) t.subgrupo_id = null; });
+    toast('Subgrupo excluído.', 'ok'); ncSgAtualizarAlvo(); ncSgPainel(undefined, null); if(!$('modal').classList.contains('show')) ncRefresh(); }
+  catch(e){ toast(e.message, 'err'); }
+}
+
+/* ---------- Ciência do colaborador evidenciado ---------- */
+function ncAbrirCiencia(depois, idEsc){
+  if(depois !== undefined) st.ncCiDepois = depois;
+  const l = ncPend(); l.forEach(x => st.ncVisto.add(x.id));
+  const seguir = () => { const f = st.ncCiDepois; st.ncCiDepois = null; if(f) setTimeout(f, 50); };
+  if(!l.length){ st.ncCi = null; fecharModal(true); seguir(); return; }
+  if(idEsc && l.some(x => x.id === idEsc)) st.ncCi = idEsc; else if(!l.some(x => x.id === st.ncCi)) st.ncCi = l[0].id;
+  const x = l.find(y => y.id === st.ncCi), pos = l.indexOf(x) + 1, sg = ncSgIdDe(x);
+  abrirModal(`⚠️ Não conformidade registrada para você${l.length > 1 ? ` · ${pos} de ${l.length}` : ''}`, `
+    <div class="nc-ci">
+      <div class="nc-ci-top"><div class="nc-ci-ic">!</div><div><div class="nc-ci-tt">${esc(ncTipoNome(x.tipo_id))}</div>
+        <div class="nc-ci-sb">${sg ? ncSgTag(sg) + ' ' : ''}#${x.id} · ${fmtD(x.data)} · registrada por <b>${esc(pessoaNome(x.criado_por))}</b></div></div></div>
+      <div class="nc-ci-grid"><div><span>Urgência</span>${ncTag(x.urgencia, NC_URG_CLS)}</div><div><span>Impacto</span>${ncTag(x.impacto_nivel, NC_IMP_CLS)}</div><div><span>Previsão de término</span><b>${x.previsao ? fmtD(x.previsao) : '—'}</b></div></div>
+      <div class="nc-ci-sec"><span>O que aconteceu</span><div>${esc(x.descricao || '')}</div></div>
+      ${x.impacto ? `<div class="nc-ci-sec"><span>Impacto para a empresa</span><div>${esc(x.impacto)}</div></div>` : ''}
+      <div class="nc-ci-sec"><span>Seu comentário <em>(opcional)</em></span><textarea id="nciObs" rows="3" placeholder="Ex.: entendido, vou conferir o tom da cor antes de implantar os próximos pedidos"></textarea></div>
+      <label class="nc-ci-ck"><input type="checkbox" id="nciCont" onchange="$('nciObs').placeholder=this.checked?'Explique por que você discorda (obrigatório)':'Ex.: entendido, vou conferir antes de implantar os próximos pedidos'"> Não concordo com o registro — quero contestar</label>
+      <div class="small muted">Ao dar ciência você confirma que leu esta não conformidade. ${esc(pessoaNome(x.criado_por))} verá a data da ciência e o seu comentário.</div>
+    </div>`,
+    `<button class="btn sec" onclick="fecharModal()">Ver depois</button><button class="btn ok" id="nciOk" onclick="ncDarCiencia()">✔ Dar ciência</button>`, true, () => { st.ncCi = null; seguir(); });
+}
+async function ncDarCiencia(){
+  const id = st.ncCi; if(!id) return;
+  const obs = $('nciObs').value.trim(), cont = $('nciCont').checked;
+  if(cont && !obs) return toast('Para contestar, escreva a justificativa.', 'err');
+  $('nciOk').disabled = true;
+  try{
+    const r = ((await sbFetch('/rest/v1/rpc/nc_dar_ciencia', { method:'POST', body:{ p_id:id, p_obs:obs || null, p_contesta:cont } })) || [])[0];
+    const k = db.ncs.findIndex(n => n.id === id); if(r){ if(k >= 0) db.ncs[k] = r; else db.ncs.push(r); }
+    toast(cont ? 'Contestação registrada.' : 'Ciência registrada. Obrigado!', 'ok');
+    st.ncCi = null; ncRefresh(); ncAbrirCiencia();
+  }catch(e){ toast(e.message, 'err'); const b = $('nciOk'); if(b) b.disabled = false; }
+}
+async function ncChecar(){
+  if(!S || !db.me || !db.ncCiOk || $('app').classList.contains('hidden')) return;
+  await ncSyncPend();
+  if($('modal').classList.contains('show') || ($('ncPop') && $('ncPop').classList.contains('show'))) return;
+  if(ncPend().some(x => !st.ncVisto.has(x.id))) ncAbrirCiencia(null);
+}
+setInterval(ncChecar, 45000);
+
 /* ---------- Dashboard de Qualidade ---------- */
-function ncLista(titulo, l){
+/* Lista clicável (cards, KPIs e gráficos) → abre a tela de detalhe com editar / excluir */
+function ncLista(titulo, l){ ncDrill(titulo, l.map(x => x.id), { q:'', st:'' }); }
+function ncDrill(titulo, ids, sub){
   st.padVoltar = null;
-  l = l.slice().sort((a,b) => NC_URG.indexOf(b.urgencia) - NC_URG.indexOf(a.urgencia) || b.data.localeCompare(a.data));
-  abrirModal(titulo, `<p class="small muted" style="margin-top:0">${l.length} não conformidade(s) · clique para abrir.</p>` + (l.map(x => { const s = ncStatus(x);
-    return `<div class="dd-it ${s==='Concluída'?'ok':s==='Atrasada'?'bad':s==='Aberta'?'warn':''}" onclick="ncAbrir(${x.id})">
-      <div class="dd-id">#${x.id}</div>
-      <div style="min-width:0"><div class="dd-tt">${esc(ncTipoNome(x.tipo_id))}</div><div class="small" style="margin-top:2px;color:var(--gr2)">${esc(pdfCorta(String(x.descricao||''), 160))}</div>
-        <div class="dd-mt">${ncTag(s, NC_ST_CLS)} ${ncTag(x.urgencia, NC_URG_CLS)}<span>Colaborador <b>${esc(pessoaNome(x.colaborador_id))}</b></span><span>Data <b>${fmtD(x.data)}</b></span>
-          ${x.previsao ? `<span>Previsão <b>${fmtD(x.previsao)}</b></span>` : ''}<span>Lead time <b>${ncLead(x)} d</b></span>${x.impacto_nivel ? `<span>Impacto <b>${esc(x.impacto_nivel)}</b></span>` : ''}</div></div>
-      <div>${ncPlano(x) ? paBar(ncPlano(x)) : `<span class="tag ${x.plano_id?'':'warn'}">${x.plano_id ? 'Plano #' + x.plano_id : 'Sem plano de ação'}</span>`}</div></div>`; }).join('') || '<div class="card empty">Nenhuma não conformidade.</div>'),
-    `<button class="btn sec" onclick="fecharModal()">Fechar</button>`, true);
+  const idSet = new Set(ids), d = st.ncDrillAtual = { titulo, ids, sub: sub !== undefined ? sub : (st.ncDrillAtual && st.ncDrillAtual.titulo === titulo ? st.ncDrillAtual.sub : { q:'', st:'' }) };
+  const todos = (db.ncs||[]).filter(n => idSet.has(n.id)), q = (d.sub.q||'').trim().toLowerCase();
+  const l = todos.filter(x => (!d.sub.st || (d.sub.st === 'ci' ? !!ncCiTag(x) && !x.ciente_em : ncStatus(x) === d.sub.st))
+      && (!q || [x.id, x.descricao, x.impacto, ncTipoNome(x.tipo_id), pessoaNome(x.colaborador_id)].join(' ').toLowerCase().includes(q)))
+    .sort((a,b) => (ncStatus(b)==='Atrasada') - (ncStatus(a)==='Atrasada') || NC_URG.indexOf(b.urgencia) - NC_URG.indexOf(a.urgencia) || b.data.localeCompare(a.data));
+  const c = s => todos.filter(x => ncStatus(x) === s).length, ciP = todos.filter(x => ncCiTag(x) && !x.ciente_em).length;
+  const conc = todos.filter(x => ncFim(x)), ltm = conc.length ? conc.reduce((a,x) => a + ncLead(x), 0) / conc.length : 0;
+  /* composição: por tipo e por colaborador */
+  const comp = (fn, nm) => { const m = {}; todos.forEach(x => { const k = fn(x); m[k] = (m[k]||0) + 1; }); return Object.entries(m).sort((a,b) => b[1] - a[1]).slice(0, 6).map(([k,v]) => ({ k, nm:nm(k), v })); };
+  const cTipo = comp(x => x.tipo_id || 0, k => Number(k) ? ncTipoNome(Number(k)) : 'Sem tipo'), cCol = comp(x => x.colaborador_id, k => pessoaNome(k));
+  const barras = (arr, tt) => `<div class="ncd-comp"><div class="ncd-ct">${tt}</div>${arr.map(a => `<div class="ncd-cr"><span title="${esc(a.nm)}">${esc(a.nm)}</span><i><em style="width:${todos.length ? a.v / arr[0].v * 100 : 0}%"></em></i><b>${a.v}</b></div>`).join('')}</div>`;
+  const kp = (k, nm, v, cls) => `<button class="ncd-k ${cls} ${d.sub.st===k?'on':''}" onclick="st.ncDrillAtual.sub.st=st.ncDrillAtual.sub.st==='${k}'?'':'${k}';ncDrill(st.ncDrillAtual.titulo, st.ncDrillAtual.ids)"><span>${nm}</span><b>${v}</b></button>`;
+  const ed = x => ncPodeEditar(x);
+  abrirModal(`<span class="ncd-h">${esc(titulo)}</span>`, `
+    <div class="ncd-kpis">
+      ${kp('', 'Total', todos.length, 'dk')}${kp('Aberta', 'Abertas', c('Aberta'), 'warn')}${kp('Em tratamento', 'Em tratamento', c('Em tratamento'), 'info')}${kp('Atrasada', 'Atrasadas', c('Atrasada'), 'bad')}${kp('Concluída', 'Concluídas', c('Concluída'), 'ok')}
+      ${db.ncCiOk ? kp('ci', 'Sem ciência', ciP, 'warn') : ''}
+      <div class="ncd-k lt"><span>Lead time médio</span><b>${conc.length ? fmtDec(ltm) + ' d' : '—'}</b></div>
+    </div>
+    ${todos.length > 1 ? `<div class="ncd-comps">${cTipo.length > 1 ? barras(cTipo, 'Por não conformidade') : ''}${cCol.length ? barras(cCol, 'Por colaborador') : ''}</div>` : ''}
+    <div class="ncd-tool"><input id="ncdQ" value="${esc(d.sub.q)}" placeholder="🔎 Buscar por descrição, colaborador, nº…" oninput="st.ncDrillAtual.sub.q=this.value;clearTimeout(window._ncdq);window._ncdq=setTimeout(()=>{ncDrill(st.ncDrillAtual.titulo, st.ncDrillAtual.ids);const i=$('ncdQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},250)">
+      <span class="small muted">${l.length} de ${todos.length}</span></div>
+    <div class="ncd-list">${l.map(x => { const s = ncStatus(x), p = ncPlano(x);
+      return `<div class="ncd-it ${s==='Concluída'?'ok':s==='Atrasada'?'bad':s==='Aberta'?'warn':'info'}">
+        <div class="ncd-id" onclick="ncAbrir(${x.id}, 1)">#${x.id}<small>${fmtD(x.data).slice(0,5)}</small></div>
+        <div class="ncd-b" onclick="ncAbrir(${x.id}, 1)">
+          <div class="ncd-tt">${db.ncSgOk && ncSgIdDe(x) ? ncSgTag(ncSgIdDe(x)) + ' ' : ''}<b>${esc(ncTipoNome(x.tipo_id))}</b></div>
+          <div class="ncd-ds">${esc(pdfCorta(String(x.descricao||''), 180))}</div>
+          <div class="ncd-mt">${ncTag(s, NC_ST_CLS)} ${ncTag(x.urgencia, NC_URG_CLS)} ${ncCiTag(x)}<span>👤 <b>${esc(pessoaNome(x.colaborador_id))}</b></span>${x.previsao ? `<span>Prev. <b>${fmtD(x.previsao)}</b></span>` : ''}<span>Lead <b>${ncLead(x)} d</b></span>${p ? `<span>🎯 Plano <b>#${p.id}</b> · ${paPct(p)}%</span>` : x.plano_id ? `<span>🎯 Plano #${x.plano_id}</span>` : '<span class="ncd-semp">Sem plano de ação</span>'}</div>
+        </div>
+        <div class="ncd-act">
+          <button class="btn sec sm" title="${ed(x) ? 'Editar' : 'Ver'}" onclick="ncAbrir(${x.id}, 1)">${ed(x) ? '✎ Editar' : '👁 Ver'}</button>
+          ${!x.plano_id && ed(x) ? `<button class="btn sec sm" title="Abrir plano de ação" onclick="ncNovoPlano(${x.id})">🎯 Plano</button>` : ''}
+          ${ed(x) ? `<button class="btn danger sm" title="Excluir" onclick="ncExcluir(${x.id}, 1)">🗑 Excluir</button>` : ''}
+        </div></div>`; }).join('') || '<div class="card empty">Nenhuma não conformidade neste filtro.</div>'}</div>`,
+    `<button class="btn sec" onclick="fecharModal()">Fechar</button><button class="btn" onclick="ncAbrir()">+ Lançar não conformidade</button>`, true);
+  $('mbox').classList.add('xl');
+}
+/* Pareto: agrupa por subgrupo ou tipo, ordena, junta a cauda em "Outros" e classifica em A (até 80%), B (até 95%) e C */
+function ncPareto(l, modo){
+  const m = {}; l.forEach(x => { const k = modo === 'sg' ? ncSgIdDe(x) : (x.tipo_id || 0); (m[k] = m[k] || []).push(x.id); });
+  let par = Object.entries(m).map(([k, ids]) => { const id = Number(k);
+      return { id, ids, n:ids.length, nm: modo === 'sg' ? ncSgNome(id) : (id ? ncTipoNome(id) : 'Sem tipo'), cor: modo === 'sg' ? (id ? ncSgCor(id) : '#9CA3AF') : null }; })
+    .sort((a,b) => b.n - a.n || a.nm.localeCompare(b.nm));
+  if(par.length > 12){ const t = par.slice(11); par = par.slice(0, 11); par.push({ id:-1, ids:t.flatMap(p => p.ids), n:t.reduce((a,p) => a + p.n, 0), nm:`Outros (${t.length})`, cor:'#9CA3AF', outros:true }); }
+  let ac = 0; par.forEach(p => { const ant = ac / (l.length || 1) * 100; ac += p.n; p.ac = Math.round(ac / l.length * 100);
+    p.cls = ant < 80 ? 'A' : ant < 95 ? 'B' : 'C'; if(!p.cor) p.cor = p.cls === 'A' ? '#127DCB' : p.cls === 'B' ? '#60A5FA' : '#94A3B8'; });
+  st.ncdParModo = modo; return par;
+}
+function ncParClick(i){
+  const p = (st.ncdPar||[])[i]; if(!p) return;
+  const per = (st.ncd.mes ? MESES[Number(st.ncd.mes)-1] + '/' : 'Ano ') + st.ncd.ano;
+  ncLista(`${st.ncdParModo === 'sg' ? '🗂 ' : '⚠️ '}${p.nm} · ${per}`, (db.ncs||[]).filter(n => p.ids.includes(n.id)));
+}
+function ncParetoChart(par, tot, o){
+  const rgba = (h, a) => { const n = parseInt(String(h).replace('#',''), 16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
+  const tx = getComputedStyle(document.body).getPropertyValue('--tx').trim() || '#1F2328';
+  const parRot = { id:'parRot', afterDatasetsDraw(ch){
+    const c = ch.ctx, a = ch.chartArea, y80 = ch.scales.y2.getPixelForValue(80);
+    c.save();
+    /* linha de referência 80% */
+    c.strokeStyle = '#DC2626'; c.globalAlpha = .5; c.setLineDash([6,5]); c.lineWidth = 1.2; c.beginPath(); c.moveTo(a.left, y80); c.lineTo(a.right, y80); c.stroke();
+    c.setLineDash([]); c.globalAlpha = 1; c.font = "800 10.5px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = '#DC2626'; c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText('80%', a.right - 2, y80 - 3);
+    /* quantidade em cima das barras */
+    c.textAlign = 'center'; c.font = "800 12px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = tx;
+    if(ch.isDatasetVisible(0)) ch.getDatasetMeta(0).data.forEach((el, j) => c.fillText(par[j].n, el.x, el.y - 4));
+    /* % acumulado em etiqueta */
+    if(ch.isDatasetVisible(1) && par.length <= 16){ c.font = "700 10px 'Segoe UI',system-ui,Arial,sans-serif";
+      ch.getDatasetMeta(1).data.forEach((el, j) => { const t = par[j].ac + '%', w = c.measureText(t).width + 8, x = el.x - w/2, y = el.y - 22;
+        c.fillStyle = o.esc_ ? '#2A1215' : '#FFF1F2'; c.strokeStyle = 'rgba(220,38,38,.35)'; c.lineWidth = 1; c.beginPath();
+        if(c.roundRect) c.roundRect(x, y, w, 15, 7); else c.rect(x, y, w, 15); c.fill(); c.stroke();
+        c.fillStyle = '#DC2626'; c.textBaseline = 'middle'; c.fillText(t, el.x, y + 8); }); }
+    c.restore(); } };
+  st.charts.push(new Chart($('chNC2'), { type:'bar', data:{ labels: par.map(p => p.nm.length > 20 ? p.nm.slice(0,19) + '…' : p.nm), datasets:[
+      { type:'bar', label:'Ocorrências', data: par.map(p => p.n), backgroundColor: par.map(p => p.cls === 'A' ? p.cor : rgba(p.cor, .42)), hoverBackgroundColor: par.map(p => p.cor),
+        borderRadius:{ topLeft:8, topRight:8 }, borderSkipped:false, maxBarThickness:54, categoryPercentage:.78, barPercentage:.92, yAxisID:'y', order:2 },
+      { type:'line', label:'% acumulado', data: par.map(p => p.ac), borderColor:'#DC2626', backgroundColor:'#DC2626', pointBackgroundColor: o.esc_ ? '#171B21' : '#fff', pointBorderColor:'#DC2626',
+        pointBorderWidth:2.5, pointRadius:5, pointHoverRadius:7, borderWidth:2.5, tension:.3, yAxisID:'y2', order:1 } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top:30, right:4 } }, interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ position:'top', align:'end', labels:{ usePointStyle:true, boxWidth:10, boxHeight:10, padding:14, font:{ weight:'600' } } }, rotulos:{ on:false }, rotDash:{ on:false },
+        tooltip:{ ...o.tip, callbacks:{ title: it => par[it[0].dataIndex].nm, label: it => it.dataset.type === 'line' ? ` Acumulado: ${it.raw}%` : ` ${it.raw} ocorrência(s) · ${pct(it.raw, tot)}% do total`,
+          footer: it => { const p = par[it[0].dataIndex]; return `Classe ${p.cls}${p.cls === 'A' ? ' · prioridade (até 80%)' : ''}\nClique para ver, editar ou excluir`; } } } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600', size:11 }, autoSkip:false, maxRotation:40, minRotation:0 } },
+        y:{ beginAtZero:true, grace:'18%', grid:{ color:o.grade }, border:{ display:false }, ticks:{ precision:0 }, title:{ display:true, text:'ocorrências' } },
+        y2:{ position:'right', min:0, max:110, grid:{ display:false }, border:{ display:false }, ticks:{ stepSize:20, callback:v => v <= 100 ? v + '%' : '' } } },
+      onHover:o.hov, onClick:(e, el, ch) => { const r = o.pick(e, ch); if(r.length) ncParClick(r[0].index); } }, plugins:[parRot] }));
 }
 function pgNCDash(){
   if(!db.ncOk){ $('content').innerHTML = ncSemBanco(); return; }
@@ -4156,9 +4615,9 @@ function pgNCDash(){
     .sort((a,b) => (ncStatus(b)==='Atrasada') - (ncStatus(a)==='Atrasada') || NC_URG.indexOf(b.urgencia) - NC_URG.indexOf(a.urgencia) || ncLead(b) - ncLead(a));
   const anosD = (db.ncs||[]).map(n => Number(n.data.slice(0,4)));
   const anos = []; for(let y = Math.min(anoAt - 1, ...(anosD.length ? anosD : [anoAt])); y <= anoAt + 1; y++) anos.push(y);
-  /* Pareto por tipo */
-  const tp = {}; l.forEach(x => tp[x.tipo_id || 0] = (tp[x.tipo_id || 0] || 0) + 1);
-  const par = Object.entries(tp).map(([k,v]) => ({ id:Number(k), n:v })).sort((a,b) => b.n - a.n); let ac = 0; par.forEach(p => { ac += p.n; p.ac = Math.round(ac / l.length * 100); });
+  /* Pareto por subgrupo (ou por tipo) */
+  const modo = db.ncSgOk && f.par !== 'tipo' ? 'sg' : 'tipo', par = ncPareto(l, modo); st.ncdPar = par;
+  const vit = par.filter(p => p.cls === 'A'), vitN = vit.reduce((a,p) => a + p.n, 0);
   /* Por colaborador (status) */
   const cb = {}; l.forEach(x => { const c = cb[x.colaborador_id] = cb[x.colaborador_id] || { id:x.colaborador_id, t:0, 'Aberta':0, 'Em tratamento':0, 'Atrasada':0, 'Concluída':0 }; c.t++; c[ncStatus(x)]++; });
   const cbs = Object.values(cb).sort((a,b) => b.t - a.t);
@@ -4179,22 +4638,30 @@ function pgNCDash(){
     <div class="nc-hero-k click" onclick="ncLista('Concluídas', st.ncdL.filter(x => ncStatus(x)==='Concluída'))"><span>Concluídas</span><b style="color:var(--ok)">${cnt('Concluída')}</b><small>${pct(cnt('Concluída'), l.length)}% resolvidas</small></div>
     <div class="nc-hero-k"><span>Lead time médio</span><b>${conc.length ? fmtDec(ltm) : '—'}<em> d</em></b><small>${conc.length} concluída(s)</small></div>
   </div>
-  <div class="grid g2">
+  <div class="card nc-par">
+    <h3 style="flex-wrap:wrap;gap:8px">📊 Pareto por ${modo === 'sg' ? 'subgrupo' : 'tipo'} de não conformidade · ${esc(perTxt)}
+      <span style="margin-left:auto;display:flex;gap:8px;align-items:center">${db.ncSgOk ? `<span class="seg"><button class="${modo==='sg'?'on':''}" onclick="st.ncd.par='sg';pgNCDash()">Subgrupo</button><button class="${modo==='tipo'?'on':''}" onclick="st.ncd.par='tipo';pgNCDash()">Tipo</button></span>` : ''}${db.ncSgOk ? `<button class="btn sec sm" onclick="ncSgPainel()">🗂 Subgrupos</button>` : ''}</span></h3>
+    ${par.length ? `<div class="nc-par-ins"><b>${vit.length}</b> de ${par.length} ${modo === 'sg' ? 'subgrupo(s)' : 'tipo(s)'} concentram <b>${pct(vitN, l.length)}%</b> das ocorrências${vit.length ? ` — foque em <b>${vit.slice(0,3).map(p => esc(p.nm)).join('</b>, <b>')}</b>${vit.length > 3 ? '…' : ''}` : ''}. <span class="muted">Clique numa coluna ou linha para ver, editar ou excluir os lançamentos.</span></div>
+    <div class="nc-par-g"><div class="chartbox" style="height:360px"><canvas id="chNC2"></canvas></div>
+      <div class="nc-par-t"><table><thead><tr><th>#</th><th>${modo === 'sg' ? 'Subgrupo' : 'Tipo'}</th><th class="num">Qtd</th><th class="num">%</th><th class="num">Acum.</th><th>Classe</th></tr></thead><tbody>
+        ${par.map((p,i) => `<tr onclick="ncParClick(${i})" title="Ver os lançamentos"><td class="muted">${i+1}</td><td><i class="nc-dot" style="background:${p.cor}"></i>${esc(p.nm)}</td><td class="num"><b>${p.n}</b></td><td class="num">${pct(p.n, l.length)}%</td>
+          <td class="num"><div class="nc-acc"><em style="width:${p.ac}%"></em><span>${p.ac}%</span></div></td><td><span class="nc-abc ${p.cls}">${p.cls}</span></td></tr>`).join('')}
+      </tbody></table><div class="small muted" style="margin-top:6px"><span class="nc-abc A">A</span> até 80% · <span class="nc-abc B">B</span> até 95% · <span class="nc-abc C">C</span> restante</div></div></div>`
+    : '<div class="empty">Nenhuma não conformidade no período.</div>'}
+  </div>
+  <div class="grid g2" style="margin-top:14px">
     <div class="card"><h3>Não conformidades por mês · ${ano}<span class="small muted" style="font-weight:400;margin-left:auto">clique no mês para filtrar</span></h3><div class="chartbox"><canvas id="chNC1"></canvas></div></div>
-    <div class="card"><h3>Pareto por tipo de não conformidade · ${esc(perTxt)}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra</span></h3>${par.length ? '<div class="chartbox"><canvas id="chNC2"></canvas></div>' : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
-  </div>
-  <div class="grid g2" style="margin-top:14px">
     <div class="card"><h3>Por colaborador · ${esc(perTxt)}<span class="small muted" style="font-weight:400;margin-left:auto">clique na barra</span></h3>${cbs.length ? `<div class="chartbox" style="height:${Math.max(260, cbs.length*34+70)}px"><canvas id="chNC3"></canvas></div>` : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
-    <div class="card"><h3>Urgência e impacto · ${esc(perTxt)}</h3>${l.length ? `<div class="nc-dn"><div><div class="nc-dn-t">Urgência do tratamento</div><div class="chartbox" style="height:230px"><canvas id="chNC4"></canvas></div></div><div><div class="nc-dn-t">Impacto para a empresa</div><div class="chartbox" style="height:230px"><canvas id="chNC5"></canvas></div></div></div>` : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
   </div>
   <div class="grid g2" style="margin-top:14px">
+    <div class="card"><h3>Urgência e impacto · ${esc(perTxt)}</h3>${l.length ? `<div class="nc-dn"><div><div class="nc-dn-t">Urgência do tratamento</div><div class="chartbox" style="height:230px"><canvas id="chNC4"></canvas></div></div><div><div class="nc-dn-t">Impacto para a empresa</div><div class="chartbox" style="height:230px"><canvas id="chNC5"></canvas></div></div></div>` : '<div class="empty">Nenhuma não conformidade no período.</div>'}</div>
     <div class="card"><h3>Lead time médio mês a mês · ${ano}</h3><div class="chartbox"><canvas id="chNC6"></canvas></div><div class="small muted" style="margin-top:6px">Média de dias das não conformidades concluídas em cada mês (pela conclusão do plano de ação).</div></div>
-    <div class="card"><h3>🚨 Prioridades em aberto<span style="margin-left:auto"><button class="btn sec sm" onclick="ncLista('Prioridades em aberto', ${'st.ncdCrit'})">Ver todas (${crit.length})</button></span></h3>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>🚨 Prioridades em aberto<span style="margin-left:auto"><button class="btn sec sm" onclick="ncLista('Prioridades em aberto', ${'st.ncdCrit'})">Ver todas (${crit.length})</button></span></h3>
       <div class="rk">${crit.slice(0,7).map(x => `<div class="rk-it" onclick="ncAbrir(${x.id})">
         <div class="rk-n ${ncStatus(x)==='Atrasada'||x.urgencia==='Urgente'?'top':''}">#${x.id}</div>
         <div class="rk-b"><div class="rk-t"><b>${esc(ncTipoNome(x.tipo_id))}</b> · ${esc(x.descricao)}</div><div class="rk-s">${esc(pessoaNome(x.colaborador_id))} · ${ncTag(ncStatus(x), NC_ST_CLS)} ${ncTag(x.urgencia, NC_URG_CLS)}${x.previsao?' · prev. '+fmtD(x.previsao):''}</div></div>
-        <div class="rk-d"><b>${ncLead(x)}</b><span>dias</span></div></div>`).join('') || '<div class="empty">Nenhuma não conformidade urgente ou atrasada. 👏</div>'}</div></div>
-  </div>`;
+        <div class="rk-d"><b>${ncLead(x)}</b><span>dias</span></div></div>`).join('') || '<div class="empty">Nenhuma não conformidade urgente ou atrasada. 👏</div>'}</div></div>`;
   st.ncdCrit = crit;
   if(typeof Chart === 'undefined') return;
   if(!Chart.registry.plugins.get('rotulos')) Chart.register(rotulosPlugin);
@@ -4214,15 +4681,7 @@ function pgNCDash(){
       scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'12%', border:{ display:false }, grid:{ color:grade }, ticks:{ precision:0 } } },
       onHover:hov, onClick:(e, el) => { if(el.length){ const m = pad(el[0].index+1); st.ncd.mes = st.ncd.mes === m ? '' : m; pgNCDash(); } } }, plugins:[rotDash] }));
   /* 2. Pareto */
-  if(par.length){
-    const lbl = par.map(p => { const n = p.id ? ncTipoNome(p.id) : 'Sem tipo'; return n.length > 24 ? n.slice(0,23) + '…' : n; });
-    st.charts.push(new Chart($('chNC2'), { type:'bar', data:{ labels: lbl, datasets:[
-        { type:'bar', label:'Ocorrências', data: par.map(p => p.n), backgroundColor:paGrad('#4BA6EE','#0A4E83'), borderRadius:6, borderSkipped:false, maxBarThickness:36, yAxisID:'y', order:2 },
-        { type:'line', label:'% acumulado', data: par.map(p => p.ac), borderColor:'#DC2626', backgroundColor:'#DC2626', pointRadius:4, borderWidth:2.5, tension:.25, yAxisID:'y2', order:1 } ] },
-      options:{ maintainAspectRatio:false, layout:{ padding:{ top:30 } }, plugins:{ legend:leg, rotulos:{ on:false }, rotDash:{ on:true }, tooltip:{ ...tip, callbacks:{ label: it => it.dataset.type === 'line' ? ` ${it.raw}% acumulado` : ` ${it.raw} ocorrência(s)` } } },
-        scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' }, maxRotation:35, minRotation:0 } }, y:{ beginAtZero:true, grace:'12%', grid:{ color:grade }, border:{ display:false }, ticks:{ precision:0 } }, y2:{ position:'right', min:0, max:100, grid:{ display:false }, border:{ display:false }, ticks:{ callback:v => v + '%' } } },
-        onHover:hov, onClick:(e, el, ch) => { const r = pick(e, ch); if(r.length){ const p = par[r[0].index]; ncLista((p.id ? ncTipoNome(p.id) : 'Sem tipo') + ' · ' + perTxt, st.ncdL.filter(x => (x.tipo_id||0) === p.id)); } } }, plugins:[rotDash] }));
-  }
+  if(par.length) ncParetoChart(par, l.length, { esc_, grade, tip, hov, pick });
   /* 3. por colaborador */
   if(cbs.length){
     const cores = { 'Aberta':['#FCD34D','#D97706'], 'Em tratamento':['#4BA6EE','#0A4E83'], 'Atrasada':['#F87171','#B91C1C'], 'Concluída':['#4ADE80','#15803D'] }, sts = Object.keys(cores);
@@ -4328,7 +4787,7 @@ function capProx(tipo){ st.capIdx[tipo] = (st.capIdx[tipo] || 0) + 1; const el =
    A pasta fica lembrada neste navegador; os arquivos antigos são apagados conforme a retenção escolhida.
    Navegadores sem acesso a pastas (Firefox/Safari) baixam o arquivo para a pasta Downloads. */
 const BKP_CFG = 'eleve_bkp_cfg', BKP_PREFIXO = 'backup_eleve_ligacoes_';
-const BKP_TABELAS = ['empresas','vendedoras','metas','perfis','usuarios','usuario_vendedoras','clientes','followups','ligacoes','plano_acao','nc_tipos','nao_conformidades'];
+const BKP_TABELAS = ['empresas','vendedoras','metas','perfis','usuarios','usuario_vendedoras','clientes','followups','ligacoes','plano_acao','nc_subgrupos','nc_tipos','nao_conformidades'];
 const bkpSuporta = () => 'showDirectoryPicker' in window;
 function bkpCfg(){ let c = {}; try{ c = JSON.parse(localStorage.getItem(BKP_CFG)) || {}; }catch(e){} return { horas:24, manter:30, ...c }; }
 function bkpSalvarCfg(o){ try{ localStorage.setItem(BKP_CFG, JSON.stringify({ ...bkpCfg(), ...o })); }catch(e){} }
