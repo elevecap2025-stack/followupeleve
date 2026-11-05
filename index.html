@@ -450,6 +450,33 @@ body.dark .cob-r{background:var(--surf2)}
 .ml-m.atual{border-color:var(--or);box-shadow:0 0 0 2px var(--orl)}
 .ml-mt{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-bottom:5px}
 .ml-dia{margin:3px 0 6px;font-size:11px}.ml-real{font-size:12.5px}
+.ml-mt{display:flex;align-items:center;gap:6px}.ml-dbtn{margin-left:auto;border:0;background:none;color:var(--gr);font-size:10.5px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0;padding:0}
+.ml-dbtn:hover{text-decoration:underline}
+.mld-kpis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.mld-kpis span{background:var(--surf2);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--mut)}.mld-kpis b{color:var(--tx);margin-left:4px}
+.mld-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.mld-wd{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);text-align:center;padding:2px 0}
+.mld{border:1px solid var(--line);border-left:4px solid #16A34A;border-radius:10px;padding:7px 8px;background:var(--surf);min-width:0}
+.mld.vazio{border:0;background:none}
+.mld-h{display:flex;align-items:baseline;gap:5px}.mld-h b{font-size:15px;color:var(--tx)}.mld-h span{font-size:11px;color:var(--mut)}
+.mld-cfg{margin-left:auto;border:0;background:none;cursor:pointer;font-size:13px;opacity:.55;padding:0}.mld-cfg:hover{opacity:1}
+.mld-tag{font-size:10.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:15px;margin:1px 0 4px}.mld-tag span{font-weight:800}
+.mld input{width:100%;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:var(--surf);color:var(--tx);font-weight:700;font-size:13px}
+.mld input:disabled{background:transparent;color:var(--mut)}
+.mld-r{font-size:11.5px;margin-top:4px;white-space:nowrap}.mld-r em{font-style:normal;font-weight:800}.mld-r em.ok{color:var(--ok)}.mld-r em.warn{color:var(--warn)}.mld-r em.bad{color:var(--bad)}
+.mld.t-sabado{border-left-color:#0EA5E9}.mld.t-sabado .mld-tag span{color:#0369A1}
+.mld.t-domingo,.mld.t-feriado,.mld.t-folga{background:var(--surf2)}
+.mld.t-domingo{border-left-color:#94A3B8}.mld.t-feriado{border-left-color:#DC2626}.mld.t-feriado .mld-tag span{color:#B91C1C}
+.mld.t-folga{border-left-color:#F59E0B}.mld.t-folga .mld-tag span{color:#B45309}
+.mld.t-trabalho{border-left-color:#7C3AED}.mld.t-trabalho .mld-tag span{color:#6D28D9}
+.mld.aj input{border-color:var(--or);box-shadow:0 0 0 2px var(--orl)}
+.mld.hj{box-shadow:0 0 0 2px #127DCB}
+.lg-leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12px;color:var(--mut)}.lg-leg span{display:inline-flex;align-items:center;gap:5px}
+.lg-leg b{width:11px;height:11px;border-radius:3px;display:inline-block}.lg-leg b.off{background:rgba(148,163,184,.35)}
+.lg-leg i{width:18px;border-top:2.5px dashed #3B4A5A;display:inline-block}
+.lg-leg b.lg-t{border-radius:2px;width:4px;height:13px}.lg-t.util{background:#16A34A}.lg-t.sabado{background:#0EA5E9}.lg-t.domingo{background:#94A3B8}.lg-t.feriado{background:#DC2626}.lg-t.folga{background:#F59E0B}.lg-t.trabalho{background:#7C3AED}
+.lg-t.aj{background:var(--or)!important;width:11px!important}
+.ml-gsel{padding:5px 8px;border:1px solid var(--line);border-radius:8px;font-weight:600;background:var(--surf);color:var(--tx)}
+@media (max-width:760px){ .mld-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .mld-wd,.mld.vazio{display:none} }
 .ml-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}.ml-foot span{margin-right:auto}
 @media (max-width:1100px){ .ml-grid{grid-template-columns:repeat(4,minmax(0,1fr))} }
 @media (max-width:640px){ .ml-grid{grid-template-columns:repeat(2,minmax(0,1fr))} .ml-pad{margin-left:0} }
@@ -1090,9 +1117,26 @@ function telLinks(c, onclick){
   });
   return out.join(' ') || '<span class="muted small">Sem telefone cadastrado</span>';
 }
+/* ============================ CALENDÁRIO DE DIAS ÚTEIS (metas de ligação) ============================
+   Padrão: segunda a sábado são dias úteis; domingo e feriados nacionais não. O calendário (app_config · lig_calendario)
+   permite marcar feriado/folga em qualquer dia, marcar um sábado, domingo ou feriado como dia trabalhado e definir se o sábado conta. */
+/* Feriados nacionais oficiais (usa a mesma tabela do Calendário 5W2H, sem os pontos facultativos) */
+const _ferNac = {};
+function feriadosNac(y){ if(_ferNac[y]) return _ferNac[y]; const o = {}, f = feriados(y); Object.keys(f).forEach(k => { if(!f[k].fac && f[k].n !== 'Páscoa') o[k] = f[k].n; }); return _ferNac[y] = o; }
+const calCfg = () => db.ligCal || { sab:true, dias:{} };
+const diasNoMes = comp => new Date(Number(comp.slice(0,4)), Number(comp.slice(5,7)), 0).getDate();
+/* { util, tipo:'util'|'sabado'|'domingo'|'feriado'|'folga'|'trabalho', nome, manual } */
+function infoDia(iso){
+  const c = calCfg(), e = (c.dias||{})[iso], w = new Date(iso+'T12:00:00').getDay(), fn = feriadosNac(Number(iso.slice(0,4)))[iso];
+  const base = fn ? { util:false, tipo:'feriado', nome:fn } : w === 0 ? { util:false, tipo:'domingo', nome:'Domingo' }
+    : w === 6 ? { util: c.sab !== false, tipo:'sabado', nome:'Sábado' } : { util:true, tipo:'util', nome:'' };
+  if(!e) return base;
+  if(e.t === 'trabalho') return { util:true, tipo:'trabalho', nome: e.d || ('Dia trabalhado' + (base.nome ? ' · ' + base.nome : '')), manual:true, base };
+  return { util:false, tipo: e.t === 'folga' ? 'folga' : 'feriado', nome: e.d || (e.t === 'folga' ? 'Folga' : 'Feriado'), manual:true, base };
+}
 function diasUteis(comp, ate){ // ate = 'AAAA-MM-DD' opcional (inclusive)
-  const [y,m] = comp.split('-').map(Number); const last = new Date(y, m, 0).getDate(); let n = 0;
-  for(let d=1; d<=last; d++){ const iso = comp+'-'+pad(d); if(ate && iso>ate) break; const w = new Date(y,m-1,d).getDay(); if(w>0) n++; } // segunda a sábado
+  const nd = diasNoMes(comp); let n = 0;
+  for(let d=1; d<=nd; d++){ const iso = comp+'-'+pad(d); if(ate && iso > ate) break; if(infoDia(iso).util) n++; }
   return n;
 }
 const fmtDec = n => (n||0).toLocaleString('pt-BR', { maximumFractionDigits:1 });
@@ -1176,7 +1220,21 @@ const minhasEmps = () => [...new Set(minhas().map(x => (M.vend[x]||{}).empresa_i
 function curEmp(){ if(isAdmin()) return st.emp ? Number(st.emp) : null; const e = minhasEmps(); return e.length === 1 ? e[0] : (st.emp ? Number(st.emp) : null); }
 const empOk = id => { const e = curEmp(); if(e) return e === id; return isAdmin() || minhasEmps().includes(id); };
 function vendsVisiveis(soAtivas){ let l = db.vendedoras.filter(v => empOk(v.empresa_id)); if(!isAdmin()){ const mv = minhas(); l = l.filter(v => mv.includes(v.id)); } if(soAtivas) l = l.filter(v => v.ativa); return l.sort((a,b)=>a.nome.localeCompare(b.nome)); }
-function metaDe(vid, comp){ const m = db.metas.find(x => x.vendedora_id===vid && x.competencia===comp); if(m) return m.meta_ligacoes; const v = M.vend[vid]; return v ? (v.meta_mensal_padrao||0) : 0; }
+/* Meta do mês (base): a cadastrada no mês ou a padrão da vendedora */
+function metaBase(vid, comp){ const m = db.metas.find(x => x.vendedora_id===vid && x.competencia===comp); if(m) return m.meta_ligacoes; const v = M.vend[vid]; return v ? (v.meta_mensal_padrao||0) : 0; }
+/* Metas por dia: base ÷ dias úteis em cada dia útil; dias com meta lançada manualmente (app_config · lig_metas_dia:<id>) usam o valor lançado */
+function metaDiasMes(vid, comp, base, ov){
+  if(base == null) base = metaBase(vid, comp); if(!ov) ov = (db.ligMD && db.ligMD[vid]) || {};
+  const nd = diasNoMes(comp), du = diasUteis(comp), pd = du ? base / du : 0, out = [];
+  for(let d=1; d<=nd; d++){ const iso = comp+'-'+pad(d), info = infoDia(iso), o = ov[iso], tem = o !== undefined && o !== null && o !== '';
+    out.push({ iso, d, info, ov: tem ? Number(o) : null, meta: info.util ? (tem ? Number(o) : pd) : 0, pd: info.util ? pd : 0 }); }
+  return out;
+}
+const r1 = n => Math.round((n||0)*10)/10;
+/* Meta efetiva do mês = soma das metas dos dias */
+function metaDe(vid, comp){ return r1(metaDiasMes(vid, comp).reduce((a,x) => a + x.meta, 0)); }
+function metaDiaDe(vid, iso){ const x = metaDiasMes(vid, iso.slice(0,7)).find(y => y.iso === iso); return x ? x.meta : 0; }
+function metaAte(vid, comp, ate){ return metaDiasMes(vid, comp).filter(x => x.iso <= ate).reduce((a,x) => a + x.meta, 0); }
 const empNome = id => (M.emp[id]||{}).nome || '';
 const empTag = id => { const e = M.emp[id]; return e ? `<span class="tag" style="background:${e.cor}22;color:${e.cor}">${esc(e.nome)}</span>` : ''; };
 const vendNome = id => (M.vend[id]||{}).nome || '—';
@@ -1281,6 +1339,7 @@ async function carregarDados(){
   try{ db.perfis = await sbAll('perfis','select=*&order=nome'); }catch(e){ db.perfis = []; }
   await carregarPlanos();
   await carregarNC();
+  await carregarLigCfg();
 }
 
 async function carregarUV(){ try{ db.uv = await sbAll('usuario_vendedoras', isAdmin() ? 'select=*' : 'select=*&usuario_id=eq.'+db.me.id); }catch(e){ db.uv = []; if(isAdmin()) setTimeout(() => toast('Não foi possível ler os vínculos de login (usuario_vendedoras): '+e.message, 'err'), 900); } }
@@ -1600,7 +1659,7 @@ function pgPainel(){
   if(Number(p.dia) > nd) p.dia = '';
   const dia = p.dia ? comp+'-'+pad(p.dia) : null, noPer = iso => dia ? iso === dia : iso.slice(0,7) === comp;
   const perTxt = dia ? nomeDia(dia)+' '+fmtD(dia) : MESES[Number(comp.slice(5))-1]+'/'+comp.slice(0,4);
-  const diaUtil = dia ? new Date(dia+'T12:00:00').getDay() > 0 : false;
+  const diaInf = dia ? infoDia(dia) : null, diaUtil = dia ? diaInf.util : false;
   let vends = vendsVisiveis();
   if(p.vend) vends = vends.filter(v => String(v.id) === String(p.vend));
   const vIds = new Set(vends.map(v => v.id));
@@ -1610,12 +1669,12 @@ function pgPainel(){
   const fus = fuVisiveis().filter(f => vIds.has(f.vendedora_id) && clsOk(f.cliente_id, p.cls));
   const cliNovos = cliVisiveis().filter(c => c.data_cadastro && clsOk(c.id, p.cls));
   const novosMes = cliNovos.filter(c => noPer(c.data_cadastro)).length;
-  const mesCorr = comp === h.slice(0,7), domingo = new Date().getDay() === 0;
+  const mesCorr = comp === h.slice(0,7), hjInf = infoDia(h), domingo = !hjInf.util;
   const duTot = diasUteis(comp), duAte = comp < h.slice(0,7) ? duTot : comp > h.slice(0,7) ? 0 : diasUteis(comp, h);
   const linhas = vends.map((v,i) => {
     const l = ligs.filter(x => x.vendedora_id === v.id), metaMes = metaDe(v.id, comp), metaDia = duTot ? metaMes/duTot : 0, real = l.length;
-    const meta = dia ? (diaUtil ? metaDia : 0) : metaMes;
-    const esperado = dia ? meta : (duTot ? Math.round(metaMes * duAte / duTot) : 0);
+    const meta = dia ? metaDiaDe(v.id, dia) : metaMes;
+    const esperado = dia ? meta : Math.round(metaAte(v.id, comp, comp < h.slice(0,7) ? comp+'-99' : comp > h.slice(0,7) ? comp+'-00' : h));
     return { v, i, meta, metaMes, real, esperado, metaDia, hj: ligsMes.filter(x => x.vendedora_id === v.id && dataDeTs(x.inicio) === h).length, efet: l.filter(x => efetivo(x.resultado)).length, dur: l.reduce((s,x)=>s+(x.duracao_seg||0),0),
       fuOk: fus.filter(f => f.vendedora_id===v.id && f.status==='concluido' && f.concluido_em && noPer(dataDeTs(f.concluido_em))).length,
       fuPend: fus.filter(f => f.vendedora_id===v.id && f.status==='pendente' && f.data_prevista >= h).length,
@@ -1633,14 +1692,14 @@ function pgPainel(){
     <div class="f"><label>Ano</label><select onchange="st.painel.comp=this.value+'-'+(st.painel.comp||mesAtual()).slice(5);pgPainel()">${anos.map(y=>`<option ${Number(comp.slice(0,4))===y?'selected':''}>${y}</option>`).join('')}</select></div>
     ${verVendFiltro()?`<div class="f"><label>Vendedora</label><div style="display:flex;gap:6px"><select onchange="st.painel.vend=this.value;pgPainel()">${vendOptions(p.vend,'Todas')}</select><button class="btn sec" title="${(p.vend||'') === vendPadraoPainel() ? 'Esta é a seleção padrão ao abrir o painel' : 'Abrir o painel sempre com esta seleção'}" onclick="painelFixarPadrao()">${(p.vend||'') === vendPadraoPainel() ? '★' : '☆'}</button></div></div>`:''}
     ${clsFiltro(p.cls, "st.painel.cls=this.value;pgPainel()")}
-    <div class="f small muted" style="padding-bottom:9px">${dia ? (diaUtil ? 'Dia útil · meta do dia = meta do mês ÷ '+duTot : 'Domingo: sem meta') : 'Dias úteis (seg a sáb): '+duAte+' de '+duTot}</div>
+    <div class="f small muted" style="padding-bottom:9px">${dia ? (diaUtil ? (diaInf.tipo === 'util' ? 'Dia útil' : esc(diaInf.nome))+' · meta do dia = meta do mês ÷ '+duTot : esc(diaInf.nome)+': sem meta') : 'Dias úteis: '+duAte+' de '+duTot}</div>
     <button class="btn sec" onclick="pdfPainel()">📄 Gerar PDF</button>
   </div>
   ${capCard('vendas', { meta:T.meta, real:T.real, esp:T.esp, pm, md:T.md, hj:T.hj, atr:T.atr, efet:T.efet, duTot, duAte, mesCorr, dia:!!dia, domingo })}
   <div class="kpis">
     <div class="kpi"><div class="l">Ligações ${perDoTxt}</div><div class="v">${fmtN(T.real)}</div><div class="s">Meta ${dia?'do dia':''}: ${fmtDec(T.meta)}</div></div>
     <div class="kpi ${pm>=100?'ok':T.real>=T.esp?'info':'bad'}"><div class="l">% da meta</div><div class="v">${pm}%</div><div class="s">${dia ? perTxt : 'Ritmo esperado hoje: '+fmtN(T.esp)}</div></div>
-    <div class="kpi info"><div class="l">Meta diária</div><div class="v">${fmtDec(T.md)}</div><div class="s">${mesCorr ? (domingo ? 'Domingo: sem meta' : 'Hoje: '+fmtN(T.hj)+' ligação(ões)') : duTot+' dias úteis (seg a sáb)'}</div></div>
+    <div class="kpi info"><div class="l">Meta diária</div><div class="v">${fmtDec(T.md)}</div><div class="s">${mesCorr ? (domingo ? esc(hjInf.nome)+': sem meta' : 'Hoje: '+fmtN(T.hj)+' ligação(ões)') : duTot+' dias úteis (seg a sáb)'}</div></div>
     <div class="kpi ok"><div class="l">Contatos efetivos</div><div class="v">${fmtN(T.efet)}</div><div class="s">${pct(T.efet,T.real)}% das ligações atendidas</div></div>
     <div class="kpi dk"><div class="l">Tempo em ligação</div><div class="v">${fmtDur(T.dur)}</div><div class="s">Média ${fmtDur(T.real?T.dur/T.real:0)} por ligação</div></div>
     <div class="kpi bad click" onclick="st.plan.filtro='atrasados';ir('planejamento')"><div class="l">Follow-ups atrasados</div><div class="v">${fmtN(T.atr)}</div><div class="s">${fmtN(T.pend)} pendentes a partir de hoje</div></div>
@@ -1649,7 +1708,7 @@ function pgPainel(){
   </div>
   <div class="grid g2">
     <div class="card"><h3>Realizado x Meta por vendedora · ${perTxt}</h3><div class="chartbox"><canvas id="ch1"></canvas></div></div>
-    <div class="card"><h3>Ligações por dia x Meta acumulada · ${MESES[Number(comp.slice(5))-1]}/${comp.slice(0,4)}</h3><div class="chartbox"><canvas id="ch2"></canvas></div></div>
+    <div class="card"><h3 style="flex-wrap:wrap;gap:8px">Ligações x Meta · ${MESES[Number(comp.slice(5))-1]}/${comp.slice(0,4)}<span class="seg" style="margin-left:auto;font-size:12.5px"><button class="${(p.g2||'dia')==='dia'?'on':''}" onclick="st.painel.g2='dia';pgPainel()">Por dia</button><button class="${p.g2==='acum'?'on':''}" onclick="st.painel.g2='acum';pgPainel()">Acumulado</button></span></h3><div class="chartbox"><canvas id="ch2"></canvas></div>${ligLegenda((p.g2||'dia')==='dia', p.g2==='acum')}</div>
     <div class="card"><h3>Resultado das ligações · ${perTxt}</h3><div class="chartbox"><canvas id="ch3"></canvas></div></div>
     <div class="card"><h3>Follow-ups por vendedora</h3><div class="chartbox"><canvas id="ch4"></canvas></div></div>
   </div>
@@ -1668,7 +1727,7 @@ function pgPainel(){
     <td class="num">${fmtDec(x.esperado)}</td><td>${sit}</td><td class="num">${fmtN(x.efet)}</td><td class="num">${x.fuAtr?`<span class="tag bad">${x.fuAtr}</span>`:'0'}</td></tr>`; }).join('') || '<tr><td colspan="12" class="empty">Nenhuma vendedora cadastrada.</td></tr>'}
   </tbody></table></div></div>`;
 
-  st.pdfPainel = { comp, dia, perTxt, T, pm, novosMes, duAte, duTot, mesCorr, domingo, anivN: anivDoDia(h).length, anivLig: anivDoDia(h).filter(c=>ligouHoje(c.id)).length, linhas: ord, anoN };
+  st.pdfPainel = { comp, dia, perTxt, T, pm, novosMes, duAte, duTot, mesCorr, domingo, hjNome: hjInf.nome, anivN: anivDoDia(h).length, anivLig: anivDoDia(h).filter(c=>ligouHoje(c.id)).length, linhas: ord, anoN };
   if(typeof Chart === 'undefined') return;
   if(!Chart.registry.plugins.get('rotulos')) Chart.register(rotulosPlugin);
   Chart.defaults.color = document.body.classList.contains('dark') ? '#AEB6C1' : '#4B5563'; Chart.defaults.borderColor = document.body.classList.contains('dark') ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.1)';
@@ -1679,17 +1738,11 @@ function pgPainel(){
       { label:'Meta', data: linhas.map(x=>Math.round(x.meta*10)/10), backgroundColor:'#3B4A5A', borderRadius:6 } ] },
     options:{ maintainAspectRatio:false, layout:pad20, plugins:{ rotulos:ROT, tooltip:{ callbacks:{ afterBody: it => { const x = linhas[it[0].dataIndex]; return 'Atingimento: '+pct(x.real,x.meta)+'%'; } } } }, scales:{ y:{ beginAtZero:true, grace:'8%' } } } }));
 
-  const labels = [], dsReal = [], dsMeta = [], dsDia = [];
-  for(let d=1; d<=nd; d++){ const iso = comp+'-'+pad(d); labels.push(pad(d)); dsMeta.push(duTot ? Math.round(T.metaMes*diasUteis(comp, iso)/duTot) : 0); dsReal.push(iso > h ? null : ligsMes.filter(l => dataDeTs(l.inicio) <= iso).length); dsDia.push(iso > h ? null : ligsMes.filter(l => dataDeTs(l.inicio) === iso).length); }
-  const porVend = linhas.length > 1 && linhas.length <= 8 ? linhas.map(x => ({ type:'line', yAxisID:'y1', semRotulo:true, order:1, label:x.v.nome, data: labels.map((_,i) => { const iso = comp+'-'+pad(i+1); return iso>h ? null : ligsMes.filter(l => l.vendedora_id===x.v.id && dataDeTs(l.inicio) <= iso).length; }), borderColor:cor(x), backgroundColor:cor(x), borderWidth:1.5, pointRadius:0, tension:.2, borderDash:[4,3] })) : [];
-  st.charts.push(new Chart($('ch2'), { type:'bar', data:{ labels, datasets:[
-      { type:'line', yAxisID:'y1', semRotulo:true, order:0, label:'Realizado acumulado', data: dsReal, borderColor:'#16A34A', backgroundColor:'#16A34A', tension:.2, pointRadius:0, borderWidth:3 },
-      { type:'line', yAxisID:'y1', semRotulo:true, order:0, label:'Meta acumulada', data: dsMeta, borderColor:'#3B4A5A', backgroundColor:'#3B4A5A', borderDash:[6,4], pointRadius:0, borderWidth:2 },
-      ...porVend,
-      { type:'bar', yAxisID:'y', order:2, label:'Ligações no dia', data: dsDia, backgroundColor:'#127DCB', borderRadius:4, maxBarThickness:22 } ] },
-    options:{ maintainAspectRatio:false, layout:pad20, interaction:{ mode:'index', intersect:false },
-      scales:{ y:{ beginAtZero:true, grace:'10%', position:'left', title:{ display:true, text:'Ligações no dia' } }, y1:{ beginAtZero:true, position:'right', grid:{ drawOnChartArea:false }, title:{ display:true, text:'Acumulado' } } },
-      plugins:{ rotulos:{ on:true, fmt:fmtN }, legend:{ labels:{ boxWidth:12 } } } } }));
+  /* Ligações x meta no mês: por dia (colunas = ligações do dia, linha = meta do dia) ou acumulado (colunas = realizado acumulado, linha = meta acumulada) */
+  { const mdv = linhas.map(x => metaDiasMes(x.v.id, comp)), cnt = {}; ligsMes.forEach(l => { const d = dataDeTs(l.inicio); cnt[d] = (cnt[d]||0) + 1; });
+    const dias = []; for(let d=1; d<=nd; d++){ const iso = comp+'-'+pad(d), info = infoDia(iso); dias.push({ iso, d, info, real: cnt[iso] || 0, meta: mdv.reduce((a,m) => a + m[d-1].meta, 0) }); }
+    const ac = p.g2 === 'acum';
+    st.charts.push(chartLigPer('ch2', ligAgrupar(dias, 'dia', comp.slice(5), comp.slice(0,4), ac), { acum:ac, degrau:!ac })); }
 
   const rc = RESULTADOS.map(r => ligs.filter(l => l.resultado === r).length);
   st.charts.push(new Chart($('ch3'), { type:'doughnut', data:{ labels: RESULTADOS.map((r,i) => r+' ('+rc[i]+')'), datasets:[{ data: rc, backgroundColor:['#16A34A','#2563EB','#F59E0B','#9CA3AF','#6B7280','#DC2626'] }] },
@@ -1730,59 +1783,221 @@ function ligMesAMes(vends, ano){
     const meta = vends.filter(v => v.ativa || lm.some(l => l.vendedora_id === v.id)).reduce((a,v) => a + (metaDe(v.id, comp) || 0), 0);
     return { comp, real: lm.length, meta, efet: lm.filter(l => efetivo(l.resultado)).length }; });
 }
-function chartLigMeta(canvas, dados, ano){
-  const h = hoje().slice(0,7), pc = dados.map(d => d.meta ? Math.round(d.real / d.meta * 100) : null);
+/* Gráfico realizado x meta por período (dia, semana, mês, trimestre). itens: [{ lab, tip, real, meta, atual, fut, off }] · rótulos só nas barras */
+function chartLigPer(canvas, itens, o){
+  o = o || {};
+  const pc = itens.map(d => d.meta ? Math.round((d.real||0) / d.meta * 100) : null), poucas = itens.length <= 16;
+  const corB = (d, j) => d.off && !d.meta ? '#94A3B8' : !d.meta ? '#127DCB' : pc[j] >= 100 ? '#16A34A' : d.atual ? '#127DCB' : pc[j] >= 80 ? '#F59E0B' : '#DC2626';
   const rot = { id:'rotLM', afterDatasetsDraw(ch){ const c = ch.ctx, m = ch.getDatasetMeta(1); c.save(); c.textAlign = 'center';
-    m.data.forEach((el, j) => { const d = dados[j]; if(!d.real && !d.meta) return;
-      c.font = "800 11px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = getComputedStyle(document.body).getPropertyValue('--tx').trim() || '#1F2328'; c.textBaseline = 'bottom';
+    m.data.forEach((el, j) => { const d = itens[j]; if(!d.real) { if(!(poucas && d.meta && !d.fut && pc[j] != null)) return; }
+      c.font = `800 ${poucas ? 11 : 10}px 'Segoe UI',system-ui,Arial,sans-serif`; c.fillStyle = getComputedStyle(document.body).getPropertyValue('--tx').trim() || '#1F2328'; c.textBaseline = 'bottom';
       if(d.real) c.fillText(fmtN(d.real), el.x, el.y - 4);
-      if(pc[j] != null && d.comp <= h){ const t = pc[j] + '%', w = c.measureText(t).width + 8, cor = pc[j] >= 100 ? '#15803D' : pc[j] >= 80 ? '#B45309' : '#B91C1C';
-        c.font = "700 10px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = cor; c.textBaseline = 'bottom'; c.fillText(t, el.x, el.y - (d.real ? 18 : 4)); } }); c.restore(); } };
-  return new Chart($(canvas), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[
-      { type:'line', label:'Meta', data: dados.map(d => d.meta || null), borderColor:'#3B4A5A', backgroundColor:'#3B4A5A', borderDash:[6,4], borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#fff', pointBorderWidth:2, tension:0, spanGaps:true, order:0 },
-      { type:'bar', label:'Ligações realizadas', data: dados.map(d => d.real), backgroundColor: dados.map((d,j) => !d.meta ? '#127DCB' : pc[j] >= 100 ? '#16A34A' : d.comp === h ? '#127DCB' : pc[j] >= 80 ? '#F59E0B' : '#DC2626'),
-        borderRadius:6, borderSkipped:false, maxBarThickness:38, order:1 } ] },
-    options:{ maintainAspectRatio:false, layout:{ padding:{ top:34 } }, interaction:{ mode:'index', intersect:false },
-      plugins:{ rotulos:{ on:false }, rotDash:{ on:false }, legend:{ position:'top', align:'end', labels:{ usePointStyle:true, boxWidth:10 } },
-        tooltip:{ callbacks:{ label: it => it.dataset.type === 'line' ? ` Meta: ${fmtN(it.raw || 0)}` : ` Realizado: ${fmtN(it.raw)}`, footer: it => { const d = dados[it[0].dataIndex]; return d.meta ? `Atingimento: ${pct(d.real, d.meta)}% · faltam ${fmtN(Math.max(0, d.meta - d.real))}` : 'Sem meta'; } } } },
-      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ beginAtZero:true, grace:'18%', ticks:{ precision:0 } } } }, plugins:[rot] });
+      if(poucas && pc[j] != null && !d.fut){ const t = pc[j] + '%', cor = pc[j] >= 100 ? '#15803D' : pc[j] >= 80 ? '#B45309' : '#B91C1C';
+        c.font = "700 10px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = cor; c.fillText(t, el.x, el.y - (d.real ? 18 : 4)); } }); c.restore(); } };
+  const sombra = { id:'sombraLM', beforeDatasetsDraw(ch){ if(!itens.some(d => d.off)) return; const a = ch.chartArea, x = ch.scales.x, c = ch.ctx, w = itens.length > 1 ? Math.abs(x.getPixelForValue(1) - x.getPixelForValue(0)) : a.right - a.left;
+    c.save(); c.fillStyle = document.body.classList.contains('dark') ? 'rgba(148,163,184,.10)' : 'rgba(148,163,184,.16)';
+    itens.forEach((d, i) => { if(d.off) c.fillRect(x.getPixelForValue(i) - w/2, a.top, w, a.bottom - a.top); }); c.restore(); } };
+  return new Chart($(canvas), { type:'bar', data:{ labels: itens.map(d => d.lab), datasets:[
+      { type:'line', label: o.acum ? 'Meta acumulada' : 'Meta', data: itens.map(d => d.meta ? r1(d.meta) : null), borderColor:'#3B4A5A', backgroundColor:'#3B4A5A', borderDash:[6,4], borderWidth:2.5,
+        pointRadius: poucas ? 4 : 0, pointHoverRadius:4, pointBackgroundColor:'#fff', pointBorderWidth:2, tension:0, spanGaps:true, stepped: o.degrau ? 'middle' : false, order:0 },
+      { type:'bar', label: o.acum ? 'Realizado acumulado' : 'Ligações realizadas', data: itens.map(d => d.real), backgroundColor: itens.map(corB),
+        borderRadius: poucas ? 6 : 3, borderSkipped:false, maxBarThickness: poucas ? 38 : 22, order:1 } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top: poucas ? 34 : 20 } }, interaction:{ mode:'index', intersect:false },
+      plugins:{ rotulos:{ on:false }, rotDash:{ on:false }, legend:{ display:false },
+        tooltip:{ callbacks:{ title: it => { const d = itens[it[0].dataIndex]; return d.tip || (Array.isArray(d.lab) ? d.lab.join(' ') : d.lab); },
+          label: it => it.dataset.type === 'line' ? ` ${it.dataset.label}: ${fmtDec(it.raw || 0)}` : ` ${it.dataset.label}: ${fmtN(it.raw)}`,
+          footer: it => { const d = itens[it[0].dataIndex]; return d.meta ? `Atingimento: ${pct(d.real||0, d.meta)}% · faltam ${fmtDec(Math.max(0, d.meta - (d.real||0)))}` : (d.off ? 'Sem expediente · sem meta' : 'Sem meta'); } } } },
+      scales:{ x:{ grid:{ display:false }, ticks:{ font:{ weight:'600', size: poucas ? 12 : 10 }, autoSkip: itens.length > 31, maxRotation:0 } }, y:{ beginAtZero:true, grace:'18%', ticks:{ precision:0 } } } }, plugins:[sombra, rot] });
+}
+function ligLegenda(off, acum){
+  const it = [['#16A34A','Meta batida'],['#F59E0B','80% a 99%'],['#DC2626','Abaixo de 80%'],['#127DCB','Período atual']];
+  return `<div class="lg-leg">${it.map(([c,t]) => `<span><b style="background:${c}"></b>${t}</span>`).join('')}<span><i></i>${acum ? 'Meta acumulada' : 'Meta'}</span>${off ? '<span><b class="off"></b>Sem expediente (domingo, feriado, folga)</span>' : ''}</div>`;
+}
+function chartLigMeta(canvas, dados, ano){
+  const h = hoje().slice(0,7);
+  return chartLigPer(canvas, dados.map((d, i) => ({ lab: MESES[i].slice(0,3), tip: MESES[i] + '/' + ano, real: d.real, meta: d.meta, atual: d.comp === h, fut: d.comp > h })));
+}
+const INI_DIA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+/* Todos os dias do ano com meta e realizado da vendedora */
+function ligDiasAno(v, ano){
+  const cnt = {}; ligVisiveis().forEach(l => { if(l.vendedora_id !== v.id) return; const d = dataDeTs(l.inicio); if(d.slice(0,4) === String(ano)) cnt[d] = (cnt[d]||0) + 1; });
+  const out = []; for(let m=1; m<=12; m++) metaDiasMes(v.id, ano + '-' + pad(m)).forEach(x => out.push(Object.assign(x, { real: cnt[x.iso] || 0 })));
+  return out;
+}
+function ligAgrupar(dias, gran, mes, ano, acum){
+  const h = hoje(), grupos = [], mp = {};
+  if(gran === 'dia') dias.filter(x => x.iso.slice(5,7) === mes).forEach(x => grupos.push({ dias:[x], lab:[pad(x.d), INI_DIA[new Date(x.iso+'T12:00:00').getDay()].slice(0,1)],
+    tip: INI_DIA[new Date(x.iso+'T12:00:00').getDay()] + ' ' + fmtD(x.iso) + (x.info.tipo !== 'util' ? ' · ' + x.info.nome : ''), off: !x.info.util }));
+  else {
+    const key = gran === 'mes' ? x => x.iso.slice(5,7) : gran === 'tri' ? x => String(Math.floor((Number(x.iso.slice(5,7)) - 1) / 3) + 1) : x => semanaIni(x.iso);
+    dias.forEach(x => { const k = key(x); if(!mp[k]){ mp[k] = { k, dias:[] }; grupos.push(mp[k]); } mp[k].dias.push(x); });
+    grupos.forEach(g => { const a = g.dias[0].iso, b = g.dias[g.dias.length-1].iso;
+      g.lab = gran === 'mes' ? MESES[Number(g.k)-1].slice(0,3) : gran === 'tri' ? g.k + 'º tri' : fmtDM(a);
+      g.tip = gran === 'mes' ? MESES[Number(g.k)-1] + '/' + ano : gran === 'tri' ? g.k + 'º trimestre/' + ano : 'Semana de ' + fmtDM(a) + ' a ' + fmtDM(b); });
+  }
+  let ar = 0, am = 0;
+  return grupos.map(g => { const fut = g.dias[0].iso > h, real = g.dias.reduce((s,x) => s + x.real, 0), meta = g.dias.reduce((s,x) => s + x.meta, 0);
+    const it = { lab:g.lab, tip:g.tip, off:!!g.off, atual: g.dias.some(x => x.iso === h), fut, real, meta };
+    if(acum){ am += meta; ar += real; it.meta = am; it.real = fut ? null : ar; }
+    return it; });
 }
 function pgMetasLig(){
   const s = st.ml || (st.ml = { vend: vendPadraoPainel(), ano: new Date().getFullYear(), todas:false });
   const vis = vendsVisiveis(), adm = isAdmin(), anoAt = new Date().getFullYear();
+  if(!s.modo) s.modo = 'mes'; if(!s.gran) s.gran = 'mes';
   if(s.vend && !vis.some(v => String(v.id) === String(s.vend))) s.vend = '';
   const v = s.vend ? M.vend[Number(s.vend)] : null, ano = Number(s.ano), dados = v ? ligMesAMes([v], ano) : [];
+  if(!s.mes) s.mes = ano === anoAt ? pad(new Date().getMonth()+1) : '01';
+  const comp = ano + '-' + s.mes;
   const tReal = dados.reduce((a,d) => a + d.real, 0), tMeta = dados.reduce((a,d) => a + d.meta, 0);
   const lista = s.todas ? vis : vis.filter(x => /joyce/i.test(x.nome) || String(x.id) === String(s.vend));
+  const segB = (campo, val, txt) => `<button class="${s[campo]===val?'on':''}" onclick="st.ml.${campo}='${val}';pgMetasLig()">${txt}</button>`;
+  const mesSel = `<select onchange="st.ml.mes=this.value;pgMetasLig()">${MESES.map((m,i) => `<option value="${pad(i+1)}" ${s.mes===pad(i+1)?'selected':''}>${m}</option>`).join('')}</select>`;
+  const aviso = db.ligCfgOk ? '' : `<div class="box-info" style="margin-bottom:12px">Para lançar metas por dia e editar o calendário (feriados, folgas e dias trabalhados), execute o <b>19_nc_subgrupos_ciencia.sql</b> no Supabase (cria a tabela app_config) e clique em ↻ Atualizar.</div>`;
   $('content').innerHTML = `
   <div class="filters">
     <div class="f"><label>Vendedora</label><select onchange="st.ml.vend=this.value;pgMetasLig()"><option value="">Selecione…</option>${vis.map(x => `<option value="${x.id}" ${String(x.id)===String(s.vend)?'selected':''}>${esc(x.nome)}${x.ativa?'':' (inativa)'}</option>`).join('')}</select></div>
     <div class="f"><label>Ano</label><select onchange="st.ml.ano=Number(this.value);pgMetasLig()">${[anoAt-1, anoAt, anoAt+1].map(y => `<option ${y===ano?'selected':''}>${y}</option>`).join('')}</select></div>
-    <div class="f grow small muted" style="padding-bottom:9px">Meta de ligações por mês. Mês em branco usa a meta padrão da vendedora. ${adm ? '' : 'Somente o administrador pode alterar as metas.'}</div>
+    <div class="f"><label>Lançamento</label><span class="seg">${segB('modo','mes','📆 Por mês')}${segB('modo','dia','📅 Por dia')}</span></div>
+    ${s.modo === 'dia' ? `<div class="f"><label>Mês</label>${mesSel}</div>` : ''}
+    <div class="f grow small muted" style="padding-bottom:9px">${s.modo === 'dia' ? 'Meta do dia = meta do mês ÷ dias úteis. Digite um valor no dia para ajustar; o total do mês passa a ser a soma dos dias.' : 'Meta de ligações por mês. Mês em branco usa a meta padrão da vendedora.'} ${adm ? '' : 'Somente o administrador pode alterar as metas.'}</div>
+    <button class="btn sec" onclick="mlCalendario()">🗓️ Feriados e dias úteis</button>
     <button class="btn sec" onclick="ir('painel')">📊 Painel de Metas</button>
   </div>
-  ${v ? `<div class="card ml-card">
+  ${aviso}
+  ${!v ? '<div class="card empty">Selecione a vendedora para definir as metas.</div>' : s.modo === 'dia' ? mlDiaHtml(v, comp, adm) : `<div class="card ml-card">
     <div class="ml-hd"><div class="ml-av">${esc((v.nome[0]||'?').toUpperCase())}</div><div><div class="ml-nm">${esc(v.nome)}</div><div class="small muted">${esc(empNome(v.empresa_id))} · ${ano}</div></div>
       <div class="ml-pad"><label>Meta padrão / mês</label><input type="number" min="0" id="mlPad" value="${v.meta_mensal_padrao||0}" ${adm?'':'disabled'} oninput="mlAtualiza()"></div></div>
-    <div class="ml-grid">${dados.map((d,i) => { const r = db.metas.find(x => x.vendedora_id === v.id && x.competencia === d.comp), p = d.meta ? pct(d.real, d.meta) : 0, fut = d.comp > hoje().slice(0,7);
-      return `<div class="ml-m ${d.comp === hoje().slice(0,7) ? 'atual' : ''}"><div class="ml-mt">${MESES[i]}</div>
+    <div class="ml-grid">${dados.map((d,i) => { const r = db.metas.find(x => x.vendedora_id === v.id && x.competencia === d.comp), p = d.meta ? pct(d.real, d.meta) : 0, fut = d.comp > hoje().slice(0,7), aj = r1(d.meta) !== r1(metaBase(v.id, d.comp));
+      return `<div class="ml-m ${d.comp === hoje().slice(0,7) ? 'atual' : ''}"><div class="ml-mt">${MESES[i]}<button class="ml-dbtn" title="Ver e lançar as metas por dia" onclick="st.ml.modo='dia';st.ml.mes='${pad(i+1)}';pgMetasLig()">📅 por dia</button></div>
         <input type="number" min="0" class="mlIn" data-comp="${d.comp}" value="${r ? r.meta_ligacoes : ''}" placeholder="${v.meta_mensal_padrao||0}" ${adm?'':'disabled'} oninput="mlAtualiza()">
         <div class="ml-dia small muted" data-comp="${d.comp}">${metaDiaTxt(r ? r.meta_ligacoes : (v.meta_mensal_padrao||0), d.comp)}</div>
+        ${aj ? `<div class="small" style="color:var(--or);font-weight:700;margin:-3px 0 5px" title="Há dias com meta ajustada manualmente">✎ Soma dos dias: ${fmtDec(d.meta)}</div>` : ''}
         <div class="ml-real">${fut ? '<span class="muted">—</span>' : `<b>${fmtN(d.real)}</b> realizadas`}</div>
         ${fut || !d.meta ? '' : `<div class="prog ${p>=100?'ok':''}" style="margin-top:4px"><div style="width:${Math.min(p,100)}%"></div></div><div class="small" style="text-align:right;font-weight:700;color:${p>=100?'var(--ok)':p>=80?'var(--warn)':'var(--bad)'}">${p}%</div>`}</div>`; }).join('')}</div>
-    <div class="ml-foot"><span>Total ${ano}: <b>${fmtN(tReal)}</b> realizadas de <b>${fmtN(tMeta)}</b> (${pct(tReal, tMeta)}%)</span>
+    <div class="ml-foot"><span>Total ${ano}: <b>${fmtN(tReal)}</b> realizadas de <b>${fmtDec(tMeta)}</b> (${pct(tReal, tMeta)}%)</span>
       ${adm ? `<button class="btn sec" onclick="document.querySelectorAll('.mlIn').forEach(i=>i.value='');mlAtualiza()">Limpar meses (usar padrão)</button><button class="btn" id="mlOk" onclick="mlSalvar(${v.id})">💾 Salvar metas</button>` : ''}</div>
-  </div>
-  <div class="card" style="margin-top:14px"><h3>📈 Ligações realizadas x Meta · mês a mês · ${esc(v.nome)} · ${ano}</h3><div class="chartbox" style="height:300px"><canvas id="chML"></canvas></div></div>`
-  : '<div class="card empty">Selecione a vendedora para definir as metas.</div>'}
+  </div>`}
+  ${v ? `<div class="card" style="margin-top:14px"><h3 style="flex-wrap:wrap;gap:8px">📈 Ligações realizadas x Meta · ${esc(v.nome)} · ${s.gran === 'dia' ? MESES[Number(s.mes)-1] + '/' : ''}${ano}
+      <span style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px">
+        <span class="seg">${segB('gran','dia','Dia')}${segB('gran','semana','Semana')}${segB('gran','mes','Mês')}${segB('gran','tri','Trimestre')}</span>
+        ${s.gran === 'dia' ? mesSel.replace('<select', '<select class="ml-gsel"') : ''}
+        <label class="small" style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" ${s.acum?'checked':''} onchange="st.ml.acum=this.checked;pgMetasLig()"> Acumulado</label></span></h3>
+    <div class="chartbox" style="height:320px"><canvas id="chML"></canvas></div>${ligLegenda(s.gran === 'dia' && !s.acum, s.acum)}</div>` : ''}
   <div class="card" style="margin-top:14px"><h3>Vendedoras<label class="small" style="margin-left:auto;font-weight:600;display:flex;gap:6px;align-items:center"><input type="checkbox" ${s.todas?'checked':''} onchange="st.ml.todas=this.checked;pgMetasLig()"> Mostrar todas</label></h3>
     <div class="tbl-wrap" style="border:0"><table><thead><tr><th>Vendedora</th><th>Empresa</th><th class="num">Meta padrão</th><th class="num">Meta ${MESES[new Date().getMonth()]}</th><th class="num">Realizado no mês</th><th>Atingimento</th><th></th></tr></thead><tbody>
     ${lista.map(x => { const comp = mesAtual(), m = metaDe(x.id, comp), r = ligVisiveis().filter(l => l.vendedora_id === x.id && dataDeTs(l.inicio).slice(0,7) === comp).length, p = pct(r, m);
-      return `<tr><td><b>${esc(x.nome)}</b></td><td>${empTag(x.empresa_id)}</td><td class="num">${fmtN(x.meta_mensal_padrao||0)}</td><td class="num">${fmtN(m)}</td><td class="num"><b>${fmtN(r)}</b></td>
+      return `<tr><td><b>${esc(x.nome)}</b></td><td>${empTag(x.empresa_id)}</td><td class="num">${fmtN(x.meta_mensal_padrao||0)}</td><td class="num">${fmtDec(m)}</td><td class="num"><b>${fmtN(r)}</b></td>
         <td><div style="display:flex;gap:8px;align-items:center"><div class="prog ${p>=100?'ok':''}" style="flex:1"><div style="width:${Math.min(p,100)}%"></div></div><b>${m ? p + '%' : '—'}</b></div></td>
         <td class="act"><button class="btn sec sm" onclick="st.ml.vend='${x.id}';pgMetasLig();window.scrollTo(0,0)">🎯 Metas</button></td></tr>`; }).join('') || '<tr><td colspan="7" class="empty">Nenhuma vendedora.</td></tr>'}
     </tbody></table></div></div>`;
-  if(v && typeof Chart !== 'undefined') st.charts.push(chartLigMeta('chML', dados, ano));
+  if(v && typeof Chart !== 'undefined') st.charts.push(chartLigPer('chML', ligAgrupar(ligDiasAno(v, ano), s.gran, s.mes, ano, s.acum), { acum:s.acum, degrau: s.gran === 'dia' && !s.acum }));
+}
+/* Lançamento por dia: calendário do mês com o tipo de cada dia, meta (automática ou ajustada) e realizado */
+function mlDiaHtml(v, comp, adm){
+  const h = hoje(), r = db.metas.find(x => x.vendedora_id === v.id && x.competencia === comp), base = metaBase(v.id, comp);
+  const real = {}; ligVisiveis().forEach(l => { if(l.vendedora_id === v.id){ const d = dataDeTs(l.inicio); if(d.slice(0,7) === comp) real[d] = (real[d]||0) + 1; } });
+  const dias = metaDiasMes(v.id, comp), ini = (new Date(comp+'-01T12:00:00').getDay() + 6) % 7, ed = adm && db.ligCfgOk;
+  const TAG = { util:'', sabado:'Sábado', domingo:'Domingo', feriado:'Feriado', folga:'Folga', trabalho:'Trabalhado' };
+  const cel = x => { const rl = real[x.iso] || 0, fut = x.iso > h, p = x.meta ? pct(rl, x.meta) : null, w = new Date(x.iso+'T12:00:00').getDay();
+    return `<div class="mld t-${x.info.tipo} ${x.iso === h ? 'hj' : ''} ${x.ov != null && x.info.util ? 'aj' : ''}">
+      <div class="mld-h"><b>${pad(x.d)}</b><span>${INI_DIA[w]}</span>${ed ? `<button class="mld-cfg" title="Definir este dia (feriado, folga, dia trabalhado)" onclick="mlDiaCfg('${x.iso}')">⚙</button>` : ''}</div>
+      <div class="mld-tag" title="${esc(x.info.nome)}">${x.info.tipo === 'util' ? '&nbsp;' : `<span>${TAG[x.info.tipo]}</span>${x.info.tipo === 'feriado' || x.info.tipo === 'folga' || x.info.tipo === 'trabalho' ? ' ' + esc(x.info.nome.replace(/^Dia trabalhado · /,'')) : ''}`}</div>
+      <input type="number" min="0" step="0.5" class="mldIn" data-iso="${x.iso}" value="${x.ov != null && x.info.util ? x.ov : ''}" placeholder="${x.info.util ? fmtDec(x.pd) : '—'}" ${ed && x.info.util ? '' : 'disabled'} oninput="mlDiaAtualiza(${v.id},'${comp}')">
+      <div class="mld-r">${fut ? '<span class="muted">—</span>' : `<b>${fmtN(rl)}</b> realiz.${p != null ? ` <em class="${p>=100?'ok':p>=80?'warn':'bad'}">${p}%</em>` : ''}`}</div></div>`; };
+  const tReal = Object.values(real).reduce((a,b) => a+b, 0), tMeta = dias.reduce((a,x) => a + x.meta, 0), du = diasUteis(comp);
+  return `<div class="card ml-card">
+    <div class="ml-hd"><div class="ml-av">${esc((v.nome[0]||'?').toUpperCase())}</div><div><div class="ml-nm">${esc(v.nome)}</div><div class="small muted">${esc(empNome(v.empresa_id))} · ${MESES[Number(comp.slice(5))-1]}/${comp.slice(0,4)}</div></div>
+      <div class="ml-pad"><label>Meta do mês</label><input type="number" min="0" id="mlBase" value="${r ? r.meta_ligacoes : ''}" placeholder="${v.meta_mensal_padrao||0}" ${adm?'':'disabled'} oninput="mlDiaAtualiza(${v.id},'${comp}')"></div></div>
+    <div class="mld-kpis"><span>Dias úteis <b>${du}</b></span><span>Meta/dia automática <b id="mldPd">${fmtDec(du ? base/du : 0)}</b></span><span>Total do mês (soma dos dias) <b id="mldTot">${fmtDec(tMeta)}</b></span><span>Realizado <b>${fmtN(tReal)}</b> (${pct(tReal, tMeta)}%)</span></div>
+    <div class="mld-grid">${['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'].map(d => `<div class="mld-wd">${d}</div>`).join('')}${'<div class="mld vazio"></div>'.repeat(ini)}${dias.map(cel).join('')}</div>
+    <div class="lg-leg" style="margin-top:10px"><span><b class="lg-t util"></b>Dia útil</span><span><b class="lg-t sabado"></b>Sábado</span><span><b class="lg-t domingo"></b>Domingo</span><span><b class="lg-t feriado"></b>Feriado</span><span><b class="lg-t folga"></b>Folga</span><span><b class="lg-t trabalho"></b>Dia trabalhado (extra)</span><span><b class="lg-t aj"></b>Meta ajustada no dia</span></div>
+    <div class="ml-foot"><span class="small muted">${ed ? 'Clique em ⚙ para marcar feriado, folga ou dia trabalhado (vale para todas as vendedoras). Dia em branco usa a meta automática.' : adm ? '' : 'Somente o administrador pode alterar as metas e o calendário.'}</span>
+      ${ed ? `<button class="btn sec" onclick="document.querySelectorAll('.mldIn').forEach(i=>i.value='');mlDiaAtualiza(${v.id},'${comp}')">Limpar ajustes dos dias</button><button class="btn" id="mlOk" onclick="mlDiaSalvar(${v.id},'${comp}')">💾 Salvar metas do mês</button>` : adm ? `<button class="btn" id="mlOk" onclick="mlDiaSalvar(${v.id},'${comp}')">💾 Salvar meta do mês</button>` : ''}</div>
+  </div>`;
+}
+function mlDiaOvTmp(){ const o = {}; document.querySelectorAll('.mldIn').forEach(i => { if(i.value !== '') o[i.dataset.iso] = Number(i.value); }); return o; }
+function mlDiaAtualiza(vid, comp){
+  const b = $('mlBase'), base = b.value === '' ? (M.vend[vid].meta_mensal_padrao || 0) : Number(b.value) || 0, dias = metaDiasMes(vid, comp, base, mlDiaOvTmp()), du = diasUteis(comp);
+  document.querySelectorAll('.mldIn').forEach(i => { const x = dias.find(y => y.iso === i.dataset.iso); if(x && x.info.util) i.placeholder = fmtDec(x.pd); i.closest('.mld').classList.toggle('aj', i.value !== ''); });
+  $('mldPd').textContent = fmtDec(du ? base/du : 0); $('mldTot').textContent = fmtDec(dias.reduce((a,x) => a + x.meta, 0));
+}
+async function cfgSet(chave, valor){
+  try{ await sbFetch('/rest/v1/app_config?on_conflict=chave', { method:'POST', body:{ chave, valor, updated_at:new Date().toISOString() }, headers:{ Prefer:'resolution=merge-duplicates,return=minimal' } }); }
+  catch(e){ throw new Error(/app_config|relation|permission|policy/i.test(e.message) ? 'Não foi possível gravar no app_config (' + e.message + '). Confira se o 19_nc_subgrupos_ciencia.sql foi executado e se o seu login pode gravar nessa tabela.' : e.message); }
+}
+async function mlDiaSalvar(vid, comp){
+  const btn = $('mlOk'); btn.disabled = true;
+  try{
+    const v = M.vend[vid], b = $('mlBase'), r = db.metas.find(x => x.vendedora_id === vid && x.competencia === comp);
+    if(b.value === ''){ if(r){ await api.del('metas', r.id); db.metas = db.metas.filter(x => x.id !== r.id); } }
+    else if(!r || Number(r.meta_ligacoes) !== Number(b.value)){
+      const n = await sbFetch('/rest/v1/metas?on_conflict=vendedora_id,competencia', { method:'POST', body:[{ vendedora_id:vid, competencia:comp, meta_ligacoes:Number(b.value) || 0 }], headers:{ Prefer:'resolution=merge-duplicates,return=representation' } });
+      (n||[]).forEach(m => { const k = db.metas.findIndex(x => x.vendedora_id === m.vendedora_id && x.competencia === m.competencia); if(k >= 0) db.metas[k] = m; else db.metas.push(m); });
+    }
+    if(db.ligCfgOk){
+      const o = Object.assign({}, (db.ligMD || {})[vid] || {}); Object.keys(o).forEach(k => { if(k.slice(0,7) === comp) delete o[k]; });
+      Object.assign(o, mlDiaOvTmp());
+      await cfgSet('lig_metas_dia:' + vid, o); (db.ligMD = db.ligMD || {})[vid] = o;
+    }
+    toast('Metas de ' + v.nome + ' · ' + MESES[Number(comp.slice(5))-1] + ' salvas.', 'ok'); pgMetasLig();
+  }catch(e){ toast(e.message, 'err'); btn.disabled = false; }
+}
+/* Calendário (vale para todas as vendedoras) */
+async function calGravar(c){ await cfgSet('lig_calendario', c); db.ligCal = c; }
+function calCopia(){ const c = calCfg(); return { sab: c.sab !== false, dias: Object.assign({}, c.dias || {}) }; }
+function mlDiaCfg(iso){
+  const i = infoDia(iso), base = i.base || i, e = (calCfg().dias || {})[iso], w = new Date(iso+'T12:00:00').getDay();
+  const auto = base.tipo === 'util' ? 'Dia útil' : base.tipo === 'sabado' ? (base.util ? 'Sábado (dia útil)' : 'Sábado (sem expediente)') : base.tipo === 'domingo' ? 'Domingo (sem expediente)' : 'Feriado nacional: ' + base.nome;
+  abrirModal('Definir dia · ' + INI_DIA[w] + ' ' + fmtD(iso), `
+    <div class="box-info" style="margin-bottom:12px">Esta definição vale para <b>todas as vendedoras</b> e recalcula os dias úteis e a meta do dia do mês.</div>
+    <div class="form"><div class="full"><label>Tipo do dia</label><select id="cdT" onchange="$('cdDw').style.display=this.value&&this.value!=='trabalho'?'':'none'">
+      <option value="">Automático · ${esc(auto)}</option>
+      <option value="feriado" ${e && e.t==='feriado'?'selected':''}>Feriado (sem expediente)</option>
+      <option value="folga" ${e && e.t==='folga'?'selected':''}>Folga / ponte (sem expediente)</option>
+      <option value="trabalho" ${e && e.t==='trabalho'?'selected':''}>Dia trabalhado (conta como dia útil)</option></select></div>
+    <div class="full" id="cdDw" style="${e && e.t !== 'trabalho' ? '' : 'display:none'}"><label>Descrição</label><input id="cdD" value="${esc(e && e.d || '')}" placeholder="Ex.: Aniversário da cidade"></div></div>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="cdOk" onclick="mlDiaCfgSalvar('${iso}')">Salvar</button>`);
+}
+async function mlDiaCfgSalvar(iso){
+  const b = $('cdOk'); b.disabled = true;
+  try{ const c = calCopia(), t = $('cdT').value, d = ($('cdD').value || '').trim();
+    if(!t) delete c.dias[iso]; else c.dias[iso] = t === 'trabalho' ? { t } : { t, d };
+    await calGravar(c); fecharModal(true); toast('Dia ' + fmtD(iso) + ' atualizado.', 'ok'); ir(st.page);
+  }catch(e){ toast(e.message, 'err'); b.disabled = false; }
+}
+function mlCalendario(){
+  const s = st.ml || {}, ano = Number(s.ano) || new Date().getFullYear(), c = calCfg(), adm = isAdmin() && db.ligCfgOk, nac = feriadosNac(ano);
+  const ds = [...new Set([...Object.keys(nac), ...Object.keys(c.dias || {}).filter(k => k.slice(0,4) === String(ano))])].sort();
+  const lin = ds.map(iso => { const i = infoDia(iso), e = (c.dias||{})[iso], w = new Date(iso+'T12:00:00').getDay();
+    const tag = i.tipo === 'trabalho' ? '<span class="tag info">Dia trabalhado</span>' : i.tipo === 'folga' ? '<span class="tag warn">Folga</span>' : '<span class="tag bad">Feriado</span>';
+    const acao = !adm ? '' : e ? `<button class="btn sec sm" onclick="mlCalAcao('${iso}','')">${nac[iso] ? 'Voltar ao padrão' : '🗑 Remover'}</button>` : `<button class="btn sec sm" onclick="mlCalAcao('${iso}','trabalho')">Marcar como trabalhado</button>`;
+    return `<tr><td style="white-space:nowrap">${fmtD(iso)} <span class="muted small">${INI_DIA[w]}</span></td><td>${esc(nac[iso] && i.tipo === 'trabalho' ? nac[iso] : i.nome)}${nac[iso] ? ' <span class="small muted">(nacional)</span>' : ''}</td><td>${tag}</td><td class="act">${acao}</td></tr>`; }).join('');
+  abrirModal('🗓️ Feriados e dias úteis · ' + ano, `
+    ${db.ligCfgOk ? '' : '<div class="box-info" style="margin-bottom:12px">Execute o <b>19_nc_subgrupos_ciencia.sql</b> no Supabase para poder editar o calendário.</div>'}
+    <div class="small muted" style="margin-bottom:10px">Vale para todas as vendedoras. Domingos e feriados não têm meta; a meta do mês é dividida pelos dias úteis.</div>
+    <label class="ck-row" style="margin-bottom:12px"><input type="checkbox" ${c.sab !== false ? 'checked' : ''} ${adm ? '' : 'disabled'} onchange="mlCalSab(this.checked)"><span><b>Sábado é dia útil</b> (conta na divisão da meta)</span></label>
+    ${adm ? `<div class="form" style="grid-template-columns:150px 1fr 1fr auto;align-items:end;margin-bottom:12px">
+      <div><label>Data</label><input type="date" id="ccD" min="${ano}-01-01" max="${ano}-12-31"></div>
+      <div><label>Tipo</label><select id="ccT"><option value="feriado">Feriado (sem expediente)</option><option value="folga">Folga / ponte (sem expediente)</option><option value="trabalho">Dia trabalhado (conta como útil)</option></select></div>
+      <div><label>Descrição</label><input id="ccN" placeholder="Ex.: Aniversário da cidade"></div>
+      <div><button class="btn" onclick="mlCalAdd()">+ Incluir</button></div></div>` : ''}
+    <div class="tbl-wrap" style="max-height:52vh"><table><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th></th></tr></thead><tbody>${lin || '<tr><td colspan="4" class="empty">Nenhum feriado.</td></tr>'}</tbody></table></div>`,
+    `<button class="btn" onclick="fecharModal()">Fechar</button>`, true);
+}
+async function mlCalSab(on){ try{ const c = calCopia(); c.sab = !!on; await calGravar(c); toast(on ? 'Sábado conta como dia útil.' : 'Sábado sem expediente.', 'ok'); ir(st.page); mlCalendario(); }catch(e){ toast(e.message, 'err'); } }
+async function mlCalAcao(iso, t){ try{ const c = calCopia(); if(t) c.dias[iso] = { t }; else delete c.dias[iso]; await calGravar(c); ir(st.page); mlCalendario(); }catch(e){ toast(e.message, 'err'); } }
+async function mlCalAdd(){
+  const iso = $('ccD').value, t = $('ccT').value, d = $('ccN').value.trim();
+  if(!iso) return toast('Informe a data.', 'err');
+  try{ const c = calCopia(); c.dias[iso] = t === 'trabalho' ? { t } : { t, d }; await calGravar(c); toast('Calendário atualizado.', 'ok'); ir(st.page); mlCalendario(); }catch(e){ toast(e.message, 'err'); }
+}
+async function carregarLigCfg(){
+  db.ligCal = { sab:true, dias:{} }; db.ligMD = {};
+  try{ const r = await sbAll('app_config', 'select=*&chave=like.lig_*');
+    (r||[]).forEach(c => { if(c.chave === 'lig_calendario') db.ligCal = Object.assign({ sab:true, dias:{} }, c.valor || {}); else if(String(c.chave).startsWith('lig_metas_dia:')) db.ligMD[Number(c.chave.split(':')[1])] = c.valor || {}; });
+    db.ligCfgOk = true; }
+  catch(e){ db.ligCfgOk = false; }
 }
 function mlAtualiza(){
   const pd = Number($('mlPad').value) || 0;
@@ -2844,7 +3059,7 @@ function pdfPainel(){
     kpis: [
       ['Ligações '+per, fmtN(T.real), 'Meta: '+fmtDec(T.meta)],
       ['% da meta', pm+'%', P.dia ? mesTxt : 'Ritmo esperado hoje: '+fmtN(T.esp)],
-      ['Meta diária', fmtDec(T.md), P.mesCorr ? (P.domingo ? 'Domingo: sem meta' : 'Hoje: '+fmtN(T.hj)+' ligação(ões)') : P.duTot+' dias úteis'],
+      ['Meta diária', fmtDec(T.md), P.mesCorr ? (P.domingo ? (P.hjNome || 'Hoje')+': sem meta' : 'Hoje: '+fmtN(T.hj)+' ligação(ões)') : P.duTot+' dias úteis'],
       ['Contatos efetivos', fmtN(T.efet), pct(T.efet,T.real)+'% das ligações'],
       ['Tempo em ligação', fmtDur(T.dur), 'Média '+fmtDur(T.real?T.dur/T.real:0)],
       ['Follow-ups atrasados', fmtN(T.atr), fmtN(T.pend)+' pendentes a partir de hoje'],
@@ -2856,14 +3071,14 @@ function pdfPainel(){
       return [k+1, x.v.nome, empNome(x.v.empresa_id), fmtDec(x.meta), fmtDec(x.metaDia), P.mesCorr && !P.domingo ? fmtN(x.hj) : '-', fmtN(x.real), pp+'%', fmtDec(x.esperado),
         !x.meta ? 'Sem meta' : pp>=100 ? 'Meta batida' : x.real>=x.esperado ? 'No ritmo' : 'Abaixo do ritmo', fmtN(x.efet), fmtN(x.fuAtr)]; }),
     estilos:{ 0:{cellWidth:8}, 3:{halign:'right'}, 4:{halign:'right'}, 5:{halign:'right'}, 6:{halign:'right'}, 7:{halign:'right'}, 8:{halign:'right'}, 10:{halign:'right'}, 11:{halign:'right'} },
-    graficos: [ { titulo:'Realizado x Meta por vendedora - '+mesTxt, canvas:'ch1' }, { titulo:'Ligações por dia x Meta acumulada', canvas:'ch2' },
+    graficos: [ { titulo:'Realizado x Meta por vendedora - '+mesTxt, canvas:'ch1' }, { titulo:'Ligações x Meta no mês', canvas:'ch2' },
       { titulo:'Resultado das ligações - '+mesTxt, canvas:'ch3' }, { titulo:'Follow-ups por vendedora', canvas:'ch4' }, { titulo:'Clientes novos por mês - '+P.anoN, canvas:'ch5' } ] });
 }
 function pdfVend(){
   const l = vendsVisiveis(), comp = mesAtual(); if(!l.length) return toast('Nenhuma vendedora cadastrada.', 'err');
   const logins = vid => db.usuarios.filter(u => u.perfil !== 'admin' && vincDe(u.id).includes(vid)).map(u => u.email + (u.ativo ? '' : ' (inativo)')).join(', ');
   gerarPDF({ titulo:'Vendedoras', arquivo:`vendedoras_${hoje()}.pdf`, paisagem:true,
-    subtitulo: 'Metas de ' + MESES[Number(comp.slice(5))-1] + '/' + comp.slice(0,4) + '  -  ' + diasUteis(comp) + ' dias úteis (seg a sáb)',
+    subtitulo: 'Metas de ' + MESES[Number(comp.slice(5))-1] + '/' + comp.slice(0,4) + '  -  ' + diasUteis(comp) + ' dias úteis',
     resumo: `${l.length} vendedora(s)  -  ${l.filter(v=>v.ativa).length} ativa(s)  -  ${l.filter(v=>logins(v.id)).length} com login`,
     colunas:['Vendedora','Empresa','Telefone','E-mail','Meta padrão/mês','Meta do mês','Meta/dia','Logins com acesso','Situação'],
     linhas: l.map(v => { const m = metaDe(v.id, comp), du = diasUteis(comp);
