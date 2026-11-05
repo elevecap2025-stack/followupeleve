@@ -3173,10 +3173,11 @@ function paFiltradas(semStatus){
     if(p.ver === 'meus' && x.responsavel_id !== me) return false;
     if(p.ver === 'ciente' && !(x.responsavel_id === me && !x.ciente_em && x.criado_por !== me)) return false;
     if(todos && p.pessoa && x.responsavel_id !== p.pessoa) return false;
+    if(!todos && p.pessoa && !(x.criado_por === me && x.responsavel_id === p.pessoa)) return false;
     if(!semStatus && p.status && stOk.includes(p.status) && paStatus(x) !== p.status) return false;
     if(!semStatus && p.tipo && paTipo(x) !== p.tipo) return false;
     if(!semStatus && !conc && p.ritmo){ if(p.ritmo === 'hoje' ? x.fim !== hoje() : paRitmo(x) !== p.ritmo) return false; }
-    if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, pessoaNome(x.responsavel_id), pessoaNome(x.criado_por)].join(' ').toLowerCase().includes(q)) return false;
+    if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, ...(todos ? [pessoaNome(x.responsavel_id), pessoaNome(x.criado_por)] : x.criado_por === me ? [pessoaNome(x.responsavel_id)] : [])].join(' ').toLowerCase().includes(q)) return false;
     return true;
   }).sort((a,b) => conc ? String(b.concluido_em||b.updated_at||'').localeCompare(String(a.concluido_em||a.updated_at||'')) : a.id - b.id);
 }
@@ -3640,7 +3641,10 @@ function paQuemGrupo(x){
 function pgPlano(){
   if(!db.paOk){ $('content').innerHTML = '<div class="card empty">A tela de Plano de Ação ainda não foi ativada no banco. Execute o <b>09_plano_acao.sql</b> no Supabase e clique em ↻.</div>'; return; }
   const p = st.pa, me = db.me.id, conc = paConc(), todos = veTodosPlanos(), l = paAgrupar(paFiltradas()), base = paAgrupar(paFiltradas(true)), pend = paPend().length;
-  if(!todos && (p.ver === 'equipe' || p.pessoa)){ p.ver = 'todos'; p.pessoa = ''; }
+  if(!todos && p.ver === 'equipe') p.ver = 'todos';
+  const pessoasEnv = todos ? [] : [...new Set((db.planos||[]).filter(x => paEncerrada(x) === conc && x.criado_por === me && x.responsavel_id && x.responsavel_id !== me).map(x => x.responsavel_id))]
+    .map(id => (db.pessoas||[]).find(y => y.id === id) || { id, nome: pessoaNome(id) }).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  if(!todos && p.pessoa && !pessoasEnv.some(x => x.id === p.pessoa)) p.pessoa = '';
   const n = s => base.filter(x => paStatus(x) === s).length, mes = mesAtual();
   const nConc = (db.planos||[]).filter(x => paEncerrada(x) && (x.criado_por === me || x.responsavel_id === me)).length;
   const kpis = conc ? `
@@ -3660,7 +3664,7 @@ function pgPlano(){
   ${capCard('plano', { total:base.length, aberto: conc ? 0 : base.length, atr: conc ? 0 : n('Atrasado'), conc: conc ? base.length : nConc, valid: base.length + (conc ? 0 : nConc), pend, concTela:conc })}
   <div class="filters">
     <div class="f"><label>Exibir</label><select onchange="st.pa.ver=this.value;if(this.value!=='equipe'&&this.value!=='todos')st.pa.pessoa='';pgPlano()">${verOps.map(([v,t])=>`<option value="${v}" ${p.ver===v?'selected':''}>${t}</option>`).join('')}</select></div>
-    ${todos ? `<div class="f"><label>Pessoa (quem)</label><select onchange="st.pa.pessoa=this.value;if(this.value)st.pa.ver='equipe';pgPlano()"><option value="">Todas</option>${pessoas.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select></div>` : ''}
+    ${todos ? `<div class="f"><label>Pessoa (quem)</label><select onchange="st.pa.pessoa=this.value;if(this.value)st.pa.ver='equipe';pgPlano()"><option value="">Todas</option>${pessoas.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email)}${x.id===me?' (eu)':''}</option>`).join('')}</select></div>` : `<div class="f"><label>Pessoa (quem)</label><select title="Somente ações criadas por você para a pessoa" onchange="st.pa.pessoa=this.value;pgPlano()"><option value="">Todas</option>${pessoasEnv.map(x=>`<option value="${x.id}" ${p.pessoa===x.id?'selected':''}>${esc(x.nome||x.email||'')}</option>`).join('')}</select></div>`}
     <div class="f"><label>Status</label><select onchange="st.pa.status=this.value;pgPlano()"><option value="">Todos</option>${stOps.map(s=>`<option ${p.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="paQ" value="${esc(p.q)}" placeholder="O quê, como, onde, quem…" oninput="st.pa.q=this.value;clearTimeout(window._paq);window._paq=setTimeout(()=>{pgPlano();const i=$('paQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
     <button class="btn sec" onclick="paAlternarCols()" title="${paCompacto() ? 'Mostrar Data Início, Horário, Lead time, Onde, Quanto, Status, %, Observações…' : 'Mostrar só ID, O quê, Por quê, Como, Quem e Data Prevista'}">${paCompacto() ? '▦ Mostrar todas as colunas' : '▤ Só colunas principais'}</button>
