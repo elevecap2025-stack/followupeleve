@@ -1336,7 +1336,7 @@ function setEmp(v){ st.emp = v; st.painel.vend = ''; st.plan.vend = ''; st.lig.v
 /* ============================ NAVEGAÇÃO ============================ */
 const PAGES = {
   painel:{ t:'Painel de Metas', ic:'📊', fn:()=>pgPainel() },
-  metaslig:{ t:'Metas de Ligação', ic:'🎯', fn:()=>pgMetasLig(), seg:'painel' },
+  metaslig:{ t:'Metas de Ligação', ic:'🎯', fn:()=>pgMetasLig() },
   aniversariantes:{ t:'Aniversariantes', ic:'🎂', fn:()=>pgAniv() },
   planejamento:{ t:'Planejamento (Follow-up)', ic:'📅', fn:()=>pgPlan() },
   planejar:{ t:'Planejar Ligações', ic:'📋', fn:()=>pgPlanejar() },
@@ -1360,7 +1360,7 @@ const PAGES = {
   meuperfil:{ t:'Meu Perfil', ic:'👤', fn:()=>pgMeuPerfil(), livre:true }
 };
 /* Permissões de telas: usuarios.telas (null = todas as telas de operação liberadas) */
-const TELAS_OPER = ['painel','aniversariantes','planejamento','planejar','ligacoes','clientes','plano','nc'];
+const TELAS_OPER = ['painel','metaslig','aniversariantes','planejamento','planejar','ligacoes','clientes','plano','nc'];
 /* Telas extras: só liberadas quando marcadas explicitamente em Permissões (ex.: caixa cadastrar vendedoras) */
 const TELAS_PERM = [...TELAS_OPER, 'vendedoras', 'planodash'];
 /* Dashboard 5W2H: liberado sempre para estes logins; para os demais, só se marcado em Permissões / Perfil */
@@ -1572,7 +1572,7 @@ const rotulosPlugin = { id:'rotulos', afterDatasetsDraw(ch, args, opt){
   const ctx = ch.ctx, tipo = ch.config.type, fmt = opt.fmt || fmtDec, ys = ch.options.scales && ch.options.scales.y, stacked = !!(ys && ys.stacked);
   ctx.save(); ctx.font = "600 11px 'Segoe UI',system-ui,Arial,sans-serif"; ctx.textAlign = 'center';
   ch.data.datasets.forEach((ds, i) => {
-    if(!ch.isDatasetVisible(i)) return; const m = ch.getDatasetMeta(i);
+    if(!ch.isDatasetVisible(i) || ds.semRotulo) return; const m = ch.getDatasetMeta(i);
     if(tipo === 'doughnut'){
       const tot = ds.data.reduce((a,b) => a+(b||0), 0);
       m.data.forEach((el, j) => { const v = ds.data[j]; if(!v || !tot || v/tot < .05) return; const p = el.tooltipPosition();
@@ -1649,7 +1649,7 @@ function pgPainel(){
   </div>
   <div class="grid g2">
     <div class="card"><h3>Realizado x Meta por vendedora · ${perTxt}</h3><div class="chartbox"><canvas id="ch1"></canvas></div></div>
-    <div class="card"><h3>Evolução acumulada no mês · ${MESES[Number(comp.slice(5))-1]}/${comp.slice(0,4)}</h3><div class="chartbox"><canvas id="ch2"></canvas></div></div>
+    <div class="card"><h3>Ligações por dia x Meta acumulada · ${MESES[Number(comp.slice(5))-1]}/${comp.slice(0,4)}</h3><div class="chartbox"><canvas id="ch2"></canvas></div></div>
     <div class="card"><h3>Resultado das ligações · ${perTxt}</h3><div class="chartbox"><canvas id="ch3"></canvas></div></div>
     <div class="card"><h3>Follow-ups por vendedora</h3><div class="chartbox"><canvas id="ch4"></canvas></div></div>
   </div>
@@ -1679,13 +1679,17 @@ function pgPainel(){
       { label:'Meta', data: linhas.map(x=>Math.round(x.meta*10)/10), backgroundColor:'#3B4A5A', borderRadius:6 } ] },
     options:{ maintainAspectRatio:false, layout:pad20, plugins:{ rotulos:ROT, tooltip:{ callbacks:{ afterBody: it => { const x = linhas[it[0].dataIndex]; return 'Atingimento: '+pct(x.real,x.meta)+'%'; } } } }, scales:{ y:{ beginAtZero:true, grace:'8%' } } } }));
 
-  const labels = [], dsReal = [], dsMeta = [];
-  for(let d=1; d<=nd; d++){ const iso = comp+'-'+pad(d); labels.push(pad(d)); dsMeta.push(duTot ? Math.round(T.metaMes*diasUteis(comp, iso)/duTot) : 0); dsReal.push(iso > h ? null : ligsMes.filter(l => dataDeTs(l.inicio) <= iso).length); }
-  const porVend = linhas.length > 1 && linhas.length <= 8 ? linhas.map(x => ({ label:x.v.nome, data: labels.map((_,i) => { const iso = comp+'-'+pad(i+1); return iso>h ? null : ligsMes.filter(l => l.vendedora_id===x.v.id && dataDeTs(l.inicio) <= iso).length; }), borderColor:cor(x), backgroundColor:cor(x), borderWidth:1.5, pointRadius:0, tension:.2, borderDash:[4,3] })) : [];
-  st.charts.push(new Chart($('ch2'), { type:'line', data:{ labels, datasets:[
-      { label:'Realizado (total)', data: dsReal, borderColor:'#127DCB', backgroundColor:'rgba(18,125,203,.12)', fill:true, tension:.2, pointRadius:0, borderWidth:3 },
-      { label:'Meta (ritmo)', data: dsMeta, borderColor:'#3B4A5A', borderDash:[6,4], pointRadius:0, borderWidth:2 }, ...porVend ] },
-    options:{ maintainAspectRatio:false, layout:pad20, interaction:{ mode:'index', intersect:false }, scales:{ y:{ beginAtZero:true } }, plugins:{ rotulos:{ on:true, fmt:fmtN, max:2 }, legend:{ labels:{ boxWidth:12 } } } } }));
+  const labels = [], dsReal = [], dsMeta = [], dsDia = [];
+  for(let d=1; d<=nd; d++){ const iso = comp+'-'+pad(d); labels.push(pad(d)); dsMeta.push(duTot ? Math.round(T.metaMes*diasUteis(comp, iso)/duTot) : 0); dsReal.push(iso > h ? null : ligsMes.filter(l => dataDeTs(l.inicio) <= iso).length); dsDia.push(iso > h ? null : ligsMes.filter(l => dataDeTs(l.inicio) === iso).length); }
+  const porVend = linhas.length > 1 && linhas.length <= 8 ? linhas.map(x => ({ type:'line', yAxisID:'y1', semRotulo:true, order:1, label:x.v.nome, data: labels.map((_,i) => { const iso = comp+'-'+pad(i+1); return iso>h ? null : ligsMes.filter(l => l.vendedora_id===x.v.id && dataDeTs(l.inicio) <= iso).length; }), borderColor:cor(x), backgroundColor:cor(x), borderWidth:1.5, pointRadius:0, tension:.2, borderDash:[4,3] })) : [];
+  st.charts.push(new Chart($('ch2'), { type:'bar', data:{ labels, datasets:[
+      { type:'line', yAxisID:'y1', semRotulo:true, order:0, label:'Realizado acumulado', data: dsReal, borderColor:'#16A34A', backgroundColor:'#16A34A', tension:.2, pointRadius:0, borderWidth:3 },
+      { type:'line', yAxisID:'y1', semRotulo:true, order:0, label:'Meta acumulada', data: dsMeta, borderColor:'#3B4A5A', backgroundColor:'#3B4A5A', borderDash:[6,4], pointRadius:0, borderWidth:2 },
+      ...porVend,
+      { type:'bar', yAxisID:'y', order:2, label:'Ligações no dia', data: dsDia, backgroundColor:'#127DCB', borderRadius:4, maxBarThickness:22 } ] },
+    options:{ maintainAspectRatio:false, layout:pad20, interaction:{ mode:'index', intersect:false },
+      scales:{ y:{ beginAtZero:true, grace:'10%', position:'left', title:{ display:true, text:'Ligações no dia' } }, y1:{ beginAtZero:true, position:'right', grid:{ drawOnChartArea:false }, title:{ display:true, text:'Acumulado' } } },
+      plugins:{ rotulos:{ on:true, fmt:fmtN }, legend:{ labels:{ boxWidth:12 } } } } }));
 
   const rc = RESULTADOS.map(r => ligs.filter(l => l.resultado === r).length);
   st.charts.push(new Chart($('ch3'), { type:'doughnut', data:{ labels: RESULTADOS.map((r,i) => r+' ('+rc[i]+')'), datasets:[{ data: rc, backgroundColor:['#16A34A','#2563EB','#F59E0B','#9CA3AF','#6B7280','#DC2626'] }] },
@@ -2852,7 +2856,7 @@ function pdfPainel(){
       return [k+1, x.v.nome, empNome(x.v.empresa_id), fmtDec(x.meta), fmtDec(x.metaDia), P.mesCorr && !P.domingo ? fmtN(x.hj) : '-', fmtN(x.real), pp+'%', fmtDec(x.esperado),
         !x.meta ? 'Sem meta' : pp>=100 ? 'Meta batida' : x.real>=x.esperado ? 'No ritmo' : 'Abaixo do ritmo', fmtN(x.efet), fmtN(x.fuAtr)]; }),
     estilos:{ 0:{cellWidth:8}, 3:{halign:'right'}, 4:{halign:'right'}, 5:{halign:'right'}, 6:{halign:'right'}, 7:{halign:'right'}, 8:{halign:'right'}, 10:{halign:'right'}, 11:{halign:'right'} },
-    graficos: [ { titulo:'Realizado x Meta por vendedora - '+mesTxt, canvas:'ch1' }, { titulo:'Evolução acumulada no mês', canvas:'ch2' },
+    graficos: [ { titulo:'Realizado x Meta por vendedora - '+mesTxt, canvas:'ch1' }, { titulo:'Ligações por dia x Meta acumulada', canvas:'ch2' },
       { titulo:'Resultado das ligações - '+mesTxt, canvas:'ch3' }, { titulo:'Follow-ups por vendedora', canvas:'ch4' }, { titulo:'Clientes novos por mês - '+P.anoN, canvas:'ch5' } ] });
 }
 function pdfVend(){
@@ -3173,11 +3177,13 @@ function paFiltradas(semStatus){
     if(p.ver === 'meus' && x.responsavel_id !== me) return false;
     if(p.ver === 'ciente' && !(x.responsavel_id === me && !x.ciente_em && x.criado_por !== me)) return false;
     if(todos && p.pessoa && x.responsavel_id !== p.pessoa) return false;
+    const resIds = paRestrito() ? paIdsReservados() : null;
+    if(resIds && p.pessoa && resIds.has(p.pessoa) && x.criado_por !== me) return false;
     if(!todos && p.pessoa && !(x.criado_por === me && x.responsavel_id === p.pessoa)) return false;
     if(!semStatus && p.status && stOk.includes(p.status) && paStatus(x) !== p.status) return false;
     if(!semStatus && p.tipo && paTipo(x) !== p.tipo) return false;
     if(!semStatus && !conc && p.ritmo){ if(p.ritmo === 'hoje' ? x.fim !== hoje() : paRitmo(x) !== p.ritmo) return false; }
-    if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, ...(todos ? [pessoaNome(x.responsavel_id), pessoaNome(x.criado_por)] : x.criado_por === me ? [pessoaNome(x.responsavel_id)] : [])].join(' ').toLowerCase().includes(q)) return false;
+    if(q && ![x.o_que, x.por_que, x.como, x.onde, x.observacoes, ...(todos ? [x.responsavel_id, x.criado_por].filter(id => !resIds || !resIds.has(id) || (x.criado_por === me && id === x.responsavel_id)).map(pessoaNome) : x.criado_por === me ? [pessoaNome(x.responsavel_id)] : [])].join(' ').toLowerCase().includes(q)) return false;
     return true;
   }).sort((a,b) => conc ? String(b.concluido_em||b.updated_at||'').localeCompare(String(a.concluido_em||a.updated_at||'')) : a.id - b.id);
 }
@@ -3659,7 +3665,8 @@ function pgPlano(){
     <div class="kpi ok click" onclick="ir('planoconc')"><div class="l">Concluídas</div><div class="v">${nConc}</div><div class="s">Ver planos concluídos</div></div>`;
   const verOps = [['todos','Todas as minhas'], ...(todos ? [['equipe','Todas as pessoas']] : []), ['criados','Criadas por mim'], ['meus','Enviadas para mim'], ...(conc ? [] : [['ciente','Aguardando meu ciente']])];
   const stOps = conc ? ['Concluído'] : ['Não iniciado','Em andamento','Atrasado','Cancelado'];
-  const pessoas = (db.pessoas||[]).filter(x => !paRestrito() || !paIdsReservados().has(x.id)).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  const resIds = paRestrito() ? paIdsReservados() : new Set();
+  const pessoas = (db.pessoas||[]).filter(x => !resIds.has(x.id) || (db.planos||[]).some(y => y.criado_por === me && y.responsavel_id === x.id)).sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   $('content').innerHTML = `
   ${capCard('plano', { total:base.length, aberto: conc ? 0 : base.length, atr: conc ? 0 : n('Atrasado'), conc: conc ? base.length : nConc, valid: base.length + (conc ? 0 : nConc), pend, concTela:conc })}
   <div class="filters">
