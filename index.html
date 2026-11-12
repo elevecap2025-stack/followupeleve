@@ -183,6 +183,11 @@ tr.hl td{background:var(--t-rec)!important;animation:hl 2.5s ease}
 .empty{padding:36px;text-align:center;color:var(--mut)}
 .phone{white-space:nowrap}
 .chartbox{position:relative;height:280px}
+.fb-campos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.fb-campo{border:1px solid var(--line);border-top:3px solid var(--fb);border-radius:10px;padding:6px 8px;background:var(--surf)}
+.fb-campo .fb-cab{font-size:12px;font-weight:700;color:var(--fb);margin-bottom:4px}
+.fb-campo textarea{min-height:52px;width:100%}
+@media(max-width:600px){.fb-campos{grid-template-columns:1fr}}
 .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tabs button{border:1px solid var(--line);background:var(--surf);padding:8px 14px;border-radius:20px;cursor:pointer;font-weight:600;color:var(--mut)}
 .tabs button.on{background:var(--gr);color:#fff;border-color:var(--gr)}
@@ -1082,6 +1087,8 @@ const CONFIG = {
 };
 
 const RESULTADOS = ['Atendeu - Positivo','Atendeu - Retornar depois','Atendeu - Sem interesse','Não atendeu','Caixa postal','Número inválido'];
+/* Feedback do cliente registrado ao concluir a ligação (coluna ligacoes.feedbacks · 21_ligacoes_feedbacks.sql) */
+const FB_TIPOS = [['Reclamação','Reclamações','#DC2626','bad','😠'],['Oportunidade','Oportunidades','#F59E0B','warn','💡'],['Elogio','Elogios','#16A34A','ok','👏']];
 const MOTIVOS = ['Retorno','Pós-venda','Aniversário','Promoção / Campanha','Reativação de cliente','Cobrança','Outro'];
 const CORES = ['#127DCB','#3B4A5A','#16A34A','#2563EB','#9333EA','#DB2777','#0891B2','#CA8A04','#DC2626','#4B5563'];
 const SESS_KEY = 'eleve_lig_sess';
@@ -1400,6 +1407,7 @@ const PAGES = {
   planejamento:{ t:'Planejamento (Follow-up)', ic:'📅', fn:()=>pgPlan() },
   planejar:{ t:'Planejar Ligações', ic:'📋', fn:()=>pgPlanejar() },
   ligacoes:{ t:'Ligações Realizadas', ic:'✅', fn:()=>pgLig() },
+  feedback:{ t:'Feedback dos Clientes', ic:'💬', fn:()=>pgFeedback(), seg:'ligacoes' },
   clientes:{ t:'Clientes', ic:'👥', fn:()=>pgCli() },
   clientesatend:{ t:'Clientes Atendidos', ic:'☑️', fn:()=>pgCliAtend(), seg:'clientes' },
   ncdash:{ t:'Dashboard da Qualidade', ic:'📊', fn:()=>pgNCDash(), seg:'nc' },
@@ -1445,7 +1453,7 @@ function montarNav(){
   const item = (k, bdg) => !pode(k) ? '' : `<a class="${st.page===k?'on':''}" title="${PAGES[k].t}" onclick="ir('${k}')"><span class="ic">${PAGES[k].ic}</span><span class="lb">${PAGES[k].t}</span>${bdg?`<span class="bdg">${bdg}</span>`:''}</a>`;
   const sec = (t, itens, cls) => itens ? `<div class="sec ${cls||''}">${t}</div>` + itens : '';
   const h = sec('Indicadores', item('painel') + item('metaslig'))
-    + sec('Ligações & Follow-up', item('planejamento', nAtras||'') + item('planejar') + item('ligacoes'))
+    + sec('Ligações & Follow-up', item('planejamento', nAtras||'') + item('planejar') + item('ligacoes') + item('feedback'))
     + sec('Clientes', item('clientes') + item('clientesatend') + item('aniversariantes', nAniv||''))
     + sec('Plano de Ação', item('planodash') + item('plano', paPend().length||'') + item('planocal') + item('planoconc') + item('guia5w2h'))
     + sec('Não Conformidades', item('ncdash') + item('nc', db.ncOk ? (db.ncs||[]).filter(n => ncStatus(n) === 'Atrasada').length || '' : '') + item('nctipos'), 'sec-nc')
@@ -2369,6 +2377,9 @@ function abrirLigacao({ followupId, clienteId, motivo }){
     <div id="cForm" class="hidden"><div class="form">
       <div class="full"><label>Resultado da ligação *</label><select id="cRes" onchange="callValidar()"><option value="">Selecione…</option>${RESULTADOS.map(r=>`<option>${r}</option>`).join('')}</select></div>
       <div class="full"><label>Descrição da conversa *</label><textarea id="cDesc" oninput="callValidar()" placeholder="O que foi conversado, interesse, pedido, próximos passos…"></textarea></div>
+      <div class="full"><label>Feedback do cliente <span class="muted" style="font-weight:400">(opcional)</span></label><div class="fb-campos">
+        ${FB_TIPOS.map(([t,pl,cor,cls,ic], i) => `<div class="fb-campo" style="--fb:${cor}"><div class="fb-cab">${ic} ${pl}</div><textarea id="cFb${i}" rows="2" placeholder="${t === 'Reclamação' ? 'Do que o cliente reclamou?' : t === 'Oportunidade' ? 'Oportunidade de venda / melhoria identificada' : 'O que o cliente elogiou?'}"></textarea></div>`).join('')}
+      </div></div>
       <div class="full"><label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="cNovo" style="width:auto" onchange="$('cNovoBox').classList.toggle('hidden',!this.checked);callValidar()"> Agendar próximo follow-up</label></div>
       <div id="cNovoBox" class="hidden full"><div class="form">
         <div><label>Data</label><input type="date" id="cNData" value="${addDias(hoje(),7)}" onchange="callValidar()"></div>
@@ -2402,9 +2413,11 @@ async function callSalvar(){
   const C = st.call; if(!C) return; callValidar(); if($('cOk').disabled) return;
   $('cOk').disabled = true;
   const vend = Number($('cVend').value);
+  const fbs = FB_TIPOS.map(([t], i) => ({ tipo:t, txt:($('cFb'+i) ? $('cFb'+i).value : '').trim() })).filter(f => f.txt);
   try{
     const lig = await api.ins('ligacoes', { empresa_id:C.c.empresa_id, cliente_id:C.c.id, vendedora_id:vend, followup_id: C.fu ? C.fu.id : null, motivo:C.motivo,
-      inicio:C.t0.toISOString(), fim:C.t1.toISOString(), duracao_seg: Math.round((C.t1-C.t0)/1000), resultado:$('cRes').value, descricao:$('cDesc').value.trim() });
+      inicio:C.t0.toISOString(), fim:C.t1.toISOString(), duracao_seg: Math.round((C.t1-C.t0)/1000), resultado:$('cRes').value, descricao:$('cDesc').value.trim(), ...(fbs.length ? { feedbacks:fbs } : {}) })
+      .catch(e => { throw new Error(/feedbacks/i.test(e.message) ? 'Para gravar Reclamações, Oportunidades e Elogios, execute o 21_ligacoes_feedbacks.sql no Supabase e clique em ↻. (Ou apague os campos de feedback para registrar só a ligação.)' : e.message); });
     db.ligacoes.unshift(lig);
     if(C.fu){ const r = await api.upd('followups', C.fu.id, { status:'concluido', ligacao_id:lig.id, concluido_em:new Date().toISOString() }); Object.assign(C.fu, r); }
     if($('cNovo').checked){
@@ -2416,6 +2429,56 @@ async function callSalvar(){
     st.hlLig = lig.id; st.lig.de = mesAtual()+'-01'; st.lig.ate = hoje(); st.lig.vend = ''; st.lig.res = ''; st.lig.q = '';
     ir(pode('ligacoes') ? 'ligacoes' : st.page);
   }catch(e){ toast(e.message, 'err'); $('cOk').disabled = false; }
+}
+
+/* ============================ FEEDBACK DOS CLIENTES ============================ */
+function fbItens(){
+  const out = [];
+  ligVisiveis().forEach(l => (Array.isArray(l.feedbacks) ? l.feedbacks : []).forEach(f => { if(f && f.tipo && f.txt) out.push({ ...f, lig:l, data:dataDeTs(l.inicio) }); }));
+  return out.sort((a,b) => String(b.lig.inicio).localeCompare(String(a.lig.inicio)));
+}
+function pgFeedback(){
+  st.fb = st.fb || { ano:new Date().getFullYear(), mes:'', vend:'', tipo:'', q:'' };
+  const p = st.fb, ano = String(p.ano), q = p.q.trim().toLowerCase();
+  const semCol = db.ligacoes.length && !db.ligacoes.some(l => 'feedbacks' in l);
+  const doAno = fbItens().filter(f => f.data.slice(0,4) === ano && (!p.vend || String(f.lig.vendedora_id) === String(p.vend)));
+  const l = doAno.filter(f => (!p.mes || f.data.slice(5,7) === p.mes) && (!p.tipo || f.tipo === p.tipo)
+    && (!q || (cliNome(f.lig.cliente_id)||'').toLowerCase().includes(q) || f.txt.toLowerCase().includes(q)));
+  const nAno = t => doAno.filter(f => f.tipo === t && (!p.mes || f.data.slice(5,7) === p.mes)).length, tot = FB_TIPOS.reduce((a,[t]) => a + nAno(t), 0);
+  const anos = [...new Set([new Date().getFullYear(), ...fbItens().map(f => Number(f.data.slice(0,4)))])].sort((a,b) => b-a);
+  $('content').innerHTML = `
+  ${semCol ? '<div class="box-info" style="margin-bottom:12px">Para registrar Reclamações, Oportunidades e Elogios nas ligações, execute o <b>21_ligacoes_feedbacks.sql</b> no Supabase e clique em ↻ Atualizar.</div>' : ''}
+  <div class="filters">
+    <div class="f"><label>Ano</label><select onchange="st.fb.ano=this.value;st.fb.mes='';pgFeedback()">${anos.map(a => `<option ${String(a)===ano?'selected':''}>${a}</option>`).join('')}</select></div>
+    <div class="f"><label>Mês</label><select onchange="st.fb.mes=this.value;pgFeedback()"><option value="">Todos</option>${MESES.map((m,i) => `<option value="${pad(i+1)}" ${p.mes===pad(i+1)?'selected':''}>${m}</option>`).join('')}</select></div>
+    ${verVendFiltro()?`<div class="f"><label>Vendedora</label><select onchange="st.fb.vend=this.value;pgFeedback()">${vendOptions(p.vend,'Todas')}</select></div>`:''}
+    <div class="f"><label>Tipo</label><select onchange="st.fb.tipo=this.value;pgFeedback()"><option value="">Todos</option>${FB_TIPOS.map(([t]) => `<option ${p.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="f grow"><label>Buscar</label><input id="fbQ" value="${esc(p.q)}" placeholder="Cliente ou texto do feedback" oninput="st.fb.q=this.value;clearTimeout(window._fbq);window._fbq=setTimeout(()=>{pgFeedback();const i=$('fbQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+  </div>
+  <div class="kpis">
+    <div class="kpi dk click ${!p.tipo?'sel':''}" onclick="st.fb.tipo='';pgFeedback()"><div class="l">Total de feedbacks</div><div class="v">${fmtN(tot)}</div><div class="s">${p.mes ? MESES[Number(p.mes)-1] + '/' : ''}${ano}</div></div>
+    ${FB_TIPOS.map(([t,pl,cor,cls,ic]) => `<div class="kpi ${cls} click ${p.tipo===t?'sel':''}" onclick="st.fb.tipo=st.fb.tipo==='${t}'?'':'${t}';pgFeedback()"><div class="l">${ic} ${pl}</div><div class="v">${fmtN(nAno(t))}</div><div class="s">${pct(nAno(t), tot)}% do total</div></div>`).join('')}
+  </div>
+  <div class="card" style="margin-bottom:14px"><h3>Acompanhamento de feedbacks · Janeiro a Dezembro de ${ano}</h3><div class="chartbox" style="height:320px"><canvas id="chFb"></canvas></div>
+    <div class="small muted" style="margin-top:6px">Clique em um mês para listar só os feedbacks dele.</div></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Data/hora</th><th>Tipo</th><th>Cliente</th>${curEmp()?'':'<th>Empresa</th>'}<th>Vendedora</th><th>Feedback</th><th>Conversa</th></tr></thead><tbody>
+  ${l.slice(0,500).map(f => { const T = FB_TIPOS.find(x => x[0] === f.tipo) || ['','','','','']; return `<tr><td style="white-space:nowrap">${fmtDH(f.lig.inicio)}</td><td><span class="tag ${T[3]}">${T[4]} ${esc(f.tipo)}</span></td>
+    <td><b>${esc(cliNome(f.lig.cliente_id))}</b></td>${curEmp()?'':`<td>${empTag(f.lig.empresa_id)}</td>`}<td>${esc(vendNome(f.lig.vendedora_id))}</td>
+    <td style="min-width:240px;white-space:pre-wrap">${esc(f.txt)}</td><td class="small muted" style="min-width:200px">${esc(f.lig.descricao||'')}</td></tr>`; }).join('') || `<tr><td colspan="${curEmp()?6:7}" class="empty">Nenhum feedback neste filtro.</td></tr>`}
+  </tbody></table></div>${l.length > 500 ? `<p class="muted small">Exibindo 500 de ${l.length}.</p>` : ''}`;
+  const porMes = t => MESES.map((_,i) => doAno.filter(f => f.tipo === t && f.data.slice(5,7) === pad(i+1)).length);
+  const ds = FB_TIPOS.map(([t,pl,cor]) => ({ type:'bar', label:pl, data:porMes(t), backgroundColor:cor, borderRadius:4, maxBarThickness:38, stack:'fb', semRotulo:true, order:1 }));
+  const totM = MESES.map((_,i) => ds.reduce((a,d) => a + d.data[i], 0));
+  const rotTot = { id:'rotFb', afterDatasetsDraw(ch){ const c = ch.ctx, m = ch.getDatasetMeta(ch.data.datasets.length - 1); c.save(); c.textAlign = 'center'; c.textBaseline = 'bottom';
+    c.font = "800 12px 'Segoe UI',system-ui,Arial,sans-serif"; c.fillStyle = getComputedStyle(document.body).getPropertyValue('--tx').trim() || '#1F2328';
+    m.data.forEach((el, j) => { if(totM[j]) c.fillText(fmtN(totM[j]), el.x, el.y - 6); }); c.restore(); } };
+  st.charts.push(new Chart($('chFb'), { type:'bar', data:{ labels: MESES.map(m => m.slice(0,3)), datasets:[ ...ds,
+      { type:'line', label:'Total', data:totM, borderColor:'#3B4A5A', backgroundColor:'#3B4A5A', borderWidth:2, pointRadius:3, tension:.25, order:0, semRotulo:true } ] },
+    options:{ maintainAspectRatio:false, layout:{ padding:{ top:24 } }, interaction:{ mode:'index', intersect:false },
+      plugins:{ rotulos:{ on:false }, legend:{ position:'top', align:'end', labels:{ usePointStyle:true, boxWidth:10 } } },
+      scales:{ x:{ stacked:true, grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ stacked:true, beginAtZero:true, grace:'15%', ticks:{ precision:0 } } },
+      onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
+      onClick:(e, el) => { if(el.length){ const m = pad(el[0].index+1); st.fb.mes = st.fb.mes === m ? '' : m; pgFeedback(); } } }, plugins:[rotTot] }));
 }
 
 /* ============================ LIGAÇÕES REALIZADAS ============================ */
@@ -4061,7 +4124,14 @@ function paEtLinha(x, cols){
   </div></td></tr>`;
 }
 /* Atualiza a tela atual do plano depois de salvar */
-function paRefresh(){ if(st.page === 'planocal') pgPlanoCal(); else if(st.page === 'plano' || st.page === 'planoconc') pgPlano(); else if(st.page === 'planodash') pgPlanoDash(); }
+function paRefresh(){ paManterRolagem(() => { if(st.page === 'planocal') pgPlanoCal(); else if(st.page === 'plano' || st.page === 'planoconc') pgPlano(); else if(st.page === 'planodash') pgPlanoDash(); }); }
+/* Redesenha a tela sem perder a posição: guarda a rolagem da página e da tabela do plano e devolve depois */
+function paManterRolagem(fn){
+  const t = document.querySelector('.pa-tbl'), wx = window.scrollX, wy = window.scrollY, tt = t ? t.scrollTop : 0, tl = t ? t.scrollLeft : 0;
+  fn();
+  const v = () => { const n = document.querySelector('.pa-tbl'); if(n){ n.scrollTop = tt; n.scrollLeft = tl; } window.scrollTo(wx, wy); };
+  v(); requestAnimationFrame(v);
+}
 /* Tela cheia (Plano de Ação e Plano de Ação Concluído 5W2H) */
 function paTelaCheia(on){
   if(on === undefined) on = !document.body.classList.contains('pa-full');
@@ -4158,7 +4228,7 @@ function paRtSalvar(entregar){
   }
   paEtRapido(o.id, 'set', { old:o.old, t, h, ok: entregar ? true : (o.old != null ? null : false) });
 }
-function paTogEt(id){ st.paAberto = st.paAberto || new Set(); st.paAberto.has(id) ? st.paAberto.delete(id) : st.paAberto.add(id); pgPlano(); const i = $('paNova'+id); if(i && st.paAberto.has(id)) i.focus(); }
+function paTogEt(id){ st.paAberto = st.paAberto || new Set(); st.paAberto.has(id) ? st.paAberto.delete(id) : st.paAberto.add(id); paManterRolagem(pgPlano); const i = $('paNova'+id); if(i && st.paAberto.has(id)) i.focus({ preventScroll:true }); }
 function paEtAdd(id, doComo){
   const x = db.planos.find(p => p.id === id); if(!x) return;
   const txt = doComo ? (x.como||'').split(/\n+/).map(t => t.replace(/^\s*(\d+\s*[-.)–]?\s*|[-•*]\s*)/, '')) : ($('paNova'+id).value || '').split(/[;\n]+/);
@@ -4197,7 +4267,7 @@ async function paEtRapido(id, op, val, marcado){
     else if(op === 'tog' && marcado) toast('Etapa entregue.', 'ok');
     paRefresh();
     if(st.page === 'planocal' && st.pcalAberto === id && $('modal').classList.contains('show')){ if(fim){ st.pcalAberto = null; fecharModal(true); } else pcalAbrir(id); }
-    const i = $('paNova'+id); if(i && op === 'add') i.focus();
+    const i = $('paNova'+id); if(i && op === 'add') i.focus({ preventScroll:true });
   }catch(e){ toast(e.message, 'err'); paRefresh(); }
 }
 
