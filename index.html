@@ -2434,17 +2434,22 @@ async function callSalvar(){
 /* ============================ FEEDBACK DOS CLIENTES ============================ */
 function fbItens(){
   const out = [];
-  ligVisiveis().forEach(l => (Array.isArray(l.feedbacks) ? l.feedbacks : []).forEach(f => { if(f && f.tipo && f.txt) out.push({ ...f, lig:l, data:dataDeTs(l.inicio) }); }));
+  ligVisiveis().forEach(l => (Array.isArray(l.feedbacks) ? l.feedbacks : []).forEach((f, idx) => { if(f && f.tipo && f.txt) out.push({ ...f, idx, lig:l, data:dataDeTs(l.inicio) }); }));
   return out.sort((a,b) => String(b.lig.inicio).localeCompare(String(a.lig.inicio)));
 }
-function pgFeedback(){
-  st.fb = st.fb || { ano:new Date().getFullYear(), mes:'', vend:'', tipo:'', q:'' };
+function fbFiltro(){
   const p = st.fb, ano = String(p.ano), q = p.q.trim().toLowerCase();
-  const semCol = db.ligacoes.length && !db.ligacoes.some(l => 'feedbacks' in l);
   const doAno = fbItens().filter(f => f.data.slice(0,4) === ano && (!p.vend || String(f.lig.vendedora_id) === String(p.vend)));
   const l = doAno.filter(f => (!p.mes || f.data.slice(5,7) === p.mes) && (!p.tipo || f.tipo === p.tipo)
     && (!q || (cliNome(f.lig.cliente_id)||'').toLowerCase().includes(q) || f.txt.toLowerCase().includes(q)));
   const nAno = t => doAno.filter(f => f.tipo === t && (!p.mes || f.data.slice(5,7) === p.mes)).length, tot = FB_TIPOS.reduce((a,[t]) => a + nAno(t), 0);
+  return { doAno, l, nAno, tot };
+}
+function pgFeedback(){
+  st.fb = st.fb || { ano:new Date().getFullYear(), mes:'', vend:'', tipo:'', q:'' };
+  const p = st.fb, ano = String(p.ano), q = p.q.trim().toLowerCase();
+  const semCol = db.ligacoes.length && !db.ligacoes.some(l => 'feedbacks' in l), adm = isAdmin();
+  const { doAno, l, nAno, tot } = fbFiltro();
   const anos = [...new Set([new Date().getFullYear(), ...fbItens().map(f => Number(f.data.slice(0,4)))])].sort((a,b) => b-a);
   $('content').innerHTML = `
   ${semCol ? '<div class="box-info" style="margin-bottom:12px">Para registrar Reclamações, Oportunidades e Elogios nas ligações, execute o <b>21_ligacoes_feedbacks.sql</b> no Supabase e clique em ↻ Atualizar.</div>' : ''}
@@ -2454,6 +2459,7 @@ function pgFeedback(){
     ${verVendFiltro()?`<div class="f"><label>Vendedora</label><select onchange="st.fb.vend=this.value;pgFeedback()">${vendOptions(p.vend,'Todas')}</select></div>`:''}
     <div class="f"><label>Tipo</label><select onchange="st.fb.tipo=this.value;pgFeedback()"><option value="">Todos</option>${FB_TIPOS.map(([t]) => `<option ${p.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
     <div class="f grow"><label>Buscar</label><input id="fbQ" value="${esc(p.q)}" placeholder="Cliente ou texto do feedback" oninput="st.fb.q=this.value;clearTimeout(window._fbq);window._fbq=setTimeout(()=>{pgFeedback();const i=$('fbQ');i.focus();i.setSelectionRange(i.value.length,i.value.length)},300)"></div>
+    <button class="btn sec" onclick="fbPdf()">📄 Imprimir PDF</button>
   </div>
   <div class="kpis">
     <div class="kpi dk click ${!p.tipo?'sel':''}" onclick="st.fb.tipo='';pgFeedback()"><div class="l">Total de feedbacks</div><div class="v">${fmtN(tot)}</div><div class="s">${p.mes ? MESES[Number(p.mes)-1] + '/' : ''}${ano}</div></div>
@@ -2461,10 +2467,10 @@ function pgFeedback(){
   </div>
   <div class="card" style="margin-bottom:14px"><h3>Acompanhamento de feedbacks · Janeiro a Dezembro de ${ano}</h3><div class="chartbox" style="height:320px"><canvas id="chFb"></canvas></div>
     <div class="small muted" style="margin-top:6px">Clique em um mês para listar só os feedbacks dele.</div></div>
-  <div class="tbl-wrap"><table><thead><tr><th>Data/hora</th><th>Tipo</th><th>Cliente</th>${curEmp()?'':'<th>Empresa</th>'}<th>Vendedora</th><th>Feedback</th><th>Conversa</th></tr></thead><tbody>
+  <div class="tbl-wrap"><table><thead><tr><th>Data/hora</th><th>Tipo</th><th>Cliente</th>${curEmp()?'':'<th>Empresa</th>'}<th>Vendedora</th><th>Feedback</th><th>Conversa</th>${adm?'<th></th>':''}</tr></thead><tbody>
   ${l.slice(0,500).map(f => { const T = FB_TIPOS.find(x => x[0] === f.tipo) || ['','','','','']; return `<tr><td style="white-space:nowrap">${fmtDH(f.lig.inicio)}</td><td><span class="tag ${T[3]}">${T[4]} ${esc(f.tipo)}</span></td>
     <td><b>${esc(cliNome(f.lig.cliente_id))}</b></td>${curEmp()?'':`<td>${empTag(f.lig.empresa_id)}</td>`}<td>${esc(vendNome(f.lig.vendedora_id))}</td>
-    <td style="min-width:240px;white-space:pre-wrap">${esc(f.txt)}</td><td class="small muted" style="min-width:200px">${esc(f.lig.descricao||'')}</td></tr>`; }).join('') || `<tr><td colspan="${curEmp()?6:7}" class="empty">Nenhum feedback neste filtro.</td></tr>`}
+    <td style="min-width:240px;white-space:pre-wrap">${esc(f.txt)}</td><td class="small muted" style="min-width:200px">${esc(f.lig.descricao||'')}</td>${adm ? `<td class="act" style="white-space:nowrap"><button class="btn sec sm" title="Editar feedback" onclick="fbEditar(${f.lig.id},${f.idx})">✎</button> <button class="btn danger sm" title="Excluir feedback" onclick="fbExcluir(${f.lig.id},${f.idx})">🗑</button></td>` : ''}</tr>`; }).join('') || `<tr><td colspan="${(curEmp()?6:7)+(adm?1:0)}" class="empty">Nenhum feedback neste filtro.</td></tr>`}
   </tbody></table></div>${l.length > 500 ? `<p class="muted small">Exibindo 500 de ${l.length}.</p>` : ''}`;
   const porMes = t => MESES.map((_,i) => doAno.filter(f => f.tipo === t && f.data.slice(5,7) === pad(i+1)).length);
   const ds = FB_TIPOS.map(([t,pl,cor]) => ({ type:'bar', label:pl, data:porMes(t), backgroundColor:cor, borderRadius:4, maxBarThickness:38, stack:'fb', semRotulo:true, order:1 }));
@@ -2479,6 +2485,56 @@ function pgFeedback(){
       scales:{ x:{ stacked:true, grid:{ display:false }, ticks:{ font:{ weight:'600' } } }, y:{ stacked:true, beginAtZero:true, grace:'15%', ticks:{ precision:0 } } },
       onHover:(e, el) => { e.native.target.style.cursor = el.length ? 'pointer' : 'default'; },
       onClick:(e, el) => { if(el.length){ const m = pad(el[0].index+1); st.fb.mes = st.fb.mes === m ? '' : m; pgFeedback(); } } }, plugins:[rotTot] }));
+}
+
+/* Administrador: editar / excluir feedback (grava pela função fb_salvar · 22_feedback_admin.sql) */
+async function fbGravar(lig, arr){
+  try{ await sbFetch('/rest/v1/rpc/fb_salvar', { method:'POST', body:{ p_lig:lig.id, p_fb: arr.length ? arr : null } }); }
+  catch(e){ throw new Error(/fb_salvar/i.test(e.message) ? 'Execute o 22_feedback_admin.sql no Supabase e clique em ↻ para editar/excluir feedbacks.' : e.message); }
+  lig.feedbacks = arr.length ? arr : null;
+}
+function fbEditar(ligId, idx){
+  if(!isAdmin()) return toast('Somente o administrador pode editar feedbacks.', 'err');
+  const lig = db.ligacoes.find(l => l.id === ligId), f = lig && Array.isArray(lig.feedbacks) ? lig.feedbacks[idx] : null; if(!f) return toast('Feedback não encontrado. Clique em ↻.', 'err');
+  abrirModal('✎ Editar feedback', `<div class="box-info small"><b>${esc(cliNome(lig.cliente_id))}</b> · ${fmtDH(lig.inicio)} · ${esc(vendNome(lig.vendedora_id))}</div>
+    <div class="form" style="margin-top:10px"><div class="full"><label>Tipo</label><select id="fbETipo">${FB_TIPOS.map(([t]) => `<option ${f.tipo===t?'selected':''}>${t}</option>`).join('')}</select></div>
+    <div class="full"><label>Feedback *</label><textarea id="fbETxt" rows="5">${esc(f.txt)}</textarea></div></div>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn" id="fbEOk" onclick="fbSalvarEd(${ligId},${idx})">💾 Salvar</button>`);
+}
+async function fbSalvarEd(ligId, idx){
+  const lig = db.ligacoes.find(l => l.id === ligId), txt = $('fbETxt').value.trim(); if(!lig) return;
+  if(!txt) return toast('Escreva o feedback.', 'err');
+  $('fbEOk').disabled = true;
+  try{ const arr = (lig.feedbacks||[]).map(x => ({ ...x })); arr[idx] = { ...arr[idx], tipo:$('fbETipo').value, txt };
+    await fbGravar(lig, arr); fecharModal(true); toast('Feedback atualizado.', 'ok'); pgFeedback(); }
+  catch(e){ toast(e.message, 'err'); $('fbEOk').disabled = false; }
+}
+async function fbExcluir(ligId, idx){
+  if(!isAdmin()) return toast('Somente o administrador pode excluir feedbacks.', 'err');
+  const lig = db.ligacoes.find(l => l.id === ligId), f = lig && Array.isArray(lig.feedbacks) ? lig.feedbacks[idx] : null; if(!f) return;
+  if(!confirm(`Excluir este feedback (${f.tipo}) de ${cliNome(lig.cliente_id)}?\n\n"${f.txt}"`)) return;
+  try{ await fbGravar(lig, lig.feedbacks.filter((_, i) => i !== idx)); toast('Feedback excluído.', 'ok'); pgFeedback(); }
+  catch(e){ toast(e.message, 'err'); }
+}
+function fbPdf(){
+  if(!fbFiltro().l.length) return toast('Nenhum feedback neste filtro.', 'err');
+  abrirModal('📄 Imprimir feedbacks', `<p style="margin-top:0">Feedbacks com os filtros atuais, indicadores e gráfico de Janeiro a Dezembro. Escolha a orientação da página.</p>`,
+    `<button class="btn sec" onclick="fecharModal()">Cancelar</button><button class="btn sec" onclick="fecharModal(true);fbGerarPdf(false)">📄 Retrato</button><button class="btn" onclick="fecharModal(true);fbGerarPdf(true)">📄 Paisagem</button>`);
+}
+function fbGerarPdf(paisagem){
+  const p = st.fb, { l, nAno, tot } = fbFiltro(), ce = !curEmp();
+  const colunas = ['Data/hora','Tipo','Cliente', ...(ce ? ['Empresa'] : []), 'Vendedora','Feedback','Conversa'];
+  const linhas = l.map(f => [fmtDH(f.lig.inicio), f.tipo, cliNome(f.lig.cliente_id), ...(ce ? [empNome(f.lig.empresa_id)] : []), vendNome(f.lig.vendedora_id), f.txt, f.lig.descricao||'']);
+  const w = paisagem ? { dt:26, tp:22, cl:44, em:20, vd:30 } : { dt:22, tp:20, cl:32, em:16, vd:24 };
+  const est = { 0:{cellWidth:w.dt}, 1:{cellWidth:w.tp}, 2:{cellWidth:w.cl} }; let i = 3;
+  if(ce) est[i++] = { cellWidth:w.em }; est[i++] = { cellWidth:w.vd };
+  gerarPDF({ titulo:'Feedback dos Clientes', arquivo:`feedbacks_${p.ano}${p.mes ? '_' + p.mes : ''}.pdf`, paisagem, multilinha:true, fonte: paisagem ? 8 : 7.5,
+    subtitulo: [ (p.mes ? MESES[Number(p.mes)-1] + '/' : 'Ano ') + p.ano, p.vend ? 'Vendedora: ' + vendNome(Number(p.vend)) : '', p.tipo ? 'Tipo: ' + p.tipo : '', p.q ? 'Busca: ' + p.q : '' ].filter(Boolean).join('  -  '),
+    kpis: [['Total de feedbacks', fmtN(tot)], ...FB_TIPOS.map(([t,pl]) => [pl, fmtN(nAno(t)), pct(nAno(t), tot) + '% do total'])],
+    resumo: `${l.length} feedback(s) listado(s)`,
+    colunas, linhas, estilos: est,
+    tabela: { didParseCell: d => { if(d.section === 'body' && d.column.index === 1){ const T = FB_TIPOS.find(x => x[0] === d.cell.raw); if(T){ d.cell.styles.textColor = T[2]; d.cell.styles.fontStyle = 'bold'; } } } },
+    graficos: [{ titulo:'Acompanhamento de feedbacks - Janeiro a Dezembro de ' + p.ano, canvas:'chFb', largo:true }] });
 }
 
 /* ============================ LIGAÇÕES REALIZADAS ============================ */
@@ -3971,7 +4027,7 @@ function pgPlano(){
       ${conc ? `<td class="px">${x.concluido_em ? fmtDH(x.concluido_em).slice(0,10) : ''}</td>` : ''}
       <td class="px" style="min-width:130px">${paBar(x)}<button class="btn sec sm pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" onclick="paTogEt(${x.id})" title="Ver, incluir e marcar etapas sem abrir a ação">☰ Etapas${paEtapas(x).length ? ' ('+paEtapas(x).filter(s=>s.ok).length+'/'+paEtapas(x).length+')' : ''}${dono || resp ? ' ＋' : ''}</button></td>
       ${paCel(x,'observacoes',false,'px')}
-      <td class="act">${!conc && dono && (x._grp ? x._grp.some(c => c.responsavel_id !== me) : x.responsavel_id !== me) ? `<button class="btn sec sm cob-btn" title="Alguma novidade? Enviar mensagem para quem recebeu a ação" onclick="cobAbrir(${x.id})">🔔</button> ` : ''}<button class="btn sec sm pc" title="Ver todos os campos desta ação" onclick="paVer(${x.id})">🔎</button> <button class="btn sec sm pc pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" style="margin-top:0" onclick="paTogEt(${x.id})" title="Etapas · ${paPct(x)}% · ${esc(paStatus(x))}">☰ ${paPct(x)}%</button> ${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
+      <td class="act">${!conc && dono && (x._grp ? x._grp.some(c => c.responsavel_id !== me) : x.responsavel_id !== me) ? `<button class="btn sec sm cob-btn" title="Alguma novidade? Enviar mensagem para quem recebeu a ação" onclick="cobAbrir(${x.id})">🔔</button> ` : ''}<button class="btn sec sm pc" title="Ver todos os campos desta ação" onclick="paVer(${x.id})">🔎</button> <button class="btn sec sm pc pa-et-btn ${(st.paAberto||new Set()).has(x.id)?'on':''}" style="margin-top:0" onclick="paTogEt(${x.id})" title="Etapas · ${paPct(x)}% · ${esc(paStatus(x))}">☰ ${paPct(x)}%</button> ${resp && !x.ciente_em && !dono ? `<button class="btn ok sm" onclick="abrirCiente(null, ${x.id})">✔ Ciente</button> ` : ''}${!conc && (dono || resp) && paStatus(x) !== 'Cancelado' ? `<button class="btn ok sm" title="Dar o plano como concluído (100%) sem precisar lançar etapas" onclick="paConcluir(${x.id})">✔ Concluído</button> ` : ''}${dono || resp ? `<button class="btn sec sm" title="${conc?'Abrir / reabrir':'Editar'}" onclick="abrirPA(${x.id})">✎</button>` : `<button class="btn sec sm" title="Ver" onclick="abrirPA(${x.id})">👁</button>`}${podeExcluirPA(x)?` <button class="btn danger sm" title="Excluir" onclick="excluirPA(${x.id})">🗑</button>`:''}</td></tr>${(st.paAberto||new Set()).has(x.id) ? paEtLinha(x, conc?17:16) : ''}`; }).join('') || `<tr><td colspan="${conc?17:16}" class="empty">${conc ? 'Nenhum plano concluído neste filtro.' : 'Nenhuma ação em aberto neste filtro.'}</td></tr>`}
   </tbody></table></div>`;
   requestAnimationFrame(paMarcarCortes);
 }
@@ -4100,6 +4156,31 @@ async function salvarPA(id){
     const enviou = dono && o.responsavel_id !== me && x.ciente_em === null;
     toast(paEncerrada(x) ? 'Ação salva e movida para Plano de Ação Concluído 5W2H.' : enviou ? `Ação enviada para ${pessoaNome(o.responsavel_id)}. Aguardando ciente.` : 'Ação salva.', 'ok');
   }catch(e){ toast(e.message, 'err'); $('paSalvar').disabled = false; }
+}
+/* Botão verde "Concluído": fecha o plano em 100% direto (etapas pendentes, se houver, são marcadas como entregues) */
+async function paConcluir(id){
+  const x = db.planos.find(p => p.id === id); if(!x) return;
+  const me = db.me.id, ids = (x._grp || [x]).filter(c => c.criado_por === me || c.responsavel_id === me).map(c => c.id);
+  const pend = paEtapas(x).filter(s => !s.ok).length;
+  if(!ids.length) return toast('Você não pode concluir esta ação.', 'err');
+  if(!confirm(`Dar a ação #${id} como CONCLUÍDA?${pend ? `\n\n${pend} etapa(s) pendente(s) serão marcadas como entregues.` : ''}${ids.length > 1 ? `\n\nVale para as ${ids.length} cópias deste plano.` : ''}\n\nEla irá para Plano de Ação Concluído 5W2H.`)) return;
+  try{
+    for(const pid of ids){
+      let ok = false;
+      for(let t = 0; t < 4 && !ok; t++){
+        const fr = (await sbFetch(`/rest/v1/plano_acao?id=eq.${pid}&select=*`) || [])[0];
+        if(!fr) throw new Error('Esta ação não existe mais. Clique em Atualizar.');
+        const agora = new Date().toISOString(), e = paEtapas(fr).map(s => s.ok ? { ...s } : { ...s, ok:true, em:agora });
+        const body = { etapas:e, percentual:100, ...(fr.status === 'Cancelado' ? { status:'Não iniciado' } : {}), concluido_em: fr.concluido_em || agora };
+        const r = await sbFetch(`/rest/v1/plano_acao?id=eq.${pid}&updated_at=eq.${encodeURIComponent(fr.updated_at)}`, { method:'PATCH', body, headers:{ Prefer:'return=representation' } });
+        ok = !!(r && r.length);
+      }
+      if(!ok) throw new Error('Outra pessoa está alterando esta ação agora. Tente de novo em instantes.');
+    }
+    try{ db.planos = paRes(await sbAll('plano_acao','select=*&order=id')); }catch(e){}
+    (st.paAberto||new Set()).delete(id); montarNav(); paRefresh();
+    toast('Ação concluída! Movida para Plano de Ação Concluído 5W2H.', 'ok');
+  }catch(e){ toast(e.message, 'err'); paRefresh(); }
 }
 /* Junta as etapas: parte da versão atual do banco e aplica só o que ESTA pessoa mudou (incluiu, removeu, marcou ou desmarcou) */
 function paMesclar(orig, mine, fresh){
